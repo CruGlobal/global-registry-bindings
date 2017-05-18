@@ -40,14 +40,13 @@ RSpec.configure do |config|
       MOCK_REDIS.del(key)
     end
 
-    Sidekiq::Queues.clear_all
-    Sidekiq::Worker.clear_all
-
     SidekiqUniqueJobs.configure do |c|
       c.redis_test_mode = :mock
     end
     allow(Sidekiq).to receive(:redis).and_yield(MOCK_REDIS)
 
+    Sidekiq::Queues.clear_all
+    Sidekiq::Worker.clear_all
     Rails.cache.clear
   end
 end
