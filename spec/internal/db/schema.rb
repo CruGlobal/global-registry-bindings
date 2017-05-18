@@ -1,0 +1,28 @@
+# frozen_string_literal: true
+
+ActiveRecord::Schema.define(version: 0) do
+  # enable_extension 'uuid-ossp'
+
+  create_table :people, force: true do |t|
+    t.string :global_registry_id
+    t.string :global_registry_mdm_id
+    t.string :first_name
+    t.string :last_name
+    t.timestamps
+  end
+
+  create_table :addresses, force: true do |t|
+    t.string :global_registry_id
+    t.string :address1
+    t.string :zip
+    t.references :person, index: true
+    t.timestamps
+  end
+
+  create_table :organizations, force: true do |t|
+    t.string :global_registry_id
+    t.string :name
+    t.references :organization, index: true
+    t.timestamps
+  end
+end

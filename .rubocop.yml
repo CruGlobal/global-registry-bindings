@@ -1,0 +1,33 @@
+AllCops:
+  Exclude:
+    - vendor/**/*
+    - bin/**/*
+  DisplayCopNames: true
+  TargetRubyVersion: 2.3
+
+Rails:
+  Enabled: true
+
+Documentation:
+  Enabled: false
+
+MethodLength:
+  Severity: warning
+  Max: 15
+
+Metrics/BlockLength:
+  Exclude:
+    - global-registry-bindings.gemspec
+    - spec/**/*.rb
+
+Metrics/LineLength:
+  Max: 120
+
+Metrics/AbcSize:
+  Max: 20
+
+Metrics/CyclomaticComplexity:
+  Max: 9
+
+Metrics/ClassLength:
+  Max: 200

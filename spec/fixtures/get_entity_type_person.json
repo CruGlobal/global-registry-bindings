@@ -1,0 +1,35 @@
+{
+  "entity_types": [
+    {
+      "id": "ee13a693-3ce7-4c19-b59a-30c8f137acd8",
+      "name": "person",
+      "data_visibility": "public",
+      "fields": [
+        {
+          "id": "67256bfa-3b34-11e7-b876-129bd0521531",
+          "name": "first_name",
+          "data_visibility": "public",
+          "field_type": "string",
+          "is_editable": true,
+          "unique_value": false
+        },
+        {
+          "id": "6b82f97e-3b34-11e7-bba6-129bd0521531",
+          "name": "last_name",
+          "data_visibility": "public",
+          "field_type": "string",
+          "is_editable": true,
+          "unique_value": false
+        }
+      ],
+      "is_editable": true,
+      "unique_value": false
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "next_page": false,
+    "from": 1,
+    "to": 1
+  }
+}

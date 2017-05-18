@@ -1,0 +1,21 @@
+# frozen_string_literal: true
+
+require 'sidekiq'
+require 'sidekiq-unique-jobs'
+
+module GlobalRegistry #:nodoc:
+  module Bindings #:nodoc:
+    module Workers #:nodoc:
+      class PushGrEntityWorker
+        include Sidekiq::Worker
+        sidekiq_options unique: :until_and_while_executing
+
+        def perform(model_class, id)
+          model_class.find(id).send(:push_entity_to_global_registry)
+        rescue ActiveRecord::RecordNotFound # rubocop:disable Lint/HandleExceptions
+          # If the record was deleted after the job was created, swallow it
+        end
+      end
+    end
+  end
+end

@@ -1,0 +1,9 @@
+{
+  "entity_type": {
+    "id": "ee13a693-3ce7-4c19-b59a-30c8f137acd8",
+    "name": "person",
+    "data_visibility": "public",
+    "is_editable": true,
+    "unique_value": false
+  }
+}
