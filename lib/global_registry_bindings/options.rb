@@ -1,21 +1,24 @@
 # frozen_string_literal: true
 
+require 'global_registry_bindings/options/instance_options'
+require 'global_registry_bindings/options/class_options'
+
 module GlobalRegistry #:nodoc:
   module Bindings #:nodoc:
     module Options
       extend ActiveSupport::Concern
 
-      def global_registry_id_value
-        send self.class.global_registry_bindings_options[:id_column]
+      included do
+        @_global_registry_bindings_class_options ||= GlobalRegistry::Bindings::Options::ClassOptions.new(self)
       end
 
-      def global_registry_id_value=(value)
-        send self.class.global_registry_bindings_options[:id_column], value
+      def global_registry
+        @_global_registry_bindings_instance_options ||= GlobalRegistry::Bindings::Options::InstanceOptions.new(self)
       end
 
       module ClassMethods
-        def entity_type_name
-          global_registry_bindings_options[:type]
+        def global_registry
+          @_global_registry_bindings_class_options
         end
       end
     end

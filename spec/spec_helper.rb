@@ -29,6 +29,7 @@ ActionController::Base.cache_store = :memory_store
 RSpec.configure do |config|
   config.use_transactional_fixtures = true
   config.file_fixture_path = 'spec/fixtures'
+  config.include ActiveSupport::Testing::TimeHelpers
   config.include FactoryGirl::Syntax::Methods
 
   config.before(:suite) do

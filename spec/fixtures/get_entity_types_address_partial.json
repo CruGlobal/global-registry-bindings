@@ -1,21 +1,29 @@
 {
   "entity_types": [
     {
-      "id": "ee13a693-3ce7-4c19-b59a-30c8f137acd8",
-      "name": "person",
+      "id": "f5331684-3ca8-11e7-b937-129bd0521531",
+      "name": "address",
       "data_visibility": "public",
       "fields": [
         {
-          "id": "67256bfa-3b34-11e7-b876-129bd0521531",
-          "name": "first_name",
+          "id": "26f131be-3f1b-11e7-925c-129bd0521531",
+          "name": "zip",
           "data_visibility": "public",
           "field_type": "string",
           "is_editable": true,
           "unique_value": false
         },
         {
-          "id": "6b82f97e-3b34-11e7-bba6-129bd0521531",
-          "name": "last_name",
+          "id": "2dc5993a-3f1b-11e7-b876-129bd0521531",
+          "name": "line1",
+          "data_visibility": "public",
+          "field_type": "string",
+          "is_editable": true,
+          "unique_value": false
+        },
+        {
+          "id": "48181a92-3f1b-11e7-bba6-129bd0521531",
+          "name": "postal_code",
           "data_visibility": "public",
           "field_type": "string",
           "is_editable": true,

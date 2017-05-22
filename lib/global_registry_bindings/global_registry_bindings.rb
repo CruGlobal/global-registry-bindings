@@ -31,7 +31,7 @@ module GlobalRegistry #:nodoc:
       include Options
       include Entity::EntityTypeMethods
       include Entity::PushMethods
-      include Entity::MdmMethods if global_registry_bindings_options[:mdm_id_column].present?
+      include Entity::MdmMethods if global_registry.mdm_id_column.present?
     end
 
     private
@@ -57,11 +57,22 @@ module GlobalRegistry #:nodoc:
           newval
         end
       end
-      options[:exclude_fields] << options[:id_column]
-      options[:exclude_fields] << options[:mdm_id_column] if options[:mdm_id_column].present?
+      options = global_registry_bindings_update_exclude_fields(options)
 
       class_attribute :global_registry_bindings_options
       self.global_registry_bindings_options = options
+    end
+
+    def global_registry_bindings_update_exclude_fields(options)
+      options[:exclude_fields] << options[:id_column]
+      options[:exclude_fields] << options[:mdm_id_column] if options[:mdm_id_column].present?
+      if options[:parent_association].present?
+        parent_id_column = reflect_on_all_associations
+                           .detect { |a| a.name == options[:parent_association] }
+                               &.foreign_key
+        options[:exclude_fields] << parent_id_column.to_sym if parent_id_column
+      end
+      options
     end
   end
 end

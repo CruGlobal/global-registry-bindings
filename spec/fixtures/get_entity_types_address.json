@@ -1,0 +1,59 @@
+{
+  "entity_types": [
+    {
+      "id": "f5331684-3ca8-11e7-b937-129bd0521531",
+      "name": "address",
+      "data_visibility": "public",
+      "fields": [
+        {
+          "id": "26f131be-3f1b-11e7-925c-129bd0521531",
+          "name": "zip",
+          "data_visibility": "public",
+          "field_type": "string",
+          "is_editable": true,
+          "unique_value": false
+        },
+        {
+          "id": "2dc5993a-3f1b-11e7-b876-129bd0521531",
+          "name": "line1",
+          "data_visibility": "public",
+          "field_type": "string",
+          "is_editable": true,
+          "unique_value": false
+        },
+        {
+          "id": "30bec83c-3f1b-11e7-b876-129bd0521531",
+          "name": "line2",
+          "data_visibility": "public",
+          "field_type": "string",
+          "is_editable": true,
+          "unique_value": false
+        },
+        {
+          "id": "40db6be4-3f1b-11e7-b876-129bd0521531",
+          "name": "primary",
+          "data_visibility": "public",
+          "field_type": "boolean",
+          "is_editable": true,
+          "unique_value": false
+        },
+        {
+          "id": "48181a92-3f1b-11e7-bba6-129bd0521531",
+          "name": "postal_code",
+          "data_visibility": "public",
+          "field_type": "string",
+          "is_editable": true,
+          "unique_value": false
+        }
+      ],
+      "is_editable": true,
+      "unique_value": false
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "next_page": false,
+    "from": 1,
+    "to": 1
+  }
+}

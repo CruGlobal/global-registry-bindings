@@ -8,6 +8,7 @@ ActiveRecord::Schema.define(version: 0) do
     t.string :global_registry_mdm_id
     t.string :first_name
     t.string :last_name
+    t.string :guid
     t.timestamps
   end
 
@@ -15,6 +16,7 @@ ActiveRecord::Schema.define(version: 0) do
     t.string :global_registry_id
     t.string :address1
     t.string :zip
+    t.boolean :primary
     t.references :person, index: true
     t.timestamps
   end
@@ -22,6 +24,8 @@ ActiveRecord::Schema.define(version: 0) do
   create_table :organizations, force: true do |t|
     t.string :global_registry_id
     t.string :name
+    t.text :description
+    t.date :start_date
     t.references :organization, index: true
     t.timestamps
   end

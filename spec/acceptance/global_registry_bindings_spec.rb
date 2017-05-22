@@ -24,7 +24,7 @@ RSpec.describe 'GlobalRegistry::Bindings' do
       expect(Person.global_registry_bindings_options[:mdm_id_column]).to be :global_registry_mdm_id
       expect(Person.global_registry_bindings_options[:type]).to be :person
       expect(Person.global_registry_bindings_options[:exclude_fields])
-        .to contain_exactly(:global_registry_id, :id, :created_at, :updated_at, :global_registry_mdm_id)
+        .to contain_exactly(:global_registry_id, :id, :created_at, :updated_at, :global_registry_mdm_id, :guid)
       expect(Person.global_registry_bindings_options[:extra_fields]).to be_a(Hash).and be_empty
     end
 
@@ -33,7 +33,7 @@ RSpec.describe 'GlobalRegistry::Bindings' do
       expect(Address.global_registry_bindings_options[:mdm_id_column]).to be nil
       expect(Address.global_registry_bindings_options[:type]).to be :address
       expect(Address.global_registry_bindings_options[:exclude_fields])
-        .to contain_exactly(:global_registry_id, :id, :created_at, :updated_at, :address1)
+        .to contain_exactly(:global_registry_id, :id, :created_at, :updated_at, :person_id, :address1)
       expect(Address.global_registry_bindings_options[:extra_fields])
         .to include(line1: :string, postal_code: :string)
     end

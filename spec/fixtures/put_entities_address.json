@@ -1,0 +1,20 @@
+{
+  "entity": {
+    "person": {
+      "id": "22527d88-3cba-11e7-b876-129bd0521531",
+      "client_integration_id": "1",
+      "address": [
+        {
+          "id": "0a594356-3f1c-11e7-bba6-129bd0521531",
+          "client_integration_id": "1"
+        }
+      ],
+      "authentication": [
+        {
+          "id": "9484718a-3cbb-11e7-b876-129bd0521531",
+          "client_integration_id": "1"
+        }
+      ]
+    }
+  }
+}

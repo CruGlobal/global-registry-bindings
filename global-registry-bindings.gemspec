@@ -39,5 +39,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'mock_redis', '~> 0.17.0'
   s.add_development_dependency 'simplecov', '~> 0.14.0'
   s.add_development_dependency 'pry'
-  s.add_development_dependency 'pry-nav'
+  s.add_development_dependency 'pry-byebug'
 end
