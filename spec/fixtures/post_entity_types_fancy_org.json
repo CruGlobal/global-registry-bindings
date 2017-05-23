@@ -1,0 +1,9 @@
+{
+  "entity_type": {
+    "id": "025a1128-3f33-11e7-b876-129bd0521531",
+    "name": "fancy_org",
+    "data_visibility": "public",
+    "is_editable": true,
+    "unique_value": false
+  }
+}

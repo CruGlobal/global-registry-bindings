@@ -12,14 +12,14 @@ module GlobalRegistry #:nodoc:
           def push_entity_type
             parent_entity_id = parent_entity_type_id
             entity_type = Rails.cache.fetch(entity_type_cache_key, expires_in: 1.hour) do
-              GlobalRegistry::EntityType.get('filters[name]' => global_registry.type,
-                                             'filters[parent_id]' => parent_entity_id)['entity_types']&.first
-            end
-
-            unless entity_type
-              entity_type = GlobalRegistry::EntityType.post(entity_type: { name: global_registry.type,
-                                                                           parent_id: parent_entity_id,
-                                                                           field_type: 'entity' })['entity_type']
+              type = GlobalRegistry::EntityType.get('filters[name]' => global_registry.type,
+                                                    'filters[parent_id]' => parent_entity_id)['entity_types']&.first
+              unless type
+                type = GlobalRegistry::EntityType.post(entity_type: { name: global_registry.type,
+                                                                      parent_id: parent_entity_id,
+                                                                      field_type: 'entity' })['entity_type']
+              end
+              type
             end
             push_entity_type_fields(entity_type)
             entity_type
@@ -38,7 +38,7 @@ module GlobalRegistry #:nodoc:
 
           def parent_entity_type_id
             parent_type = global_registry&.parent_type
-            return if parent_type.blank?
+            return if parent_type.blank? || global_registry.parent_is_self?
             parent_entity_type = global_registry.parent_class.send :push_entity_type
             parent_entity_type&.dig('id')
           end

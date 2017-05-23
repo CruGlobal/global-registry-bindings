@@ -5,6 +5,7 @@ require 'global_registry'
 require 'global_registry_bindings/options'
 require 'global_registry_bindings/entity/entity_type_methods'
 require 'global_registry_bindings/entity/push_methods'
+require 'global_registry_bindings/entity/delete_methods'
 require 'global_registry_bindings/entity/mdm_methods'
 
 module GlobalRegistry #:nodoc:
@@ -31,6 +32,7 @@ module GlobalRegistry #:nodoc:
       include Options
       include Entity::EntityTypeMethods
       include Entity::PushMethods
+      include Entity::DeleteMethods
       include Entity::MdmMethods if global_registry.mdm_id_column.present?
     end
 
@@ -51,8 +53,6 @@ module GlobalRegistry #:nodoc:
       options = global_registry_bindings_default_options.deep_merge(options) do |key, oldval, newval|
         if :exclude_fields == key
           oldval.concat Array.wrap(newval)
-        elsif :extra_fields == key
-          oldval.merge newval
         else
           newval
         end

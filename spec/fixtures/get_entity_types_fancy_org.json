@@ -1,0 +1,43 @@
+{
+  "entity_types": [
+    {
+      "id": "025a1128-3f33-11e7-b876-129bd0521531",
+      "name": "fancy_org",
+      "data_visibility": "public",
+      "fields": [
+        {
+          "id": "692bef3e-3f33-11e7-b937-129bd0521531",
+          "name": "name",
+          "data_visibility": "public",
+          "field_type": "string",
+          "is_editable": true,
+          "unique_value": false
+        },
+        {
+          "id": "6e504b40-3f33-11e7-b937-129bd0521531",
+          "name": "description",
+          "data_visibility": "public",
+          "field_type": "string",
+          "is_editable": true,
+          "unique_value": false
+        },
+        {
+          "id": "7311faa2-3f33-11e7-b876-129bd0521531",
+          "name": "start_date",
+          "data_visibility": "public",
+          "field_type": "date",
+          "is_editable": true,
+          "unique_value": false
+        }
+      ],
+      "is_editable": true,
+      "unique_value": false
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "next_page": false,
+    "from": 1,
+    "to": 1
+  }
+}

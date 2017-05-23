@@ -10,7 +10,6 @@ module GlobalRegistry #:nodoc:
 
         included do
           after_commit :async_push_entity_to_global_registry, on: %i[create update]
-          # after_commit :delete_from_global_registry, on: :destroy
         end
 
         def async_push_entity_to_global_registry
@@ -38,6 +37,10 @@ module GlobalRegistry #:nodoc:
         end
 
         def create_entity_in_global_registry
+          if global_registry.parent_is_self? && global_registry.parent_id_value.blank?
+            # Push parent entity if it exists and is missing global_registry_id
+            global_registry.parent&.create_entity_in_global_registry
+          end
           entity_attributes = { global_registry.type => entity_attributes_to_push }
           entity = GlobalRegistry::Entity.post(entity: entity_attributes)
           global_registry.id_value = dig_global_registry_id_from_entity(entity['entity'], global_registry.type)
@@ -104,13 +107,6 @@ module GlobalRegistry #:nodoc:
                                  .reduce(&:merge)
                                  .reject { |k, _v| global_registry.exclude_fields.include? k }
                                  .merge(global_registry.extra_fields)
-          end
-
-          def parent_association_class
-            return if global_registry.parent_association.blank?
-            reflect_on_all_associations
-              .detect { |a| a.name == global_registry.parent_association.to_sym }
-                &.klass
           end
 
           protected

@@ -22,11 +22,11 @@ ActiveRecord::Schema.define(version: 0) do
   end
 
   create_table :organizations, force: true do |t|
-    t.string :global_registry_id
+    t.string :gr_id
     t.string :name
     t.text :description
     t.date :start_date
-    t.references :organization, index: true
+    t.references :parent, index: true
     t.timestamps
   end
 end

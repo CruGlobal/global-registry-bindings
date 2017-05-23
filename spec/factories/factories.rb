@@ -18,4 +18,12 @@ FactoryGirl.define do
     global_registry_id nil
     person_id nil
   end
+
+  factory :organization do
+    name 'Organization'
+    description 'Fancy Organization'
+    start_date { Time.zone.today }
+    parent_id nil
+    gr_id nil
+  end
 end
