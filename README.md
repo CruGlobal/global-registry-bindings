@@ -20,6 +20,8 @@ GlobalRegistry.configure do |config|
 end
 ```
 
+Make sure sidekiq is configured. See [Using Redis](https://github.com/mperham/sidekiq/wiki/Using-Redis) for information.
+
 ## Usage
 
 To make use of `global-registry-bindings` your model will need a few additional columns.

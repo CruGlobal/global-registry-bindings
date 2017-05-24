@@ -3,27 +3,27 @@
 require 'spec_helper'
 
 RSpec.describe 'Organization' do
-  describe ':async_push_entity_to_global_registry' do
+  describe ':push_entity_to_global_registry_async' do
     it 'should enqueue sidekiq job' do
       org = build(:organization)
       expect do
-        org.async_push_entity_to_global_registry
+        org.push_entity_to_global_registry_async
       end.to change(GlobalRegistry::Bindings::Workers::PushGrEntityWorker.jobs, :size).by(1)
     end
   end
 
-  describe ':async_delete_from_global_registry' do
+  describe ':delete_from_global_registry_async' do
     it 'should enqueue sidekiq job' do
       organization = build(:organization, gr_id: '22527d88-3cba-11e7-b876-129bd0521531')
       expect do
-        organization.async_delete_from_global_registry
+        organization.delete_from_global_registry_async
       end.to change(GlobalRegistry::Bindings::Workers::DeleteGrEntityWorker.jobs, :size).by(1)
     end
 
     it 'should not enqueue sidekiq job when missing global_registry_id' do
       organization = build(:organization)
       expect do
-        organization.async_delete_from_global_registry
+        organization.delete_from_global_registry_async
       end.not_to change(GlobalRegistry::Bindings::Workers::DeleteGrEntityWorker.jobs, :size)
     end
   end

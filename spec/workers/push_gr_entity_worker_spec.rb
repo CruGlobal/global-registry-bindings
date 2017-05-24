@@ -7,7 +7,7 @@ RSpec.describe 'GlobalRegistry::Bindings::Workers' do
     let(:user) { create(:person) }
 
     it 'sends :push_entity_to_global_registry to the model instance' do
-      allow(Person).to receive(:async_push_entity_to_global_registry)
+      allow(Person).to receive(:push_entity_to_global_registry_async)
       expect(Person).to receive(:find).with(user.id).and_return(user)
       expect(user).to receive(:push_entity_to_global_registry)
 
@@ -16,7 +16,7 @@ RSpec.describe 'GlobalRegistry::Bindings::Workers' do
     end
 
     it 'fails silently on ActiveRecord::RecordNotFound' do
-      allow(Person).to receive(:async_push_entity_to_global_registry)
+      allow(Person).to receive(:push_entity_to_global_registry_async)
       expect(Person).to receive(:find).with(user.id).and_raise(ActiveRecord::RecordNotFound)
       expect(user).not_to receive(:push_entity_to_global_registry)
 

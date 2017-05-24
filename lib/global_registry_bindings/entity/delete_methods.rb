@@ -9,10 +9,10 @@ module GlobalRegistry #:nodoc:
         extend ActiveSupport::Concern
 
         included do
-          after_commit :async_delete_from_global_registry, on: :destroy
+          after_commit :delete_from_global_registry_async, on: :destroy
         end
 
-        def async_delete_from_global_registry
+        def delete_from_global_registry_async
           return unless global_registry.id_value?
           ::GlobalRegistry::Bindings::Workers::DeleteGrEntityWorker.perform_async(global_registry.id_value)
         end
