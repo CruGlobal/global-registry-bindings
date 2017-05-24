@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Default < ActiveRecord::Base
+class Default < ApplicationRecord
   self.table_name = :people
   global_registry_bindings
 end

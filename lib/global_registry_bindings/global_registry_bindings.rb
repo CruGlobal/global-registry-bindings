@@ -14,20 +14,21 @@ module GlobalRegistry #:nodoc:
     #
     # Options:
     #
-    # - :id_column - Column used to track the Global Registry ID for the model instance.
-    #   Can be a :string or :uuid column. Default value 'global_registry_id'
-    # - :mdm_id_column - Column used to enable MDM tracking and set the name of the column. MDM is disabled
-    #   when this option is nil or empty. Default value nil.
-    # - :type - Global Registry entity type name. Default value is underscored name of the model.
-    # - :push_on - Array of Active Record lifecycle events used to push changes to Global Registry.
-    #   Default: [:create, :update, :delete]
-    # - :parent_association - Name of the Active Record parent association. Must be defined before calling
-    #   global_registry_bindings. Default: nil
-    # - :exclude_fields - Model fields to skip when pushing to Global Registry. Default value [:id, :created_at,
-    #   :updated_at, :global_registry_id] (global_registry_id will be whatever value is used for :id_column)
-    # - :extra_fields - Additional fields to send to Global Registry. This should be a hash with name as the key
-    #   and :type attributes as the value. Ex: {language: :string}. Name is a symbol and type is an ActiveRecord
-    #   column type.
+    # * `:id_column`: Column used to track the Global Registry ID for the model instance. Can be a :string or :uuid
+    #   column. (default: `:global_registry_id`)
+    # * `:mdm_id_column`: Column used to enable MDM tracking and set the name of the column. MDM is disabled when this
+    #    option is nil or empty. (default: `nil`)
+    # * `:type`: Global Registry entity type. Default value is underscored name of the model.
+    # * `:push_on`: Array of Active Record lifecycle events used to push changes to Global Registry.
+    #    (default: `[:create, :update, :delete]`)
+    # * `:parent_association`: Name of the Active Record parent association. Must be defined before calling
+    #    global_registry_bindings in order to determine foreign_key field. (default: `nil`)
+    # * `:exclude_fields`: Model fields to exclude when pushing to Global Registry. Will additionally include
+    #   `:mdm_id_column` and `:parent_association` foreign key when defined.
+    #   (default:  `[:id, :created_at, :updated_at, :global_registry_id]`)
+    # * `:extra_fields`: Additional fields to send to Global Registry. This should be a hash with name as the key
+    #    and :type attributes as the value. Ex: `{language: :string}`. Name is a symbol and type is an ActiveRecord
+    #    column type.
     #
     # @api public
     def global_registry_bindings(options = {})
@@ -58,7 +59,7 @@ module GlobalRegistry #:nodoc:
 
     def global_registry_bindings_parse_options!(options)
       options = global_registry_bindings_default_options.deep_merge(options) do |key, oldval, newval|
-        if :exclude_fields == key
+        if key == :exclude_fields
           oldval.concat Array.wrap(newval)
         else
           newval
