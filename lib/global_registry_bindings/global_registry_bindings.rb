@@ -19,8 +19,12 @@ module GlobalRegistry #:nodoc:
     # - :mdm_id_column - Column used to enable MDM tracking and set the name of the column. MDM is disabled
     #   when this option is nil or empty. Default value nil.
     # - :type - Global Registry entity type name. Default value is underscored name of the model.
-    # - :exclude_fields - Model fields to skip when pushing to Global Registry. Default value ['id', 'created_at'
-    #   'updated_at', 'global_registry_id'] (global_registry_id will be whatever value is used for :id_column)
+    # - :push_on - Array of Active Record lifecycle events used to push changes to Global Registry.
+    #   Default: [:create, :update, :delete]
+    # - :parent_association - Name of the Active Record parent association. Must be defined before calling
+    #   global_registry_bindings. Default: nil
+    # - :exclude_fields - Model fields to skip when pushing to Global Registry. Default value [:id, :created_at,
+    #   :updated_at, :global_registry_id] (global_registry_id will be whatever value is used for :id_column)
     # - :extra_fields - Additional fields to send to Global Registry. This should be a hash with name as the key
     #   and :type attributes as the value. Ex: {language: :string}. Name is a symbol and type is an ActiveRecord
     #   column type.
@@ -30,9 +34,11 @@ module GlobalRegistry #:nodoc:
       global_registry_bindings_parse_options! options
 
       include Options
-      include Entity::EntityTypeMethods
-      include Entity::PushMethods
-      include Entity::DeleteMethods
+      if global_registry.push_on.any? { |item| %i[create update].include? item }
+        include Entity::EntityTypeMethods
+        include Entity::PushMethods
+      end
+      include Entity::DeleteMethods if global_registry.push_on.include? :delete
       include Entity::MdmMethods if global_registry.mdm_id_column.present?
     end
 
@@ -43,6 +49,7 @@ module GlobalRegistry #:nodoc:
         id_column: :global_registry_id,
         mdm_id_column: nil,
         type: to_s.underscore.to_sym,
+        push_on: %i[create update delete],
         parent_association: nil,
         exclude_fields: %i[id created_at updated_at],
         extra_fields: {}

@@ -5,5 +5,6 @@ class Organization < ActiveRecord::Base
   belongs_to :parent, class_name: 'Organization'
   global_registry_bindings id_column: :gr_id,
                            type: :fancy_org,
+                           push_on: %i[create delete],
                            parent_association: :parent
 end

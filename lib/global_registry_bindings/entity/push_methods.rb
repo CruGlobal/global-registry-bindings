@@ -9,7 +9,7 @@ module GlobalRegistry #:nodoc:
         extend ActiveSupport::Concern
 
         included do
-          after_commit :async_push_entity_to_global_registry, on: %i[create update]
+          after_commit :async_push_entity_to_global_registry, on: (global_registry.push_on - %i[delete])
         end
 
         def async_push_entity_to_global_registry

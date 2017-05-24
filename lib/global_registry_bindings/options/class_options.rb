@@ -6,7 +6,13 @@ module GlobalRegistry #:nodoc:
   module Bindings #:nodoc:
     module Options
       class ClassOptions
-        delegate :id_column, :mdm_id_column, :type, :parent_association, :exclude_fields, :extra_fields, to: :@options
+        delegate :id_column,
+                 :mdm_id_column,
+                 :type,
+                 :push_on,
+                 :parent_association,
+                 :exclude_fields,
+                 :extra_fields, to: :@options
 
         def initialize(model_class)
           @model_class = model_class

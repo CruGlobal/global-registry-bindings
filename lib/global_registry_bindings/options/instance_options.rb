@@ -7,6 +7,7 @@ module GlobalRegistry #:nodoc:
         delegate :id_column,
                  :mdm_id_column,
                  :type,
+                 :push_on,
                  :parent_association,
                  :exclude_fields,
                  :extra_fields,
