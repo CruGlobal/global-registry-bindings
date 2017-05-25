@@ -69,7 +69,7 @@ and `:parent_association` foreign key when defined.
 (default:  `[:id, :created_at, :updated_at, :global_registry_id]`)
 * `:extra_fields`: Additional fields to send to Global Registry. This should be a hash with name as the key
 and :type attributes as the value. Ex: `{language: :string}`. Name is a symbol and type is an ActiveRecord column type.
-
+* `:mdm_timeout`: Only pull mdm information at most once every `:mdm_timeout`. (default: `1.minute`)
 
 ## Values for `extra_fields`
 
