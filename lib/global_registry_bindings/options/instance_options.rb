@@ -6,6 +6,7 @@ module GlobalRegistry #:nodoc:
       class InstanceOptions
         delegate :id_column,
                  :mdm_id_column,
+                 :mdm_timeout,
                  :type,
                  :push_on,
                  :parent_association,
@@ -14,6 +15,7 @@ module GlobalRegistry #:nodoc:
                  :parent_class,
                  :parent_type,
                  :parent_is_self?,
+                 :mdm_worker_class_name,
                  to: :@class_options
 
         def initialize(model)

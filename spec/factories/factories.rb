@@ -3,7 +3,7 @@
 require 'securerandom'
 
 FactoryGirl.define do
-  factory :person do
+  factory :person, class: Namespaced::Person do
     first_name 'Tony'
     last_name 'Stark'
     guid '98711710-acb5-4a41-ba51-e0fc56644b53'

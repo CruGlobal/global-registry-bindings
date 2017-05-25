@@ -7,7 +7,7 @@ module GlobalRegistry #:nodoc:
         if Module.const_defined? :Rollbar
           ::Rollbar.configure do |config|
             config.exception_level_filters.merge!('GlobalRegistry::Bindings::RecordMissingGlobalRegistryId' => 'ignore',
-                                                  'GlobalRegistry::Bindings::InvalidMasterPerson' => 'ignore')
+                                                  'GlobalRegistry::Bindings::EntityMissingMdmId' => 'ignore')
           end
         end
       end

@@ -2,6 +2,7 @@
 
 require 'active_support/core_ext'
 require 'global_registry'
+require 'global_registry_bindings/exceptions'
 require 'global_registry_bindings/options'
 require 'global_registry_bindings/entity/entity_type_methods'
 require 'global_registry_bindings/entity/push_methods'
@@ -29,6 +30,7 @@ module GlobalRegistry #:nodoc:
     # * `:extra_fields`: Additional fields to send to Global Registry. This should be a hash with name as the key
     #    and :type attributes as the value. Ex: `{language: :string}`. Name is a symbol and type is an ActiveRecord
     #    column type.
+    # * `:mdm_timeout`: Only pull mdm information at most once every `:mdm_timeout`. (default: `1.minute`)
     #
     # @api public
     def global_registry_bindings(options = {})
@@ -49,11 +51,12 @@ module GlobalRegistry #:nodoc:
       {
         id_column: :global_registry_id,
         mdm_id_column: nil,
-        type: to_s.underscore.to_sym,
+        type: name.demodulize.underscore.to_sym,
         push_on: %i[create update delete],
         parent_association: nil,
         exclude_fields: %i[id created_at updated_at],
-        extra_fields: {}
+        extra_fields: {},
+        mdm_timeout: 1.minute
       }.freeze
     end
 

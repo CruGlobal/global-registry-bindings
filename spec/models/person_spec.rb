@@ -192,4 +192,56 @@ RSpec.describe 'Person' do
       end
     end
   end
+
+  describe ':pull_mdm_id_from_global_registry_async' do
+    it 'should enqueue sidekiq job' do
+      person = build(:person)
+      expect do
+        person.pull_mdm_id_from_global_registry_async
+      end.to change(GlobalRegistry::Bindings::Workers::PullNamespacedPersonMdmIdWorker.jobs, :size).by(1)
+    end
+  end
+
+  describe ':pull_mdm_id_from_global_registry' do
+    context 'record missing global_registry_id' do
+      let(:person) { create(:person) }
+
+      it 'should raise an exception' do
+        expect do
+          person.pull_mdm_id_from_global_registry
+        end.to raise_error GlobalRegistry::Bindings::RecordMissingGlobalRegistryId
+      end
+    end
+
+    context 'entity missing mdm id' do
+      let(:person) { create(:person, global_registry_id: '22527d88-3cba-11e7-b876-129bd0521531') }
+      let!(:request) do
+        stub_request(:get, 'https://backend.global-registry.org/entities/22527d88-3cba-11e7-b876-129bd0521531')
+          .with(query: { 'filters[owned_by]' => 'mdm' })
+          .to_return(body: file_fixture('get_entities_person.json'), status: 200)
+      end
+
+      it 'should raise an exception' do
+        expect do
+          person.pull_mdm_id_from_global_registry
+        end.to raise_error GlobalRegistry::Bindings::EntityMissingMdmId
+      end
+    end
+
+    context 'entity missing mdm id' do
+      let(:person) { create(:person, global_registry_id: '22527d88-3cba-11e7-b876-129bd0521531') }
+      let!(:request) do
+        stub_request(:get, 'https://backend.global-registry.org/entities/22527d88-3cba-11e7-b876-129bd0521531')
+          .with(query: { 'filters[owned_by]' => 'mdm' })
+          .to_return(body: file_fixture('get_entities_person_mdm.json'), status: 200)
+      end
+
+      it 'should raise an exception' do
+        expect do
+          person.pull_mdm_id_from_global_registry
+          expect(person.global_registry_mdm_id).to eq 'c81340b2-7e57-4978-b6b9-396f21bb0bb2'
+        end.not_to raise_error
+      end
+    end
+  end
 end

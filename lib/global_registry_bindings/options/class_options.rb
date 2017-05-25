@@ -8,6 +8,7 @@ module GlobalRegistry #:nodoc:
       class ClassOptions
         delegate :id_column,
                  :mdm_id_column,
+                 :mdm_timeout,
                  :type,
                  :push_on,
                  :parent_association,
@@ -32,6 +33,10 @@ module GlobalRegistry #:nodoc:
 
         def parent_type
           parent_class&.global_registry&.type
+        end
+
+        def mdm_worker_class_name
+          "Pull#{@model_class.name.tr(':', '')}MdmIdWorker"
         end
       end
     end

@@ -1,0 +1,13 @@
+{
+  "entity": {
+    "person": {
+      "id": "22527d88-3cba-11e7-b876-129bd0521531",
+      "master_person:relationship": {
+        "master_person": "c81340b2-7e57-4978-b6b9-396f21bb0bb2",
+        "relationship_entity_id": "31d8465a-f9ff-11e6-9e00-1228c4aab4b9",
+        "client_integration_id": "16a96973-6240-449b-adec-757c7da31b17"
+      }
+    }
+  },
+  "meta": {}
+}
