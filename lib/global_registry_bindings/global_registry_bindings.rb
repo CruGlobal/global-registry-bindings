@@ -4,9 +4,10 @@ require 'active_support/core_ext'
 require 'global_registry'
 require 'global_registry_bindings/exceptions'
 require 'global_registry_bindings/options'
+require 'global_registry_bindings/entity/entity_methods'
 require 'global_registry_bindings/entity/entity_type_methods'
-require 'global_registry_bindings/entity/push_methods'
-require 'global_registry_bindings/entity/delete_methods'
+require 'global_registry_bindings/entity/push_entity_methods'
+require 'global_registry_bindings/entity/delete_entity_methods'
 require 'global_registry_bindings/entity/mdm_methods'
 
 module GlobalRegistry #:nodoc:
@@ -37,11 +38,12 @@ module GlobalRegistry #:nodoc:
       global_registry_bindings_parse_options! options
 
       include Options
+      include Entity::EntityMethods
       if global_registry.push_on.any? { |item| %i[create update].include? item }
         include Entity::EntityTypeMethods
-        include Entity::PushMethods
+        include Entity::PushEntityMethods
       end
-      include Entity::DeleteMethods if global_registry.push_on.include? :delete
+      include Entity::DeleteEntityMethods if global_registry.push_on.include? :delete
       include Entity::MdmMethods if global_registry.mdm_id_column.present?
     end
 

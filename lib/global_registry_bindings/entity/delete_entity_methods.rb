@@ -5,14 +5,14 @@ require 'global_registry_bindings/workers/delete_gr_entity_worker'
 module GlobalRegistry #:nodoc:
   module Bindings #:nodoc:
     module Entity #:nodoc:
-      module DeleteMethods
+      module DeleteEntityMethods
         extend ActiveSupport::Concern
 
         included do
-          after_commit :delete_from_global_registry_async, on: :destroy
+          after_commit :delete_entity_from_global_registry_async, on: :destroy
         end
 
-        def delete_from_global_registry_async
+        def delete_entity_from_global_registry_async
           return unless global_registry.id_value?
           ::GlobalRegistry::Bindings::Workers::DeleteGrEntityWorker.perform_async(global_registry.id_value)
         end
