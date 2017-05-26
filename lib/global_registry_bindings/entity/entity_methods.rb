@@ -8,13 +8,6 @@ module GlobalRegistry #:nodoc:
       module EntityMethods
         extend ActiveSupport::Concern
 
-        def dig_global_registry_id_from_entity(entity, type, parent_type = nil)
-          return entity&.dig(type.to_s, 'id') unless parent_type
-          Array.wrap(entity&.dig(parent_type.to_s, type.to_s)).detect do |item|
-            item['client_integration_id'] == id.to_s
-          end&.dig('id')
-        end
-
         def entity_attributes_to_push
           entity_attributes = self.class.columns_to_push.map do |name, type|
             value_for_global_registry(name, type)
