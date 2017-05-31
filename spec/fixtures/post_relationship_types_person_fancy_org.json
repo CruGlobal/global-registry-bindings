@@ -1,0 +1,16 @@
+{
+  "relationship_type": {
+    "id": "5d721db8-4248-11e7-90b4-129bd0521531",
+    "relationship_entity_type_id": "5d70b630-4248-11e7-90b4-129bd0521531",
+    "relationship1": {
+      "entity_type": "person",
+      "relationship_name": "person"
+    },
+    "relationship2": {
+      "entity_type": "fancy_org",
+      "relationship_name": "fancy_org"
+    },
+    "fields": [],
+    "is_editable": true
+  }
+}

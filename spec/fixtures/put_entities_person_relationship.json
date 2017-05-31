@@ -1,0 +1,29 @@
+{
+  "entity": {
+    "person": {
+      "id": "22527d88-3cba-11e7-b876-129bd0521531",
+      "fancy_org:relationship": [
+        {
+          "fancy_org": "aebb4170-3f34-11e7-bba6-129bd0521531",
+          "relationship_entity_id": "51a014a4-4252-11e7-944f-129bd0521531",
+          "client_integration_id": "1",
+          "role": "leader"
+        },
+        {
+          "fancy_org": "aebb4170-3f34-11e7-bba6-129bd0521531",
+          "relationship_entity_id": "4b11dcda-4630-11e7-be1b-129bd0521531",
+          "client_integration_id": "3",
+          "role": "supervisor"
+        },
+        {
+          "fancy_org": "aebb4170-3f34-11e7-bba6-129bd0521531",
+          "relationship_entity_id": "687c8ca2-4630-11e7-be1b-129bd0521531",
+          "client_integration_id": "4",
+          "role": "entry_level"
+        }
+      ],
+      "client_integration_id": "1"
+    }
+  },
+  "meta": {}
+}

@@ -3,6 +3,7 @@
 module Namespaced
   class Person < ApplicationRecord
     has_many :addresses, dependent: :destroy, inverse_of: :person
+    has_many :assignments
 
     global_registry_bindings mdm_id_column: :global_registry_mdm_id,
                              mdm_timeout: 24.hours,

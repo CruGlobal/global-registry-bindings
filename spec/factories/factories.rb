@@ -26,4 +26,12 @@ FactoryGirl.define do
     parent_id nil
     gr_id nil
   end
+
+  factory :assignment do
+    role 'leader'
+    hired_at { 2.months.ago }
+    person_id nil
+    organization_id nil
+    global_registry_id nil
+  end
 end

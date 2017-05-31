@@ -10,10 +10,15 @@ module GlobalRegistry #:nodoc:
                  :type,
                  :push_on,
                  :parent_association,
+                 :related_association,
                  :exclude_fields,
                  :extra_fields,
                  :parent_class,
+                 :related_class,
                  :parent_type,
+                 :related_type,
+                 :parent_relationship_name,
+                 :related_relationship_name,
                  :parent_is_self?,
                  :mdm_worker_class_name,
                  to: :@class_options
@@ -39,8 +44,16 @@ module GlobalRegistry #:nodoc:
           @model.send(parent_association) if parent_association.present?
         end
 
+        def related
+          @model.send(related_association) if related_association.present?
+        end
+
         def parent_id_value
           parent&.global_registry&.id_value
+        end
+
+        def related_id_value
+          related&.global_registry&.id_value
         end
       end
     end

@@ -6,9 +6,11 @@ require 'global_registry_bindings/exceptions'
 require 'global_registry_bindings/options'
 require 'global_registry_bindings/entity/entity_methods'
 require 'global_registry_bindings/entity/entity_type_methods'
+require 'global_registry_bindings/entity/relationship_type_methods'
 require 'global_registry_bindings/entity/push_entity_methods'
 require 'global_registry_bindings/entity/delete_entity_methods'
 require 'global_registry_bindings/entity/mdm_methods'
+require 'global_registry_bindings/entity/push_relationship_methods'
 
 module GlobalRegistry #:nodoc:
   module Bindings #:nodoc:
@@ -25,6 +27,12 @@ module GlobalRegistry #:nodoc:
     #    (default: `[:create, :update, :delete]`)
     # * `:parent_association`: Name of the Active Record parent association. Must be defined before calling
     #    global_registry_bindings in order to determine foreign_key field. (default: `nil`)
+    # * `:related_association`: Name of the Active Record related association. Setting this option changes the
+    #    global registry binding from entity to relationship. Active Record association must be defined before calling
+    #    global_registry_bindings in order to determine the foreign key. `:parent_relationship_name` and
+    #    `:related_relationship_name` must be set for relationship binding to work. (default: `nil`)
+    # * `:parent_relationship_name`: Name of parent relationship role. (default: `nil`)
+    # * `:related_relationship_name`: Name of the related relationship role. (default: `nil`)
     # * `:exclude_fields`: Model fields to exclude when pushing to Global Registry. Will additionally include
     #   `:mdm_id_column` and `:parent_association` foreign key when defined.
     #   (default:  `[:id, :created_at, :updated_at, :global_registry_id]`)
@@ -40,52 +48,24 @@ module GlobalRegistry #:nodoc:
       include Options
       include Entity::EntityMethods
       if global_registry.push_on.any? { |item| %i[create update].include? item }
-        include Entity::EntityTypeMethods
-        include Entity::PushEntityMethods
+        if global_registry.related_association && global_registry.parent_association
+          include Entity::RelationshipTypeMethods
+          include Entity::PushRelationshipMethods
+        else
+          include Entity::EntityTypeMethods
+          include Entity::PushEntityMethods
+        end
       end
+
       include Entity::DeleteEntityMethods if global_registry.push_on.include? :delete
       include Entity::MdmMethods if global_registry.mdm_id_column.present?
     end
 
     private
 
-    def global_registry_bindings_default_options
-      {
-        id_column: :global_registry_id,
-        mdm_id_column: nil,
-        type: name.demodulize.underscore.to_sym,
-        push_on: %i[create update delete],
-        parent_association: nil,
-        exclude_fields: %i[id created_at updated_at],
-        extra_fields: {},
-        mdm_timeout: 1.minute
-      }.freeze
-    end
-
     def global_registry_bindings_parse_options!(options)
-      options = global_registry_bindings_default_options.deep_merge(options) do |key, oldval, newval|
-        if key == :exclude_fields
-          oldval.concat Array.wrap(newval)
-        else
-          newval
-        end
-      end
-      options = global_registry_bindings_update_exclude_fields(options)
-
-      class_attribute :global_registry_bindings_options
-      self.global_registry_bindings_options = options
-    end
-
-    def global_registry_bindings_update_exclude_fields(options)
-      options[:exclude_fields] << options[:id_column]
-      options[:exclude_fields] << options[:mdm_id_column] if options[:mdm_id_column].present?
-      if options[:parent_association].present?
-        parent_id_column = reflect_on_all_associations
-                           .detect { |a| a.name == options[:parent_association] }
-                               &.foreign_key
-        options[:exclude_fields] << parent_id_column.to_sym if parent_id_column
-      end
-      options
+      class_attribute :_global_registry_bindings_options_hash
+      self._global_registry_bindings_options_hash = GlobalRegistry::Bindings::OptionsParser.new(self).parse(options)
     end
   end
 end

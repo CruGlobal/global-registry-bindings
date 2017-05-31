@@ -1,0 +1,32 @@
+{
+  "entity": {
+    "person": {
+      "id": "22527d88-3cba-11e7-b876-129bd0521531",
+      "first_name": "Tony",
+      "last_name": "Stark",
+      "authentication": {
+        "id": "9484718a-3cbb-11e7-b876-129bd0521531",
+        "key_guid": "8ec978ef-0b44-4ba1-ab32-1b6cae8aeb17",
+        "parent_id": "22527d88-3cba-11e7-b876-129bd0521531",
+        "client_integration_id": "1"
+      },
+      "address": {
+        "id": "0a594356-3f1c-11e7-bba6-129bd0521531",
+        "zip": "90265",
+        "primary": true,
+        "line1": "10880 Malibu Point",
+        "postal_code": "90265",
+        "parent_id": "22527d88-3cba-11e7-b876-129bd0521531",
+        "client_integration_id": "1",
+        "client_updated_at": "2001-02-03 00:00:00"
+      },
+      "fancy_org:relationship": {
+        "fancy_org": "aebb4170-3f34-11e7-bba6-129bd0521531",
+        "relationship_entity_id": "51a014a4-4252-11e7-944f-129bd0521531",
+        "client_integration_id": "1",
+        "role": "peon"
+      },
+      "client_integration_id": "1"
+    }
+  }
+}

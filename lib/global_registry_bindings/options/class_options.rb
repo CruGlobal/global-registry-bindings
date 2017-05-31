@@ -12,12 +12,15 @@ module GlobalRegistry #:nodoc:
                  :type,
                  :push_on,
                  :parent_association,
+                 :related_association,
+                 :parent_relationship_name,
+                 :related_relationship_name,
                  :exclude_fields,
                  :extra_fields, to: :@options
 
         def initialize(model_class)
           @model_class = model_class
-          @options = OpenStruct.new model_class.global_registry_bindings_options
+          @options = OpenStruct.new model_class._global_registry_bindings_options_hash
         end
 
         def parent_class
@@ -27,12 +30,23 @@ module GlobalRegistry #:nodoc:
               &.klass
         end
 
+        def related_class
+          return if related_association.blank?
+          @model_class.reflect_on_all_associations
+                      .detect { |a| a.name == related_association.to_sym }
+            &.klass
+        end
+
         def parent_is_self?
           parent_association.present? && parent_type == type
         end
 
         def parent_type
           parent_class&.global_registry&.type
+        end
+
+        def related_type
+          related_class&.global_registry&.type
         end
 
         def mdm_worker_class_name

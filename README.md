@@ -64,6 +64,12 @@ option is nil or empty. (default: `nil`)
 (default: `[:create, :update, :delete]`) 
 * `:parent_association`: Name of the Active Record parent association. Must be defined before calling
 global_registry_bindings in order to determine foreign_key field. (default: `nil`)
+* `:related_association`: Name of the Active Record related association. Setting this option changes the
+   global registry binding from entity to relationship. Active Record association must be defined before calling
+   global_registry_bindings in order to determine the foreign key. `:parent_relationship_name` and
+   `:related_relationship_name` must be set for relationship binding to work. (default: `nil`)
+* `:parent_relationship_name`: Name of parent relationship role. (default: `nil`)
+* `:related_relationship_name`: Name of the related relationship role. (default: `nil`)
 * `:exclude_fields`: Model fields to exclude when pushing to Global Registry. Will additionally include `:mdm_id_column`
 and `:parent_association` foreign key when defined. 
 (default:  `[:id, :created_at, :updated_at, :global_registry_id]`)
@@ -100,6 +106,20 @@ class Person < ActiveRecord::Base
   end
 end
 ```
+
+## Relationships
+
+Global Registry allows for relating two entities together (many-to-many) through a relationship. An example of this
+could be a Person to Person relationship. This relationship could be described as husband/spouse, or even
+leader/employee. You could also relate a Person to an Organization through an assignment. The assignment can track
+specific fields about the relationship.
+
+`global-registry-bindings` supports this through the `:parent_association` and `:related_association` options.
+Relationship roles, like husband/wife, are defined through the `:parent_relationship_name` and
+`:related_relationship_name` options.
+
+More information on Global Registry relationships and relationship types can be found
+[here](https://github.com/CruGlobal/global_registry_docs/wiki/About-Relationships)
 
 ## Example Models
 

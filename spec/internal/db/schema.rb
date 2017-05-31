@@ -29,4 +29,13 @@ ActiveRecord::Schema.define(version: 0) do
     t.references :parent, index: true
     t.timestamps
   end
+
+  create_table :assignments, force: true do |t|
+    t.string :global_registry_id
+    t.string :role
+    t.datetime :hired_at
+    t.references :person, index: true
+    t.references :organization, index: true
+    t.timestamps
+  end
 end

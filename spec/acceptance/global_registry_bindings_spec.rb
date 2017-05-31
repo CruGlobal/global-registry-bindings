@@ -56,5 +56,19 @@ RSpec.describe 'GlobalRegistry::Bindings' do
         .to contain_exactly(:gr_id, :id, :created_at, :updated_at, :parent_id)
       expect(Organization.global_registry.extra_fields).to be_a(Hash).and be_empty
     end
+
+    it 'should parse and set relationship fields' do
+      expect(Assignment.global_registry.id_column).to be :global_registry_id
+      expect(Assignment.global_registry.mdm_id_column).to be nil
+      expect(Assignment.global_registry.type).to be :assignment
+      expect(Assignment.global_registry.parent_association).to be :person
+      expect(Assignment.global_registry.related_association).to be :organization
+      expect(Assignment.global_registry.parent_relationship_name).to be :person
+      expect(Assignment.global_registry.related_relationship_name).to be :fancy_org
+      expect(Assignment.global_registry.push_on).to be_an(Array).and eq(%i[create update delete])
+      expect(Assignment.global_registry.exclude_fields)
+        .to contain_exactly(:global_registry_id, :id, :created_at, :updated_at, :person_id, :organization_id)
+      expect(Assignment.global_registry.extra_fields).to be_a(Hash).and be_empty
+    end
   end
 end
