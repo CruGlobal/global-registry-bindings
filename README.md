@@ -14,6 +14,7 @@ Add a Global Registry initializer.
 `config/initializers/global_registry.rb`
 ```ruby
 require 'global_registry'
+require 'global_registry_bindings'
 GlobalRegistry.configure do |config|
   config.access_token = ENV['GLOBAL_REGISTRY_TOKEN'] || 'fake'
   config.base_url = ENV['GLOBAL_REGISTRY_URL'] || 'https://backend.global-registry.org'
@@ -30,16 +31,9 @@ To push models to Global Registry, you will need a `global_registry_id` column. 
 `:string` or `:uuid` and allow null values. Column names are customizable through options.
 ```ruby
 class CreatePeople < ActiveRecord::Migration
-  def self.up
-    create_table :people do |t|
-      t.string :name
-      t.string :global_registry_id, :null => true, :index => true
-      t.string :global_registry_mdm_id, :null => true, :index => true
-    end
-  end
-
-  def self.down
-    drop_table :people
+  def change
+    add_column :people, :global_registry_id, :string, null: true, default: nil
+    add_column :people, :global_registry_mdm_id, :string, null: true, default: nil
   end
 end
 ```

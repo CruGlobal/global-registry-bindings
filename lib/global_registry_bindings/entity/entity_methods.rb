@@ -31,7 +31,7 @@ module GlobalRegistry #:nodoc:
                     value.to_s.strip
                   end
           [name, value]
-        rescue NoMethodError
+        rescue ::NoMethodError
           nil
         end
 
