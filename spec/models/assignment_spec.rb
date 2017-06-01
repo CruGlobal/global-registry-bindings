@@ -137,5 +137,64 @@ RSpec.describe 'Assignment' do
         end
       end
     end
+
+    context 'related entities missing global_registry_id' do
+      context '\'person\' missing global_registry_id' do
+        let(:person) { build(:person) }
+        let(:organization) { build(:organization, gr_id: 'aebb4170-3f34-11e7-bba6-129bd0521531') }
+        let!(:assignment) { create(:assignment, person: person, organization: organization) }
+
+        it 'should raise an exception' do
+          # Drop sidekiq-unique-jobs locks
+          MOCK_REDIS.keys.each do |key|
+            MOCK_REDIS.del(key)
+          end
+
+          expect do
+            assignment.push_relationship_to_global_registry
+          end.to raise_error(GlobalRegistry::Bindings::RelatedEntityMissingGlobalRegistryId).and(
+            change(GlobalRegistry::Bindings::Workers::PushGrEntityWorker.jobs, :size).by(1)
+          )
+        end
+      end
+
+      context '\'organization\' missing global_registry_id' do
+        let(:person) { build(:person, global_registry_id: '22527d88-3cba-11e7-b876-129bd0521531') }
+        let(:organization) { build(:organization) }
+        let!(:assignment) { create(:assignment, person: person, organization: organization) }
+
+        it 'should raise an exception' do
+          # Drop sidekiq-unique-jobs locks
+          MOCK_REDIS.keys.each do |key|
+            MOCK_REDIS.del(key)
+          end
+
+          expect do
+            assignment.push_relationship_to_global_registry
+          end.to raise_error(GlobalRegistry::Bindings::RelatedEntityMissingGlobalRegistryId).and(
+            change(GlobalRegistry::Bindings::Workers::PushGrEntityWorker.jobs, :size).by(1)
+          )
+        end
+      end
+
+      context '\'person\' and \'organization\' missing global_registry_id' do
+        let(:person) { build(:person) }
+        let(:organization) { build(:organization) }
+        let!(:assignment) { create(:assignment, person: person, organization: organization) }
+
+        it 'should raise an exception' do
+          # Drop sidekiq-unique-jobs locks
+          MOCK_REDIS.keys.each do |key|
+            MOCK_REDIS.del(key)
+          end
+
+          expect do
+            assignment.push_relationship_to_global_registry
+          end.to raise_error(GlobalRegistry::Bindings::RelatedEntityMissingGlobalRegistryId).and(
+            change(GlobalRegistry::Bindings::Workers::PushGrEntityWorker.jobs, :size).by(2)
+          )
+        end
+      end
+    end
   end
 end

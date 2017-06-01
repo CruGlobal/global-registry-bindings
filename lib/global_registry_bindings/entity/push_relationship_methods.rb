@@ -18,6 +18,7 @@ module GlobalRegistry #:nodoc:
         end
 
         def push_relationship_to_global_registry
+          ensure_related_entities_have_global_registry_ids!
           self.class.push_global_registry_relationship_type
 
           if global_registry.id_value?
@@ -59,6 +60,20 @@ module GlobalRegistry #:nodoc:
             cid = cid['value'] if cid.is_a?(Hash)
             cid == id.to_s
           end&.dig('relationship_entity_id')
+        end
+
+        def ensure_related_entities_have_global_registry_ids!
+          return if global_registry.parent_id_value.present? && global_registry.related_id_value.present?
+          # Enqueue push_entity worker for related entities missing global_registry_id and retry relationship push
+          names = []
+          [global_registry.parent, global_registry.related].each do |model|
+            next if model.global_registry.id_value?
+            names << "#{model.class.name}(#{model.id})"
+            model.push_entity_to_global_registry_async
+          end
+          raise GlobalRegistry::Bindings::RelatedEntityMissingGlobalRegistryId,
+                "#{self.class.name}(#{id}) has related entities [#{names.join ', '}] missing global_registry_id;" \
+                  ' will retry.'
         end
       end
     end
