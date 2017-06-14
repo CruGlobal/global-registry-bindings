@@ -5,5 +5,6 @@ module GlobalRegistry #:nodoc:
     class RecordMissingGlobalRegistryId < StandardError; end
     class EntityMissingMdmId < StandardError; end
     class RelatedEntityMissingGlobalRegistryId < StandardError; end
+    class ParentEntityMissingGlobalRegistryId < StandardError; end
   end
 end
