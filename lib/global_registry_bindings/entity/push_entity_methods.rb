@@ -37,10 +37,7 @@ module GlobalRegistry #:nodoc:
         end
 
         def create_entity_in_global_registry
-          if global_registry.parent_is_self? && global_registry.parent_id_value.blank?
-            # Push parent entity if it exists and is missing global_registry_id
-            global_registry.parent&.create_entity_in_global_registry
-          end
+          ensure_parent_entity_has_global_registry_id! if global_registry.parent.present?
           entity_attributes = { global_registry.type => entity_attributes_to_push }
           entity = GlobalRegistry::Entity.post(entity: entity_attributes)
           global_registry.id_value = dig_global_registry_id_from_entity(entity['entity'], global_registry.type)
@@ -71,6 +68,16 @@ module GlobalRegistry #:nodoc:
           Array.wrap(entity&.dig(parent_type.to_s, type.to_s)).detect do |item|
             item['client_integration_id'] == id.to_s
           end&.dig('id')
+        end
+
+        def ensure_parent_entity_has_global_registry_id!
+          return unless global_registry.parent_is_self? && global_registry.parent_id_value.blank?
+          # Push parent entity if it exists and is missing global_registry_id
+          global_registry.parent.push_entity_to_global_registry_async
+          raise GlobalRegistry::Bindings::ParentEntityMissingGlobalRegistryId,
+                "#{self.class.name}(#{id}) has parent entity " \
+                "#{global_registry.parent.class.name}(#{global_registry.parent.id}) missing " \
+                'global_registry_id; will retry.'
         end
       end
     end

@@ -9,7 +9,8 @@ module GlobalRegistry #:nodoc:
             config.exception_level_filters.merge!(
               'GlobalRegistry::Bindings::RecordMissingGlobalRegistryId' => 'ignore',
               'GlobalRegistry::Bindings::EntityMissingMdmId' => 'ignore',
-              'GlobalRegistry::Bindings::RelatedEntityMissingGlobalRegistryId' => 'ignore'
+              'GlobalRegistry::Bindings::RelatedEntityMissingGlobalRegistryId' => 'ignore',
+              'GlobalRegistry::Bindings::ParentEntityMissingGlobalRegistryId' => 'ignore'
             )
           end
         end

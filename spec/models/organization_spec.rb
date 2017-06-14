@@ -74,27 +74,11 @@ RSpec.describe 'Organization' do
         context 'record with a parent' do
           let(:parent) { create(:organization, name: 'Parent', description: 'Parent Fancy Organization') }
           let(:organization) { create(:organization, parent: parent) }
-          let!(:sub_requests) do
-            [stub_request(:post, 'https://backend.global-registry.org/entities')
-              .with(body: { entity: { fancy_org: { name: 'Parent', description: 'Parent Fancy Organization',
-                                                   start_date: '2001-02-03', parent_id: nil,
-                                                   client_integration_id: parent.id,
-                                                   client_updated_at: '2001-02-03 00:00:00' } } })
-              .to_return(body: file_fixture('post_entities_fancy_org_parent.json'), status: 200),
-             stub_request(:post, 'https://backend.global-registry.org/entities')
-               .with(body: { entity: { fancy_org: { name: 'Organization', description: 'Fancy Organization',
-                                                    start_date: '2001-02-03',
-                                                    parent_id: 'cd5da38a-c336-46a7-b818-dcdd51c4acde',
-                                                    client_integration_id: organization.id,
-                                                    client_updated_at: '2001-02-03 00:00:00' } } })
-               .to_return(body: file_fixture('post_entities_fancy_org.json'), status: 200)]
-          end
-
-          it 'should create \'fancy_org\' entity_type and push both entities' do
-            organization.push_entity_to_global_registry
-            (requests + sub_requests).each { |r| expect(r).to have_been_requested.once }
-            expect(parent.gr_id).to eq 'cd5da38a-c336-46a7-b818-dcdd51c4acde'
-            expect(organization.gr_id).to eq 'aebb4170-3f34-11e7-bba6-129bd0521531'
+          it 'should create \'fancy_org\' entity_type raise an exception' do
+            expect do
+              organization.push_entity_to_global_registry
+              requests.each { |r| expect(r).to have_been_requested.once }
+            end.to raise_error GlobalRegistry::Bindings::ParentEntityMissingGlobalRegistryId
           end
         end
 
