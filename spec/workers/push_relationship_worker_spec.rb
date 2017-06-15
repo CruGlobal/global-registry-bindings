@@ -21,7 +21,7 @@ RSpec.describe 'GlobalRegistry::Bindings::Workers' do
       expect(user).not_to receive(:push_relationship_to_global_registry)
 
       worker = GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new
-      worker.perform(Namespaced::Person, user.id)
+      worker.perform('Namespaced::Person', user.id)
     end
   end
 end

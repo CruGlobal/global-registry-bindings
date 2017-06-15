@@ -10,7 +10,8 @@ module GlobalRegistry #:nodoc:
         include Sidekiq::Worker
 
         def perform(model_class, id)
-          model_class.find(id).send(:pull_mdm_id_from_global_registry)
+          klass = model_class.is_a?(String) ? model_class.constantize : model_class
+          klass.find(id).send(:pull_mdm_id_from_global_registry)
         rescue ActiveRecord::RecordNotFound
           # If the record was deleted after the job was created, swallow it
           return

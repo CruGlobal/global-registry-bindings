@@ -35,7 +35,7 @@ RSpec.describe 'GlobalRegistry::Bindings::Workers' do
 
       worker_name = "GlobalRegistry::Bindings::Workers::#{Namespaced::Person.global_registry.mdm_worker_class_name}"
       worker = worker_name.constantize.new
-      worker.perform(Namespaced::Person, user.id)
+      worker.perform('Namespaced::Person', user.id)
     end
   end
 

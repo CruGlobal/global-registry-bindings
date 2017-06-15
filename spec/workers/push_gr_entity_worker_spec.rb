@@ -12,7 +12,7 @@ RSpec.describe 'GlobalRegistry::Bindings::Workers' do
       expect(user).to receive(:push_entity_to_global_registry)
 
       worker = GlobalRegistry::Bindings::Workers::PushGrEntityWorker.new
-      worker.perform(Namespaced::Person, user.id)
+      worker.perform('Namespaced::Person', user.id)
     end
 
     it 'fails silently on ActiveRecord::RecordNotFound' do
