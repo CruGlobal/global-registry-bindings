@@ -4,6 +4,7 @@ module GlobalRegistry #:nodoc:
   module Bindings #:nodoc:
     class Railtie < Rails::Railtie
       config.after_initialize do
+        # :nocov:
         if Module.const_defined? :Rollbar
           ::Rollbar.configure do |config|
             config.exception_level_filters.merge!(
@@ -14,6 +15,7 @@ module GlobalRegistry #:nodoc:
             )
           end
         end
+        # :nocov:
       end
     end
   end
