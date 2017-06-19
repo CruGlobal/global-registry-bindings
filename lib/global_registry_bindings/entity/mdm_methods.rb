@@ -18,8 +18,10 @@ module GlobalRegistry #:nodoc:
                                                                                          .perform_async(self.class, id)
         end
 
-        def pull_mdm_id_from_global_registry
+        def pull_mdm_id_from_global_registry # rubocop:disable Metrics/AbcSize
           unless global_registry.id_value?
+            # Record missing Global Registry ID, enqueue it to be pushed.
+            push_entity_to_global_registry_async
             raise GlobalRegistry::Bindings::RecordMissingGlobalRegistryId,
                   "#{self.class.name} #{id} has no #{global_registry.id_column}; will retry"
           end

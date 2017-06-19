@@ -27,10 +27,15 @@ module GlobalRegistry #:nodoc:
     #    (default: `[:create, :update, :delete]`)
     # * `:parent_association`: Name of the Active Record parent association. Must be defined before calling
     #    global_registry_bindings in order to determine foreign_key field. (default: `nil`)
+    # * `:parent_association_class`: Class name of the parent model. Required if `:parent_association` can not be used
+    #    to determine the parent class. This can happen if parent is defined by another gem, like `has_ancestry`.
+    #    (default: `nil`)
     # * `:related_association`: Name of the Active Record related association. Setting this option changes the
     #    global registry binding from entity to relationship. Active Record association must be defined before calling
     #    global_registry_bindings in order to determine the foreign key. `:parent_relationship_name` and
     #    `:related_relationship_name` must be set for relationship binding to work. (default: `nil`)
+    # * `:related_association_class`: Class name of the related model. Required if `:related_association` can not be
+    #    used to determine the related class. (default: `nil`)
     # * `:parent_relationship_name`: Name of parent relationship role. (default: `nil`)
     # * `:related_relationship_name`: Name of the related relationship role. (default: `nil`)
     # * `:exclude_fields`: Model fields to exclude when pushing to Global Registry. Will additionally include

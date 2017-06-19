@@ -12,7 +12,9 @@ module GlobalRegistry #:nodoc:
                  :type,
                  :push_on,
                  :parent_association,
+                 :parent_association_class,
                  :related_association,
+                 :related_association_class,
                  :parent_relationship_name,
                  :related_relationship_name,
                  :exclude_fields,
@@ -25,6 +27,7 @@ module GlobalRegistry #:nodoc:
 
         def parent_class
           return if parent_association.blank?
+          return parent_association_class if parent_association_class.present?
           @model_class.reflect_on_all_associations
                       .detect { |a| a.name == parent_association.to_sym }
               &.klass
@@ -32,6 +35,7 @@ module GlobalRegistry #:nodoc:
 
         def related_class
           return if related_association.blank?
+          return related_association_class if related_association_class.present?
           @model_class.reflect_on_all_associations
                       .detect { |a| a.name == related_association.to_sym }
             &.klass

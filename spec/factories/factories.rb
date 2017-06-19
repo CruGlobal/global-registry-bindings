@@ -11,6 +11,14 @@ FactoryGirl.define do
     global_registry_mdm_id nil
   end
 
+  factory :user_edited, class: Namespaced::Person::UserEdited do
+    first_name 'Bruce'
+    last_name 'Banner'
+    guid 'e4b665fe-df98-46b4-adb8-e878669dcdd4'
+    global_registry_id nil
+    global_registry_mdm_id nil
+  end
+
   factory :address do
     address1 '10880 Malibu Point'
     zip '90265'
