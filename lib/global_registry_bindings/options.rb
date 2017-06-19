@@ -9,7 +9,8 @@ module GlobalRegistry #:nodoc:
       extend ActiveSupport::Concern
 
       included do
-        @_global_registry_bindings_class_options ||= GlobalRegistry::Bindings::Options::ClassOptions.new(self)
+        class_attribute :_global_registry_bindings_class_options
+        self._global_registry_bindings_class_options ||= GlobalRegistry::Bindings::Options::ClassOptions.new(self)
       end
 
       def global_registry
@@ -18,7 +19,7 @@ module GlobalRegistry #:nodoc:
 
       module ClassMethods
         def global_registry
-          @_global_registry_bindings_class_options
+          _global_registry_bindings_class_options
         end
       end
     end
