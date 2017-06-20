@@ -36,25 +36,32 @@ RSpec.describe 'GlobalRegistry::Bindings' do
     end
 
     it 'should parse and set exclude and extra fields options' do
+      address = build(:address)
       expect(Address.global_registry.id_column).to be :global_registry_id
       expect(Address.global_registry.mdm_id_column).to be nil
       expect(Address.global_registry.type).to be :address
       expect(Address.global_registry.parent_association).to be :person
-      expect(Address.global_registry.exclude_fields)
+      expect(Address.global_registry.exclude_fields).to be_a Proc
+      expect(address.global_registry.exclude_fields)
         .to contain_exactly(:global_registry_id, :id, :created_at, :updated_at, :person_id, :address1)
-      expect(Address.global_registry.extra_fields)
+      expect(Address.global_registry.extra_fields).to be_a Symbol
+      expect(address.global_registry.extra_fields)
         .to include(line1: :string, postal_code: :string)
     end
 
     it 'should parse and set push_on fields' do
+      org = build(:organization)
       expect(Organization.global_registry.id_column).to be :gr_id
       expect(Organization.global_registry.mdm_id_column).to be nil
-      expect(Organization.global_registry.type).to be :fancy_org
+      expect(Organization.global_registry.type).to be_a Proc
+      expect(org.global_registry.type).to be :fancy_org
       expect(Organization.global_registry.parent_association).to be :parent
       expect(Organization.global_registry.push_on).to be_an(Array).and eq(%i[create delete])
-      expect(Organization.global_registry.exclude_fields)
+      expect(Organization.global_registry.exclude_fields).to be_a Symbol
+      expect(org.global_registry.exclude_fields)
         .to contain_exactly(:gr_id, :id, :created_at, :updated_at, :parent_id)
-      expect(Organization.global_registry.extra_fields).to be_a(Hash).and be_empty
+      expect(Organization.global_registry.extra_fields).to be_a Proc
+      expect(org.global_registry.extra_fields).to be_a(Hash).and be_empty
     end
 
     it 'should parse and set relationship fields' do

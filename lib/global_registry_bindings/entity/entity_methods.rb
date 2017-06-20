@@ -9,7 +9,7 @@ module GlobalRegistry #:nodoc:
         extend ActiveSupport::Concern
 
         def entity_attributes_to_push
-          entity_attributes = self.class.columns_to_push.map do |name, type|
+          entity_attributes = columns_to_push.map do |name, type|
             value_for_global_registry(name, type)
           end.compact.to_h
           entity_attributes[:client_integration_id] = id unless global_registry.exclude_fields
@@ -35,25 +35,25 @@ module GlobalRegistry #:nodoc:
           nil
         end
 
-        module ClassMethods
-          def columns_to_push
-            @columns_to_push ||= columns
-                                 .collect { |c| { c.name.underscore.to_sym => normalize_column_type(c.type, c.name) } }
-                                 .reduce(&:merge)
-                                 .reject { |k, _v| global_registry.exclude_fields.include? k }
-                                 .merge(global_registry.extra_fields)
-          end
+        def columns_to_push
+          @columns_to_push ||= self
+                               .class
+                               .columns
+                               .collect { |c| { c.name.underscore.to_sym => normalize_column_type(c.type, c.name) } }
+                               .reduce(&:merge)
+                               .reject { |k, _v| global_registry.exclude_fields.include? k }
+                               .merge(global_registry.extra_fields)
+        end
 
-          protected
+        protected
 
-          def normalize_column_type(type, name)
-            if type.to_s == 'text'
-              :string
-            elsif name.ends_with?('_id')
-              :uuid
-            else
-              type
-            end
+        def normalize_column_type(type, name)
+          if type.to_s == 'text'
+            :string
+          elsif name.ends_with?('_id')
+            :uuid
+          else
+            type
           end
         end
       end

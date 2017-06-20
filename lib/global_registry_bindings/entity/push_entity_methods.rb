@@ -17,7 +17,8 @@ module GlobalRegistry #:nodoc:
         end
 
         def push_entity_to_global_registry
-          self.class.push_entity_type
+          return if global_registry.parent_required? && global_registry.parent.blank?
+          push_entity_type_to_global_registry
 
           if global_registry.parent_type.present? && !global_registry.parent_is_self?
             create_dependent_entity_in_global_registry

@@ -48,13 +48,8 @@ module GlobalRegistry #:nodoc:
       end
 
       def parse(options_hash = {})
-        @options = defaults.deep_merge(options_hash) do |key, oldval, newval|
-          if key == :exclude_fields
-            oldval.concat Array.wrap(newval)
-          else
-            newval
-          end
-        end
+        merge_defaults options_hash
+        update_association_classes
         update_excludes
         validate_options
         @options
@@ -62,7 +57,32 @@ module GlobalRegistry #:nodoc:
 
       private
 
+      def merge_defaults(options_hash = {})
+        @options = defaults.merge(options_hash) do |key, oldval, newval|
+          if key == :exclude_fields
+            case newval
+            when Proc, Symbol
+              newval
+            else
+              oldval.concat Array.wrap(newval)
+            end
+          else
+            newval
+          end
+        end
+      end
+
+      def update_association_classes
+        unless @options[:parent_association_class]
+          @options[:parent_association_class] = association_class @options[:parent_association]
+        end
+        unless @options[:related_association_class] # rubocop:disable Style/GuardClause
+          @options[:related_association_class] = association_class @options[:related_association]
+        end
+      end
+
       def update_excludes
+        return unless @options[:exclude_fields].is_a? Array
         @options[:exclude_fields] << @options[:id_column]
         @options[:exclude_fields] << @options[:mdm_id_column] if @options[:mdm_id_column].present?
 
@@ -77,6 +97,10 @@ module GlobalRegistry #:nodoc:
 
       def association_foreign_key(name)
         @model_class.reflect_on_all_associations.detect { |a| a.name == name }&.foreign_key if name
+      end
+
+      def association_class(name)
+        @model_class.reflect_on_all_associations.detect { |a| a.name == name }&.klass if name
       end
     end
   end

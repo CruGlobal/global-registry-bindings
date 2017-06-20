@@ -19,7 +19,7 @@ module GlobalRegistry #:nodoc:
 
         def push_relationship_to_global_registry
           ensure_related_entities_have_global_registry_ids!
-          self.class.push_global_registry_relationship_type
+          push_global_registry_relationship_type
 
           if global_registry.id_value?
             update_relationship_in_global_registry

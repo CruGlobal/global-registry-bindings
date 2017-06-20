@@ -50,16 +50,18 @@ end
 You can pass various options to the `global_registry_bindings` method. Configuration options are:
 
 * `:id_column`: Column used to track the Global Registry ID for the model instance. Can be a :string or :uuid column.
-(default: `:global_registry_id`) 
+   (default: `:global_registry_id`) 
 * `:mdm_id_column`: Column used to enable MDM tracking and set the name of the column. MDM is disabled when this
-option is nil or empty. (default: `nil`)
-* `:type`: Global Registry entity type. Default value is underscored name of the model.
+   option is nil or empty. (default: `nil`)
+* `:type`: Global Registry entity type. Accepts a Symbol or a Proc. Symbol is the name of the entity type, Proc
+   is passed the model instnce and must return a symbol which is the entity type. Default value is underscored
+   name of the model. Ex: ```type: proc { |model| model.name.to_sym }```
 * `:push_on`: Array of Active Record lifecycle events used to push changes to Global Registry.
-(default: `[:create, :update, :delete]`) 
+   (default: `[:create, :update, :delete]`) 
 * `:parent_association`: Name of the Active Record parent association. Must be defined before calling
-global_registry_bindings in order to determine foreign_key field. (default: `nil`)
+   global_registry_bindings in order to determine foreign_key for use in exclude_fields. (default: `nil`)
 * `:parent_association_class`: Class name of the parent model. Required if `:parent_association` can not be used
-   to determine the parent class. This can happen if parent is defined by another gem, like `has_ancestry`.
+   to determine the parent class. This can happen if parent is defined by another gem, like `ancestry`.
    (default: `nil`)
 * `:related_association`: Name of the Active Record related association. Setting this option changes the
    global registry binding from entity to relationship. Active Record association must be defined before calling
@@ -69,11 +71,16 @@ global_registry_bindings in order to determine foreign_key field. (default: `nil
    used to determine the related class. (default: `nil`)
 * `:parent_relationship_name`: Name of parent relationship role. (default: `nil`)
 * `:related_relationship_name`: Name of the related relationship role. (default: `nil`)
-* `:exclude_fields`: Model fields to exclude when pushing to Global Registry. Will additionally include `:mdm_id_column`
-and `:parent_association` foreign key when defined. 
-(default:  `[:id, :created_at, :updated_at, :global_registry_id]`)
-* `:extra_fields`: Additional fields to send to Global Registry. This should be a hash with name as the key
-and :type attributes as the value. Ex: `{language: :string}`. Name is a symbol and type is an ActiveRecord column type.
+* `:exclude_fields`: Array, Proc or Symbol. Array of Model fields (as symbols) to exclude when pushing to Global
+   Registry. Array Will additionally include `:mdm_id_column` and `:parent_association` foreign key when defined.
+   If Proc, is passed type and model instance and should return an Array of the fields to exclude. If Symbol,
+   this should be a method name the Model instance responds to. It is passed the type and should return an Array
+   of fields to exclude. When Proc or Symbol are used, you must explicitly return the standard defaults.
+   (default:  `[:id, :created_at, :updated_at, :global_registry_id]`)
+* `:extra_fields`: Additional fields to send to Global Registry. Hash, Proc or Symbol. As a Hash, names are the
+   keys and :type attributes are the values. Ex: `{language: :string}`. Name is a symbol and type is an
+   ActiveRecord column type. As a Proc, it is passed the type and model instance, and should return a Hash.
+   As a Symbol, the model should respond to this method, is passed the type, and should return a Hash.
 * `:mdm_timeout`: Only pull mdm information at most once every `:mdm_timeout`. (default: `1.minute`)
 
 ## Values for `extra_fields`

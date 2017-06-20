@@ -31,6 +31,14 @@ RSpec.describe 'Address' do
   describe ':push_entity_to_global_registry' do
     around { |example| travel_to Time.utc(2001, 2, 3), &example }
     context 'create' do
+      context '\'address\' record does not belong to a person' do
+        let(:address) { create(:address) }
+
+        it 'should not create \'address\' entity_type and skip push of entity' do
+          address.push_entity_to_global_registry
+        end
+      end
+
       context '\'address\' entity_type does not exist' do
         let!(:requests) do
           [stub_request(:get, 'https://backend.global-registry.org/entity_types')
@@ -64,15 +72,6 @@ RSpec.describe 'Address' do
              .with(body: { entity_type: { name: 'postal_code', parent_id: 'f5331684-3ca8-11e7-b937-129bd0521531',
                                           field_type: 'string' } })
              .to_return(status: 200)]
-        end
-
-        context '\'address\' record does not belong to a person' do
-          let(:address) { create(:address) }
-
-          it 'should create \'address\' entity_type and skip push of entity' do
-            address.push_entity_to_global_registry
-            requests.each { |r| expect(r).to have_been_requested.once }
-          end
         end
 
         context '\'address\' record belongs to a person without global registry id' do
