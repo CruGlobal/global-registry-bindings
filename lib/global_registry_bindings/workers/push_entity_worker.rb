@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
 require 'global_registry_bindings/worker'
-require 'global_registry_bindings/entity/relationship_type_methods'
-require 'global_registry_bindings/entity/push_relationship_methods'
+require 'global_registry_bindings/entity/entity_type_methods'
+require 'global_registry_bindings/entity/push_entity_methods'
 
 module GlobalRegistry #:nodoc:
   module Bindings #:nodoc:
     module Workers #:nodoc:
-      class PushRelationshipWorker < GlobalRegistry::Bindings::Worker
-        include GlobalRegistry::Bindings::Entity::RelationshipTypeMethods
-        include GlobalRegistry::Bindings::Entity::PushRelationshipMethods
+      class PushEntityWorker < GlobalRegistry::Bindings::Worker
+        include GlobalRegistry::Bindings::Entity::EntityTypeMethods
+        include GlobalRegistry::Bindings::Entity::PushEntityMethods
         sidekiq_options unique: :until_and_while_executing
 
         def perform(model_class, id)
           super model_class, id
-          push_relationship_to_global_registry
+          push_entity_to_global_registry
         rescue ActiveRecord::RecordNotFound # rubocop:disable Lint/HandleExceptions
           # If the record was deleted after the job was created, swallow it
         end

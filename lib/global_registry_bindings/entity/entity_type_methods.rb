@@ -29,9 +29,9 @@ module GlobalRegistry #:nodoc:
 
         def push_entity_type_fields_to_global_registry(entity_type)
           existing_fields = entity_type['fields']&.collect { |f| f['name'].to_sym } || []
-          columns_to_push
-            .reject { |k, _v| existing_fields.include? k }
-            .each do |name, type|
+          model.entity_columns_to_push
+               .reject { |k, _v| existing_fields.include? k }
+               .each do |name, type|
             GlobalRegistry::EntityType.post(entity_type: { name: name,
                                                            parent_id: entity_type['id'],
                                                            field_type: type })
@@ -41,7 +41,8 @@ module GlobalRegistry #:nodoc:
         def parent_entity_type_id
           parent = global_registry&.parent
           return if parent.blank? || global_registry.parent_is_self?
-          parent_entity_type = parent.send :push_entity_type_to_global_registry
+          worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new parent
+          parent_entity_type = worker.send :push_entity_type_to_global_registry
           parent_entity_type&.dig('id')
         end
 

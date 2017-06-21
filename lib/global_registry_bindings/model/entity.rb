@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
-require 'global_registry'
-
 module GlobalRegistry #:nodoc:
   module Bindings #:nodoc:
-    module Entity #:nodoc:
-      module EntityMethods
+    module Model #:nodoc:
+      module Entity
         extend ActiveSupport::Concern
 
         def entity_attributes_to_push
-          entity_attributes = columns_to_push.map do |name, type|
+          entity_attributes = entity_columns_to_push.map do |name, type|
             value_for_global_registry(name, type)
           end.compact.to_h
           entity_attributes[:client_integration_id] = id unless global_registry.exclude_fields
@@ -35,11 +33,13 @@ module GlobalRegistry #:nodoc:
           nil
         end
 
-        def columns_to_push
+        def entity_columns_to_push
           @columns_to_push ||= self
                                .class
                                .columns
-                               .collect { |c| { c.name.underscore.to_sym => normalize_column_type(c.type, c.name) } }
+                               .collect do |c|
+                                 { c.name.underscore.to_sym => normalize_entity_column_type(c.type, c.name) }
+                               end # rubocop:disable Style/MultilineBlockChain
                                .reduce(&:merge)
                                .reject { |k, _v| global_registry.exclude_fields.include? k }
                                .merge(global_registry.extra_fields)
@@ -47,7 +47,7 @@ module GlobalRegistry #:nodoc:
 
         protected
 
-        def normalize_column_type(type, name)
+        def normalize_entity_column_type(type, name)
           if type.to_s == 'text'
             :string
           elsif name.ends_with?('_id')

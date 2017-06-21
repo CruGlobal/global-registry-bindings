@@ -33,15 +33,17 @@ module GlobalRegistry #:nodoc:
         end
 
         def associated_entity_ids
-          [global_registry.parent.send(:push_entity_type_to_global_registry)&.dig('id'),
-           global_registry.related.send(:push_entity_type_to_global_registry)&.dig('id')]
+          parent_worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new global_registry.parent
+          related_worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new global_registry.related
+          [parent_worker.send(:push_entity_type_to_global_registry)&.dig('id'),
+           related_worker.send(:push_entity_type_to_global_registry)&.dig('id')]
         end
 
         def push_global_registry_relationship_type_fields(relationship_type)
           existing_fields = relationship_type['fields']&.collect { |f| f['name'].to_sym } || []
-          fields = columns_to_push
-                   .reject { |k, _v| existing_fields.include? k }
-                   .map { |name, type| { name: name, field_type: type } }
+          fields = model.entity_columns_to_push
+                        .reject { |k, _v| existing_fields.include? k }
+                        .map { |name, type| { name: name, field_type: type } }
           return if fields.empty?
           GlobalRegistry::RelationshipType.put(relationship_type['id'],
                                                relationship_type: { fields: fields })

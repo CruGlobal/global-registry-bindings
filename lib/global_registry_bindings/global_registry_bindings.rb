@@ -4,13 +4,12 @@ require 'active_support/core_ext'
 require 'global_registry'
 require 'global_registry_bindings/exceptions'
 require 'global_registry_bindings/options'
-require 'global_registry_bindings/entity/entity_methods'
-require 'global_registry_bindings/entity/entity_type_methods'
-require 'global_registry_bindings/entity/relationship_type_methods'
-require 'global_registry_bindings/entity/push_entity_methods'
-require 'global_registry_bindings/entity/delete_entity_methods'
-require 'global_registry_bindings/entity/mdm_methods'
-require 'global_registry_bindings/entity/push_relationship_methods'
+require 'global_registry_bindings/model/entity'
+require 'global_registry_bindings/model/push_entity'
+require 'global_registry_bindings/model/push_relationship'
+require 'global_registry_bindings/model/delete_entity'
+require 'global_registry_bindings/model/pull_mdm'
+require 'global_registry_bindings/worker'
 
 module GlobalRegistry #:nodoc:
   module Bindings #:nodoc:
@@ -54,29 +53,21 @@ module GlobalRegistry #:nodoc:
     #
     # @api public
     def global_registry_bindings(options = {})
-      global_registry_bindings_parse_options! options
+      class_attribute :_global_registry_bindings_options_hash
+      self._global_registry_bindings_options_hash = GlobalRegistry::Bindings::OptionsParser.new(self).parse(options)
 
       include Options
-      include Entity::EntityMethods
+      include Model::Entity
       if global_registry.push_on.any? { |item| %i[create update].include? item }
         if global_registry.related_association && global_registry.parent_association
-          include Entity::RelationshipTypeMethods
-          include Entity::PushRelationshipMethods
+          include Model::PushRelationship
         else
-          include Entity::EntityTypeMethods
-          include Entity::PushEntityMethods
+          include Model::PushEntity
         end
       end
 
-      include Entity::DeleteEntityMethods if global_registry.push_on.include? :delete
-      include Entity::MdmMethods if global_registry.mdm_id_column.present?
-    end
-
-    private
-
-    def global_registry_bindings_parse_options!(options)
-      class_attribute :_global_registry_bindings_options_hash
-      self._global_registry_bindings_options_hash = GlobalRegistry::Bindings::OptionsParser.new(self).parse(options)
+      include Model::DeleteEntity if global_registry.push_on.include? :delete
+      include Model::PullMdm if global_registry.mdm_id_column.present?
     end
   end
 end
