@@ -14,8 +14,8 @@ module GlobalRegistry #:nodoc:
         end
 
         def pull_mdm_id_from_global_registry_async
-          "::GlobalRegistry::Bindings::Workers::#{global_registry.mdm_worker_class_name}".constantize
-                                                                                         .perform_async(self.class, id)
+          "::GlobalRegistry::Bindings::Workers::#{global_registry_entity.mdm_worker_class_name}"
+            .constantize .perform_async(self.class, id)
         end
       end
     end

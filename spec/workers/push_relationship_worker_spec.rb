@@ -4,7 +4,7 @@ require 'spec_helper'
 
 RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
   around { |example| travel_to Time.utc(2001, 2, 3), &example }
-  describe '#perform(model_class, id)' do
+  describe '#perform(model_class, id, type)' do
     context Assignment do
       let(:assignment) { create(:assignment) }
       context 'with valid id' do
@@ -13,7 +13,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
 
           worker = GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new
           expect(worker).to receive(:push_relationship_to_global_registry)
-          worker.perform('Assignment', assignment.id)
+          worker.perform('Assignment', assignment.id, :assignment)
           expect(worker.model).to be assignment
         end
       end
@@ -25,7 +25,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
             .not_to receive(:push_relationship_to_global_registry)
 
           worker = GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new
-          worker.perform(Assignment, assignment.id)
+          worker.perform(Assignment, assignment.id, :assignment)
           expect(worker.model).to be nil
         end
       end
@@ -34,7 +34,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
 
   describe '#push_relationship_to_global_registry' do
     describe Assignment do
-      let(:worker) { GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new assignment }
+      let(:worker) { GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new assignment, :assignment }
       context 'as create' do
         let(:person) { create(:person, global_registry_id: '22527d88-3cba-11e7-b876-129bd0521531') }
         let(:organization) { create(:organization, gr_id: 'aebb4170-3f34-11e7-bba6-129bd0521531') }

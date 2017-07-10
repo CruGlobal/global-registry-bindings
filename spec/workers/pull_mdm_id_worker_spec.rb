@@ -10,7 +10,8 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PullMdmIdWorker do
       it 'should call #pull_mdm_id_from_global_registry' do
         expect(Namespaced::Person).to receive(:find).with(person.id).and_return(person)
 
-        worker_name = "GlobalRegistry::Bindings::Workers::#{Namespaced::Person.global_registry.mdm_worker_class_name}"
+        worker_name =
+          "GlobalRegistry::Bindings::Workers::#{Namespaced::Person.global_registry_entity.mdm_worker_class_name}"
         worker = worker_name.constantize.new
         expect(worker).to receive(:pull_mdm_id_from_global_registry)
         worker.perform('Namespaced::Person', person.id)
@@ -23,7 +24,8 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PullMdmIdWorker do
         expect(Namespaced::Person).to receive(:find).with(person.id).and_raise(ActiveRecord::RecordNotFound)
         expect(GlobalRegistry::Bindings::Workers::PullMdmIdWorker).not_to receive(:pull_mdm_id_from_global_registry)
 
-        worker_name = "GlobalRegistry::Bindings::Workers::#{Namespaced::Person.global_registry.mdm_worker_class_name}"
+        worker_name =
+          "GlobalRegistry::Bindings::Workers::#{Namespaced::Person.global_registry_entity.mdm_worker_class_name}"
         worker = worker_name.constantize.new
         worker.perform(Namespaced::Person, person.id)
         expect(worker.model).to be nil
@@ -37,7 +39,8 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PullMdmIdWorker do
         expect(Rails.logger).to receive(:info).with('GR entity for GlobalRegistry::Bindings::Workers::PullNamespaced' \
                                                     'PersonMdmIdWorker 1 does not exist; will _not_ retry')
 
-        worker_name = "GlobalRegistry::Bindings::Workers::#{Namespaced::Person.global_registry.mdm_worker_class_name}"
+        worker_name =
+          "GlobalRegistry::Bindings::Workers::#{Namespaced::Person.global_registry_entity.mdm_worker_class_name}"
         worker = worker_name.constantize.new
         worker.perform(Namespaced::Person, person.id)
         expect(worker.model).to be nil
@@ -102,7 +105,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PullMdmIdWorker do
     before do
       module MdmTest
         class Klass
-          def self.global_registry
+          def self.global_registry_entity
             @gr ||= Object.new
           end
         end
@@ -114,10 +117,10 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PullMdmIdWorker do
     end
 
     it 'generates worker class with mdm timeout set' do
-      expect(MdmTest::Klass.global_registry).to(
+      expect(MdmTest::Klass.global_registry_entity).to(
         receive(:mdm_worker_class_name).and_return('PullMdmTestKlassMdmIdWorker')
       )
-      expect(MdmTest::Klass.global_registry).to(
+      expect(MdmTest::Klass.global_registry_entity).to(
         receive(:mdm_timeout).and_return(33.minutes)
       )
 

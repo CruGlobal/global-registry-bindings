@@ -7,7 +7,7 @@ RSpec.describe Assignment do
     it 'should enqueue sidekiq job' do
       assignment = build(:assignment)
       expect do
-        assignment.push_relationship_to_global_registry_async
+        assignment.push_relationship_to_global_registry_async(:assignment)
       end.to change(GlobalRegistry::Bindings::Workers::PushRelationshipWorker.jobs, :size).by(1)
     end
   end

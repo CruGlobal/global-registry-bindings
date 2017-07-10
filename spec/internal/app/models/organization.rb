@@ -5,6 +5,8 @@ class Organization < ApplicationRecord
   belongs_to :parent, class_name: 'Organization'
 
   has_many :assignments
+  has_many :people, class_name: 'Namespaced::Person', through: :assignments
+
   global_registry_bindings id_column: :gr_id,
                            type: ->(_model) { :fancy_org },
                            push_on: %i[create delete],

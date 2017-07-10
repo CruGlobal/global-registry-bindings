@@ -3,23 +3,21 @@
 module GlobalRegistry #:nodoc:
   module Bindings #:nodoc:
     module Model #:nodoc:
-      module Entity
+      module Relationship
         extend ActiveSupport::Concern
 
-        def entity_attributes_to_push
-          entity_attributes = entity_columns_to_push.map do |name, type|
-            value_for_global_registry(name, type)
+        def relationship_attributes_to_push(type)
+          entity_attributes = relationship_columns_to_push(type).map do |name, t|
+            relationship_value_for_global_registry(name, t)
           end.compact.to_h
-          entity_attributes[:client_integration_id] = id unless global_registry_entity.exclude_fields
-                                                                                      .include?(:client_integration_id)
+          entity_attributes[:client_integration_id] = id unless global_registry_relationship(type)
+                                                                .exclude_fields
+                                                                .include?(:client_integration_id)
           entity_attributes[:client_updated_at] = updated_at.to_s(:db) if respond_to?(:updated_at)
-          if global_registry_entity.parent_is_self?
-            entity_attributes[:parent_id] = global_registry_entity.parent_id_value
-          end
           entity_attributes
         end
 
-        def value_for_global_registry(name, type)
+        def relationship_value_for_global_registry(name, type)
           value = send(name)
           return [name, value] if value.nil?
           value = case type
@@ -35,21 +33,21 @@ module GlobalRegistry #:nodoc:
           nil
         end
 
-        def entity_columns_to_push
+        def relationship_columns_to_push(type)
           @columns_to_push ||= self
                                .class
                                .columns
                                .collect do |c|
-                                 { c.name.underscore.to_sym => normalize_entity_column_type(c.type, c.name) }
+                                 { c.name.underscore.to_sym => normalize_relationship_column_type(c.type, c.name) }
                                end # rubocop:disable Style/MultilineBlockChain
                                .reduce(&:merge)
-                               .reject { |k, _v| global_registry_entity.exclude_fields.include? k }
-                               .merge(global_registry_entity.extra_fields)
+                               .reject { |k, _v| global_registry_relationship(type).exclude_fields.include? k }
+                               .merge(global_registry_relationship(type).extra_fields)
         end
 
         protected
 
-        def normalize_entity_column_type(type, name)
+        def normalize_relationship_column_type(type, name)
           if type.to_s == 'text'
             :string
           elsif name.ends_with?('_id')

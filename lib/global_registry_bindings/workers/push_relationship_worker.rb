@@ -12,11 +12,23 @@ module GlobalRegistry #:nodoc:
         include GlobalRegistry::Bindings::Entity::PushRelationshipMethods
         sidekiq_options unique: :until_and_while_executing
 
-        def perform(model_class, id)
+        attr_accessor :type
+
+        def initialize(model = nil, type = nil)
+          super model
+          self.type = type
+        end
+
+        def perform(model_class, id, type)
           super model_class, id
+          self.type = type
           push_relationship_to_global_registry
         rescue ActiveRecord::RecordNotFound # rubocop:disable Lint/HandleExceptions
           # If the record was deleted after the job was created, swallow it
+        end
+
+        def global_registry_rel
+          global_registry_relationship(type)
         end
       end
     end

@@ -9,7 +9,8 @@ module GlobalRegistry #:nodoc:
       include Sidekiq::Worker
 
       attr_accessor :model
-      delegate :global_registry, to: :model
+      delegate :global_registry_entity, to: :model
+      delegate :global_registry_relationship, to: :model
 
       def initialize(model = nil)
         self.model = model

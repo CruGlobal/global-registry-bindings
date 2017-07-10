@@ -13,8 +13,8 @@ module GlobalRegistry #:nodoc:
         end
 
         def delete_entity_from_global_registry_async
-          return unless global_registry.id_value?
-          ::GlobalRegistry::Bindings::Workers::DeleteEntityWorker.perform_async(global_registry.id_value)
+          return unless global_registry_entity.id_value?
+          ::GlobalRegistry::Bindings::Workers::DeleteEntityWorker.perform_async(global_registry_entity.id_value)
         end
       end
     end

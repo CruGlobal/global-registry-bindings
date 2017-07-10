@@ -5,7 +5,7 @@ require 'ostruct'
 module GlobalRegistry #:nodoc:
   module Bindings #:nodoc:
     module Options
-      class ClassOptions
+      class EntityClassOptions
         delegate :id_column,
                  :mdm_id_column,
                  :type,
@@ -13,16 +13,12 @@ module GlobalRegistry #:nodoc:
                  :push_on,
                  :parent_association,
                  :parent_association_class,
-                 :related_association,
-                 :related_association_class,
-                 :parent_relationship_name,
-                 :related_relationship_name,
                  :exclude_fields,
                  :extra_fields, to: :@options
 
         def initialize(model_class)
           @model_class = model_class
-          @options = OpenStruct.new model_class._global_registry_bindings_options_hash
+          @options = OpenStruct.new model_class._global_registry_bindings_options[:entity]
         end
 
         def mdm_worker_class_name

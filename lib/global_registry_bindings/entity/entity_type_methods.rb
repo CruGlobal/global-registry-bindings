@@ -11,12 +11,12 @@ module GlobalRegistry #:nodoc:
         def push_entity_type_to_global_registry
           parent_entity_id = parent_entity_type_id
           entity_type = Rails.cache.fetch(entity_type_cache_key, expires_in: 1.hour) do
-            GlobalRegistry::EntityType.get('filters[name]' => global_registry.type,
+            GlobalRegistry::EntityType.get('filters[name]' => global_registry_entity.type,
                                            'filters[parent_id]' => parent_entity_id)['entity_types']&.first
           end
 
           unless entity_type
-            entity_type = GlobalRegistry::EntityType.post(entity_type: { name: global_registry.type,
+            entity_type = GlobalRegistry::EntityType.post(entity_type: { name: global_registry_entity.type,
                                                                          parent_id: parent_entity_id,
                                                                          field_type: 'entity' })['entity_type']
           end
@@ -39,15 +39,15 @@ module GlobalRegistry #:nodoc:
         end
 
         def parent_entity_type_id
-          parent = global_registry&.parent
-          return if parent.blank? || global_registry.parent_is_self?
+          parent = global_registry_entity&.parent
+          return if parent.blank? || global_registry_entity.parent_is_self?
           worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new parent
           parent_entity_type = worker.send :push_entity_type_to_global_registry
           parent_entity_type&.dig('id')
         end
 
         def entity_type_cache_key
-          "GlobalRegistry::Bindings::EntityType::#{global_registry.type}"
+          "GlobalRegistry::Bindings::EntityType::#{global_registry_entity.type}"
         end
       end
     end

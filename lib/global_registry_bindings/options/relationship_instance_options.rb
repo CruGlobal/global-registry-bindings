@@ -3,23 +3,22 @@
 module GlobalRegistry #:nodoc:
   module Bindings #:nodoc:
     module Options
-      class InstanceOptions
+      class RelationshipInstanceOptions
         delegate :id_column,
-                 :mdm_id_column,
-                 :mdm_timeout,
                  :push_on,
-                 :parent_association,
-                 :parent_association_class,
+                 :primary_association,
+                 :primary_association_class,
+                 :primary_association_foreign_key,
+                 :primary_relationship_name,
                  :related_association,
                  :related_association_class,
-                 :parent_relationship_name,
+                 :related_association_foreign_key,
                  :related_relationship_name,
-                 :mdm_worker_class_name,
                  to: :@class_options
 
-        def initialize(model)
+        def initialize(type, model)
           @model = model
-          @class_options = model.class.global_registry
+          @class_options = model.class.global_registry_relationship(type)
         end
 
         def id_value
@@ -39,29 +38,33 @@ module GlobalRegistry #:nodoc:
           t.is_a?(Proc) ? t.call(@model) : t
         end
 
-        def parent
-          @model.send(parent_association) if parent_association.present?
+        def primary
+          @model.send(primary_association) if primary_association.present?
         end
 
-        def parent_class
-          return if parent_association.blank?
-          parent_association_class
+        def primary_class
+          return if primary_association.blank?
+          primary_association_class
         end
 
-        def parent_type
-          parent&.global_registry&.type
+        def primary_type
+          primary&.global_registry_entity&.type
         end
 
-        def parent_id_value
-          parent&.global_registry&.id_value
+        def primary_id_value
+          primary&.global_registry_entity&.id_value
         end
 
-        def parent_required?
-          parent_association.present? && related_association.blank? && !parent_is_self?
+        def primary_required?
+          primary_association.present? && related_association.blank? && !primary_is_self?
         end
 
-        def parent_is_self?
-          parent_association.present? && parent_class == @model.class
+        def primary_is_self?
+          primary_association.present? && primary_class == @model.class
+        end
+
+        def primary_relationship_name
+          @class_options.primary_relationship_name || primary_type
         end
 
         def related
@@ -69,11 +72,15 @@ module GlobalRegistry #:nodoc:
         end
 
         def related_type
-          related&.global_registry&.type
+          related&.global_registry_entity&.type
         end
 
         def related_id_value
-          related&.global_registry&.id_value
+          related&.global_registry_entity&.id_value
+        end
+
+        def related_relationship_name
+          @class_options.related_relationship_name || related_type
         end
 
         def exclude_fields
