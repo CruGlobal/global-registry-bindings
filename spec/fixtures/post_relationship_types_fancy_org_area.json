@@ -1,0 +1,16 @@
+{
+  "relationship_type": {
+    "id": "f03b947e-6644-11e7-93dd-129bd0521531",
+    "relationship_entity_type_id": "f03a929a-6644-11e7-93dd-129bd0521531",
+    "relationship1": {
+      "entity_type": "fancy_org",
+      "relationship_name": "fancy_org"
+    },
+    "relationship2": {
+      "entity_type": "area",
+      "relationship_name": "area"
+    },
+    "fields": [],
+    "is_editable": true
+  }
+}

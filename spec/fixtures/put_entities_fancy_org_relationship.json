@@ -1,0 +1,17 @@
+{
+  "entity": {
+    "fancy_org": {
+      "id": "aebb4170-3f34-11e7-bba6-129bd0521531",
+      "area:relationship": [
+        {
+          "area": "0fdb70c5-f51e-4628-a1fe-caa37fae53cd",
+          "relationship_entity_id": "c99d7d7e-8b14-4fe6-9c11-e5359ee03637",
+          "client_integration_id": "1",
+          "priority": "High"
+        }
+      ],
+      "client_integration_id": "1"
+    }
+  },
+  "meta": {}
+}

@@ -9,6 +9,7 @@ module GlobalRegistry #:nodoc:
         delegate :id_column,
                  :type,
                  :push_on,
+                 :client_integration_id,
                  :primary_association,
                  :primary_association_class,
                  :primary_association_foreign_key,
@@ -16,13 +17,19 @@ module GlobalRegistry #:nodoc:
                  :related_association,
                  :related_association_class,
                  :related_association_foreign_key,
+                 :related_association_type,
                  :related_relationship_name,
+                 :related_global_registry_id,
                  :exclude_fields,
                  :extra_fields, to: :@options
 
         def initialize(type, model_class)
           @model_class = model_class
           @options = OpenStruct.new model_class._global_registry_bindings_options[:relationships][type]
+        end
+
+        def ensure_relationship_type?
+          @options.ensure_relationship_type.present?
         end
       end
     end

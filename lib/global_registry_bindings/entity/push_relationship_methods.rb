@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'global_registry'
+require 'global_registry_bindings/workers/delete_entity_worker'
 
 module GlobalRegistry #:nodoc:
   module Bindings #:nodoc:
@@ -11,36 +12,16 @@ module GlobalRegistry #:nodoc:
         def push_relationship_to_global_registry
           ensure_related_entities_have_global_registry_ids!
           push_global_registry_relationship_type
-
-          if global_registry_relationship(type).id_value?
-            update_relationship_in_global_registry
-          else
-            create_relationship_in_global_registry
-          end
-        end
-
-        def update_relationship_in_global_registry
-          GlobalRegistry::Entity.put(global_registry_rel.id_value, entity: model.relationship_attributes_to_push(type))
+          create_relationship_in_global_registry
         end
 
         def create_relationship_in_global_registry
-          entity = GlobalRegistry::Entity.put(
-            global_registry_relationship(type).primary_id_value,
-            relationship_entity,
-            params: {
-              full_response: true,
-              fields: "#{global_registry_relationship(type).related_relationship_name}:relationship"
-            }
-          )
+          entity = put_relationship_to_global_registry
           global_registry_relationship(type).id_value = global_registry_relationship_entity_id_from_entity entity
           model.update_column( # rubocop:disable Rails/SkipsModelValidations
             global_registry_relationship(type).id_column,
             global_registry_relationship(type).id_value
           )
-          # Update relationship to work around bug in Global Registry
-          # - If current system doesn't own a copy of the primary entity, then creating a new relationship in the same
-          #   request will not add the relationship entity_type properties.
-          update_relationship_in_global_registry if global_registry_relationship(type).id_value?
         end
 
         def global_registry_relationship_entity_id_from_entity(entity)
@@ -52,7 +33,7 @@ module GlobalRegistry #:nodoc:
           relationships.detect do |rel|
             cid = rel['client_integration_id']
             cid = cid['value'] if cid.is_a?(Hash)
-            cid == model.id.to_s
+            cid == global_registry_relationship(type).client_integration_id.to_s
           end&.dig('relationship_entity_id')
         end
 
@@ -80,6 +61,33 @@ module GlobalRegistry #:nodoc:
                    .merge(global_registry_relationship(type).related_type =>
                          global_registry_relationship(type).related_id_value)
           }, client_integration_id: global_registry_relationship(type).primary.id } }
+        end
+
+        def put_relationship_to_global_registry
+          GlobalRegistry::Entity.put(
+            global_registry_relationship(type).primary_id_value,
+            relationship_entity,
+            params: {
+              full_response: true,
+              fields: "#{global_registry_relationship(type).related_relationship_name}:relationship"
+            }
+          )
+        rescue RestClient::BadRequest => e
+          response = JSON.parse(e.response.body)
+          raise unless response['error'] =~ /^Validation failed:.*already exists$/i
+          # Delete relationship entity and retry on 400 Bad Request (client_integration_id already exists)
+          delete_relationship_from_global_registry_and_retry
+        end
+
+        def delete_relationship_from_global_registry_and_retry
+          GlobalRegistry::Bindings::Workers::DeleteEntityWorker.new.perform(global_registry_relationship(type).id_value)
+          model.update_column( # rubocop:disable Rails/SkipsModelValidations
+            global_registry_relationship(type).id_column, nil
+          )
+          raise GlobalRegistry::Bindings::RelatedEntityExistsWithCID,
+                "#{model.class.name}(#{model.id}) #{global_registry_relationship(type).related_relationship_name}" \
+                ':relationship already exists with client_integration_id(' \
+                "#{global_registry_relationship(type).client_integration_id}). Will delete and retry."
         end
       end
     end

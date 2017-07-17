@@ -1,0 +1,44 @@
+{
+  "entity_types": [
+    {
+      "id": "548852c6-d55e-11e3-897f-12725f8f377c",
+      "name": "area",
+      "description": "Areas",
+      "data_visibility": "public",
+      "fields": [
+        {
+          "id": "428acf06-d6ab-11e3-ae81-12725f8f377c",
+          "name": "area_code",
+          "data_visibility": "public",
+          "field_type": "string",
+          "is_editable": true,
+          "unique_value": false
+        },
+        {
+          "id": "39b33954-d6ab-11e3-aa70-12725f8f377c",
+          "name": "area_name",
+          "data_visibility": "public",
+          "field_type": "string",
+          "is_editable": true,
+          "unique_value": false
+        },
+        {
+          "id": "4f12bd4c-d6ab-11e3-b0c9-12725f8f377c",
+          "name": "is_active",
+          "data_visibility": "public",
+          "field_type": "boolean",
+          "is_editable": true,
+          "unique_value": false
+        }
+      ],
+      "is_editable": true,
+      "unique_value": false
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "next_page": false,
+    "from": 1,
+    "to": 1
+  }
+}

@@ -11,7 +11,8 @@ module GlobalRegistry #:nodoc:
               'GlobalRegistry::Bindings::RecordMissingGlobalRegistryId' => 'ignore',
               'GlobalRegistry::Bindings::EntityMissingMdmId' => 'ignore',
               'GlobalRegistry::Bindings::RelatedEntityMissingGlobalRegistryId' => 'ignore',
-              'GlobalRegistry::Bindings::ParentEntityMissingGlobalRegistryId' => 'ignore'
+              'GlobalRegistry::Bindings::ParentEntityMissingGlobalRegistryId' => 'ignore',
+              'GlobalRegistry::Bindings::RelatedEntityExistsWithCID' => 'ignore'
             )
           end
         end

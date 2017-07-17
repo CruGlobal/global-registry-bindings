@@ -455,5 +455,22 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
         end
       end
     end
+
+    describe Community do
+      let(:worker) { GlobalRegistry::Bindings::Workers::PushEntityWorker.new community }
+      let(:community) { create(:community, infobase_id: 234) }
+      let!(:request) do
+        stub_request(:post, 'https://backend.global-registry.org/entities')
+          .with(body: { entity: { community: { name: 'Community', client_integration_id: community.id,
+                                               client_updated_at: '2001-02-03 00:00:00' } } })
+          .to_return(body: file_fixture('post_entities_community.json'), status: 200)
+      end
+
+      it 'should push community entity' do
+        worker.push_entity_to_global_registry
+        expect(request).to have_been_requested.once
+        expect(community.global_registry_id).to eq '6133f6fe-c63a-425a-bb46-68917c689723'
+      end
+    end
   end
 end

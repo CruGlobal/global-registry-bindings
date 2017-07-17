@@ -9,11 +9,9 @@ module GlobalRegistry #:nodoc:
                  :primary_association,
                  :primary_association_class,
                  :primary_association_foreign_key,
-                 :primary_relationship_name,
                  :related_association,
                  :related_association_class,
                  :related_association_foreign_key,
-                 :related_relationship_name,
                  to: :@class_options
 
         def initialize(type, model)
@@ -38,13 +36,25 @@ module GlobalRegistry #:nodoc:
           t.is_a?(Proc) ? t.call(@model) : t
         end
 
+        def client_integration_id
+          option = @class_options.client_integration_id
+          case option
+          when Proc
+            option.call(@model)
+          when Symbol
+            @model.send(option, type)
+          end
+        rescue ArgumentError
+          @model.send(option)
+        end
+
         def primary
-          @model.send(primary_association) if primary_association.present?
+          return @model.send(primary_association) if primary_association.present?
+          @model
         end
 
         def primary_class
-          return if primary_association.blank?
-          primary_association_class
+          primary_association_class || primary.class
         end
 
         def primary_type
@@ -55,12 +65,8 @@ module GlobalRegistry #:nodoc:
           primary&.global_registry_entity&.id_value
         end
 
-        def primary_required?
-          primary_association.present? && related_association.blank? && !primary_is_self?
-        end
-
-        def primary_is_self?
-          primary_association.present? && primary_class == @model.class
+        def primary_class_is_self?
+          primary_class == @model.class
         end
 
         def primary_relationship_name
@@ -72,11 +78,19 @@ module GlobalRegistry #:nodoc:
         end
 
         def related_type
-          related&.global_registry_entity&.type
+          @class_options.related_association_type || related&.global_registry_entity&.type
         end
 
         def related_id_value
-          related&.global_registry_entity&.id_value
+          option = @class_options.related_global_registry_id
+          case option
+          when Proc
+            option.call(@model, type)
+          when Symbol
+            @model.send(option, type)
+          else
+            related&.global_registry_entity&.id_value
+          end
         end
 
         def related_relationship_name
@@ -105,6 +119,11 @@ module GlobalRegistry #:nodoc:
           else
             option
           end
+        end
+
+        def ensure_relationship_type?
+          return false if @class_options.related_global_registry_id.present?
+          @class_options.ensure_relationship_type?
         end
       end
     end

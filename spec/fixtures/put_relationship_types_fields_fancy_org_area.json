@@ -1,0 +1,25 @@
+{
+  "relationship_type": {
+    "id": "f03b947e-6644-11e7-93dd-129bd0521531",
+    "relationship_entity_type_id": "f03a929a-6644-11e7-93dd-129bd0521531",
+    "relationship1": {
+      "entity_type": "fancy_org",
+      "relationship_name": "fancy_org"
+    },
+    "relationship2": {
+      "entity_type": "area",
+      "relationship_name": "area"
+    },
+    "fields": [
+      {
+        "id": "ac0bde52-6645-11e7-80e8-129bd0521531",
+        "name": "priority",
+        "data_visibility": "public",
+        "field_type": "string",
+        "is_editable": true,
+        "unique_value": false
+      }
+    ],
+    "is_editable": true
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "entity": {
+    "person": {
+      "id": "2f0c62f1-5738-4860-88bd-5706fb801d7b",
+      "country:relationship": [
+        {
+          "country": "0f9089a3-2b93-4de8-9b81-92be0261f325",
+          "relationship_entity_id": "420d2fd1-7a73-41ed-9d8f-5dc79b00a688",
+          "client_integration_id": "cos_1",
+          "country_of_service": true
+        },
+        {
+          "country": "7cdaf399-d449-4008-8c6b-3c64a2b2730c",
+          "relationship_entity_id": "a4c030ce-13f2-44f5-8131-4003eb21c0ae",
+          "client_integration_id": "cor_1",
+          "country_of_residence": true
+        }
+      ],
+      "client_integration_id": "1"
+    }
+  },
+  "meta": {}
+}

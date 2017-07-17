@@ -21,6 +21,10 @@ module GlobalRegistry #:nodoc:
           @options = OpenStruct.new model_class._global_registry_bindings_options[:entity]
         end
 
+        def ensure_entity_type?
+          @options.ensure_entity_type.present?
+        end
+
         def mdm_worker_class_name
           "Pull#{@model_class.name.tr(':', '')}MdmIdWorker"
         end

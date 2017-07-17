@@ -8,7 +8,10 @@ module GlobalRegistry #:nodoc:
       module RelationshipTypeMethods
         extend ActiveSupport::Concern
 
-        def push_global_registry_relationship_type # rubocop:disable Metrics/MethodLength
+        # rubocop:disable Metrics/MethodLength
+        # rubocop:disable Metrics/AbcSize
+        def push_global_registry_relationship_type
+          return unless global_registry_relationship(type).ensure_relationship_type?
           primary_entity_type_id, related_entity_type_id = associated_entity_ids
 
           relationship_type = Rails.cache.fetch(relationship_type_cache_key, expires_in: 1.hour) do
@@ -34,6 +37,8 @@ module GlobalRegistry #:nodoc:
           push_global_registry_relationship_type_fields(relationship_type)
           relationship_type
         end
+        # rubocop:enable Metrics/MethodLength
+        # rubocop:enable Metrics/AbcSize
 
         def associated_entity_ids
           primary_worker =

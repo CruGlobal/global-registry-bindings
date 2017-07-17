@@ -26,6 +26,8 @@ MOCK_REDIS = MockRedis.new
 
 ActionController::Base.cache_store = :memory_store
 
+require 'helpers/sidekiq_helpers'
+
 RSpec.configure do |config|
   config.use_transactional_fixtures = true
   config.file_fixture_path = 'spec/fixtures'
@@ -33,23 +35,20 @@ RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
   config.include ActiveSupport::Testing::TimeHelpers
   config.include FactoryGirl::Syntax::Methods
+  config.include SidekiqHelpers
 
   config.before(:suite) do
     FactoryGirl.find_definitions
   end
 
   config.before(:each) do
-    MOCK_REDIS.keys.each do |key|
-      MOCK_REDIS.del(key)
-    end
-
     SidekiqUniqueJobs.configure do |c|
       c.redis_test_mode = :mock
     end
     allow(Sidekiq).to receive(:redis).and_yield(MOCK_REDIS)
 
-    Sidekiq::Queues.clear_all
-    Sidekiq::Worker.clear_all
+    clear_sidekiq_jobs_and_locks
+
     Rails.cache.clear
   end
 end

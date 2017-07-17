@@ -1,0 +1,16 @@
+{
+  "entity": {
+    "community": {
+      "id": "6133f6fe-c63a-425a-bb46-68917c689723",
+      "ministry:relationship": [
+        {
+          "ministry": "41f767fd-86f4-42e2-8d24-cbc3f697b794",
+          "relationship_entity_id": "ee40f9ed-d625-405b-8ce6-aec821611ec6",
+          "client_integration_id": "1"
+        }
+      ],
+      "client_integration_id": "1"
+    }
+  },
+  "meta": {}
+}

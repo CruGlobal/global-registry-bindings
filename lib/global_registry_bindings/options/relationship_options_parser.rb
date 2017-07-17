@@ -12,20 +12,21 @@ module GlobalRegistry #:nodoc:
           {
             id_column: :global_registry_id,
             type: @model_class.name.demodulize.underscore.to_sym,
-            push_on: %i[create update delete],
+            client_integration_id: :id,
             primary_association: nil,
             primary_association_class: nil,
             primary_relationship_name: nil,
-            related_association: nil,
+            related_association: nil, related_association_type: nil,
             related_association_class: nil,
             related_relationship_name: nil,
+            related_global_registry_id: nil,
             exclude_fields: %i[id created_at updated_at],
-            extra_fields: {}
+            extra_fields: {}, ensure_relationship_type: true
           }.freeze
         end
 
         def parse(options_hash = {})
-          merge_defaults options_hash
+          merge_defaults(options_hash)
           update_association_classes
           update_foreign_keys
           update_excludes
@@ -51,7 +52,11 @@ module GlobalRegistry #:nodoc:
 
         def update_association_classes
           unless @options[:primary_association_class]
-            @options[:primary_association_class] = association_class @options[:primary_association]
+            @options[:primary_association_class] = if @options[:primary_association]
+                                                     association_class @options[:primary_association]
+                                                   else
+                                                     @model_class
+                                                   end
           end
           unless @options[:related_association_class] # rubocop:disable Style/GuardClause
             @options[:related_association_class] = association_class @options[:related_association]
@@ -79,8 +84,6 @@ module GlobalRegistry #:nodoc:
             @options[:exclude_fields] << @options[:related_association_foreign_key]
           end
         end
-
-        def validate_options; end
 
         def association_foreign_key(name)
           @model_class.reflect_on_association(name)&.foreign_key&.to_sym

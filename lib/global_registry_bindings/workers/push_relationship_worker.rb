@@ -26,10 +26,6 @@ module GlobalRegistry #:nodoc:
         rescue ActiveRecord::RecordNotFound # rubocop:disable Lint/HandleExceptions
           # If the record was deleted after the job was created, swallow it
         end
-
-        def global_registry_rel
-          global_registry_relationship(type)
-        end
       end
     end
   end
