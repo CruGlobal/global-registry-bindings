@@ -2,6 +2,6 @@
 
 module GlobalRegistry #:nodoc:
   module Bindings #:nodoc:
-    VERSION = '0.0.6'
+    VERSION = '0.1.0'
   end
 end
