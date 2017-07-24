@@ -1,0 +1,18 @@
+{
+  "entity_types": [
+    {
+      "id": "3d8a68df-72f3-45f0-848b-4a6322448a6c",
+      "name": "community",
+      "data_visibility": "public",
+      "fields": [],
+      "is_editable": true,
+      "unique_value": false
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "next_page": false,
+    "from": 1,
+    "to": 1
+  }
+}

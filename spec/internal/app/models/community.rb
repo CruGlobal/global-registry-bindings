@@ -10,8 +10,7 @@ class Community < ApplicationRecord
                            related_relationship_name: :ministry,
                            related_association_type: :ministry,
                            related_association_foreign_key: :infobase_id,
-                           related_global_registry_id: :pull_infobase_global_registry_id,
-                           ensure_relationship_type: false
+                           related_global_registry_id: :pull_infobase_global_registry_id
 
   def pull_infobase_global_registry_id(_type)
     '41f767fd-86f4-42e2-8d24-cbc3f697b794'

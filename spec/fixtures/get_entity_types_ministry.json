@@ -1,0 +1,18 @@
+{
+  "entity_types": [
+    {
+      "id": "f0f0876b-0ebe-4680-9e48-1c3b72523d07",
+      "name": "ministry",
+      "data_visibility": "public",
+      "fields": [],
+      "is_editable": true,
+      "unique_value": false
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "next_page": false,
+    "from": 1,
+    "to": 1
+  }
+}

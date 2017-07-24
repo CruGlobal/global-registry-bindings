@@ -12,7 +12,8 @@ module GlobalRegistry #:nodoc:
         # rubocop:disable Metrics/AbcSize
         def push_global_registry_relationship_type
           return unless global_registry_relationship(type).ensure_relationship_type?
-          primary_entity_type_id, related_entity_type_id = associated_entity_ids
+          primary_entity_type_id = primary_associated_entity_type_id
+          related_entity_type_id = related_associated_entity_type_id
 
           relationship_type = Rails.cache.fetch(relationship_type_cache_key, expires_in: 1.hour) do
             GlobalRegistry::RelationshipType.get(
@@ -40,13 +41,37 @@ module GlobalRegistry #:nodoc:
         # rubocop:enable Metrics/MethodLength
         # rubocop:enable Metrics/AbcSize
 
-        def associated_entity_ids
+        def primary_associated_entity_type_id
           primary_worker =
             GlobalRegistry::Bindings::Workers::PushEntityWorker.new global_registry_relationship(type).primary
+          entity_type = primary_worker.send(:push_entity_type_to_global_registry)
+          unless entity_type
+            primary_type = global_registry_relationship(type).primary_type
+            entity_type = GlobalRegistry::EntityType.get(
+              'filters[name]' => primary_type
+            )['entity_types']&.first
+          end
+          entity_type&.dig('id')
+        end
+
+        def related_associated_entity_type_id
+          unless global_registry_relationship(type).related
+            related_type = global_registry_relationship(type).related_type
+            # remote foreign_key doesn't have a model class in rails. Short-circuit and fetch entity_type by name
+            entity_type = GlobalRegistry::EntityType.get(
+              'filters[name]' => related_type
+            )['entity_types']&.first
+            unless entity_type
+              raise GlobalRegistry::Bindings::RelatedEntityTypeMissing,
+                    "#{model.class.name}(#{model.id}) has unknown related entity_type(" \
+                    "#{related_type}) in global_registry. Entity Type must exist " \
+                    'in Global Registry for remote foreign_key relationship.'
+            end
+            return entity_type&.dig('id')
+          end
           related_worker =
             GlobalRegistry::Bindings::Workers::PushEntityWorker.new global_registry_relationship(type).related
-          [primary_worker.send(:push_entity_type_to_global_registry)&.dig('id'),
-           related_worker.send(:push_entity_type_to_global_registry)&.dig('id')]
+          related_worker.send(:push_entity_type_to_global_registry)&.dig('id')
         end
 
         def push_global_registry_relationship_type_fields(relationship_type)

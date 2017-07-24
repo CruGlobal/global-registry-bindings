@@ -336,20 +336,56 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
       let(:community) do
         create(:community, global_registry_id: '6133f6fe-c63a-425a-bb46-68917c689723', infobase_id: 2345)
       end
-      let!(:request) do
-        stub_request(:put, "https://backend.global-registry.org/entities/#{community.global_registry_id}")
-          .with(body: { entity: { community: { 'ministry:relationship': {
-                  client_integration_id: community.id, client_updated_at: '2001-02-03 00:00:00',
-                  ministry: '41f767fd-86f4-42e2-8d24-cbc3f697b794'
-                } }, client_integration_id: community.id } },
-                query: { full_response: 'true', fields: 'ministry:relationship' })
-          .to_return(body: file_fixture('put_entities_community_relationship.json'), status: 200)
+
+      context '\'ministry\' entity_type does not exist' do
+        let!(:requests) do
+          [stub_request(:get, 'https://backend.global-registry.org/entity_types')
+            .with(query: { 'filters[name]' => 'ministry' })
+            .to_return(body: file_fixture('get_entity_types.json'), status: 200),
+           stub_request(:get, 'https://backend.global-registry.org/entity_types')
+             .with(query: { 'filters[name]' => 'community' })
+             .to_return(body: file_fixture('get_entity_types_community.json'), status: 200)]
+        end
+
+        it 'should raise an exception' do
+          expect do
+            worker.push_relationship_to_global_registry
+          end.to raise_error(GlobalRegistry::Bindings::RelatedEntityTypeMissing)
+          requests.each { |r| expect(r).to have_been_requested.once }
+        end
       end
 
-      it 'should push relationship' do
-        worker.push_relationship_to_global_registry
-        expect(request).to have_been_requested.once
-        expect(community.infobase_gr_id).to eq 'ee40f9ed-d625-405b-8ce6-aec821611ec6'
+      context '\'ministry\' entity_type does not exist' do
+        let!(:requests) do
+          [stub_request(:get, 'https://backend.global-registry.org/entity_types')
+            .with(query: { 'filters[name]' => 'ministry' })
+            .to_return(body: file_fixture('get_entity_types_ministry.json'), status: 200),
+           stub_request(:get, 'https://backend.global-registry.org/entity_types')
+             .with(query: { 'filters[name]' => 'community' })
+             .to_return(body: file_fixture('get_entity_types_community.json'), status: 200),
+           stub_request(:get, 'https://backend.global-registry.org/relationship_types')
+             .with(query: { 'filters[between]' =>
+                              '3d8a68df-72f3-45f0-848b-4a6322448a6c,f0f0876b-0ebe-4680-9e48-1c3b72523d07' })
+             .to_return(body: file_fixture('get_relationship_types.json'), status: 200),
+           stub_request(:post, 'https://backend.global-registry.org/relationship_types')
+             .with(body: { relationship_type: { entity_type1_id: '3d8a68df-72f3-45f0-848b-4a6322448a6c',
+                                                entity_type2_id: 'f0f0876b-0ebe-4680-9e48-1c3b72523d07',
+                                                relationship1: 'community', relationship2: 'ministry' } })
+             .to_return(body: file_fixture('post_relationship_types_community_ministry.json'), status: 200),
+           stub_request(:put, "https://backend.global-registry.org/entities/#{community.global_registry_id}")
+             .with(body: { entity: { community: { 'ministry:relationship': {
+                     client_integration_id: community.id, client_updated_at: '2001-02-03 00:00:00',
+                     ministry: '41f767fd-86f4-42e2-8d24-cbc3f697b794'
+                   } }, client_integration_id: community.id } },
+                   query: { full_response: 'true', fields: 'ministry:relationship' })
+             .to_return(body: file_fixture('put_entities_community_relationship.json'), status: 200)]
+        end
+
+        it 'should raise an exception' do
+          worker.push_relationship_to_global_registry
+          requests.each { |r| expect(r).to have_been_requested.once }
+          expect(community.infobase_gr_id).to eq('ee40f9ed-d625-405b-8ce6-aec821611ec6')
+        end
       end
     end
   end

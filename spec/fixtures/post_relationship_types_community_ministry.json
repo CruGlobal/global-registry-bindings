@@ -1,0 +1,16 @@
+{
+  "relationship_type": {
+    "id": "3df8cbd3-bc9f-4ffd-aefd-3cbf51a37931",
+    "relationship_entity_type_id": "f854900f-9dcf-473a-be1b-399dda75edae",
+    "relationship1": {
+      "entity_type": "community",
+      "relationship_name": "community"
+    },
+    "relationship2": {
+      "entity_type": "ministry",
+      "relationship_name": "ministry"
+    },
+    "fields": [],
+    "is_editable": true
+  }
+}

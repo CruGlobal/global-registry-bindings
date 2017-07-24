@@ -122,7 +122,6 @@ module GlobalRegistry #:nodoc:
         end
 
         def ensure_relationship_type?
-          return false if @class_options.related_global_registry_id.present?
           @class_options.ensure_relationship_type?
         end
       end
