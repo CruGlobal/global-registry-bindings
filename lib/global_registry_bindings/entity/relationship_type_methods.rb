@@ -63,9 +63,8 @@ module GlobalRegistry #:nodoc:
             )['entity_types']&.first
             unless entity_type
               raise GlobalRegistry::Bindings::RelatedEntityTypeMissing,
-                    "#{model.class.name}(#{model.id}) has unknown related entity_type(" \
-                    "#{related_type}) in global_registry. Entity Type must exist " \
-                    'in Global Registry for remote foreign_key relationship.'
+                    "#{model.class.name}(#{model.id}) has unknown related entity_type(#{related_type}) in " \
+                    'global_registry. Entity Type must exist in Global Registry for remote foreign_key relationship.'
             end
             return entity_type&.dig('id')
           end
