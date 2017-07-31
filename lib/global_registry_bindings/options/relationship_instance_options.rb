@@ -12,6 +12,8 @@ module GlobalRegistry #:nodoc:
                  :related_association,
                  :related_association_class,
                  :related_association_foreign_key,
+                 :ensure_relationship_type?,
+                 :rename_entity_type?,
                  to: :@class_options
 
         def initialize(type, model)
@@ -119,10 +121,6 @@ module GlobalRegistry #:nodoc:
           else
             option
           end
-        end
-
-        def ensure_relationship_type?
-          @class_options.ensure_relationship_type?
         end
       end
     end

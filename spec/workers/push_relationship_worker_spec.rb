@@ -71,7 +71,11 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
                           'https://backend.global-registry.org/relationship_types/5d721db8-4248-11e7-90b4-129bd0521531')
                .with(body: { relationship_type: { fields: [{ name: 'role', field_type: 'string' },
                                                            { name: 'hired_at', field_type: 'datetime' }] } })
-               .to_return(body: file_fixture('put_relationship_types_fields.json'), status: 200)]
+               .to_return(body: file_fixture('put_relationship_types_fields.json'), status: 200),
+             stub_request(:put,
+                          'https://backend.global-registry.org/entity_types/5d70b630-4248-11e7-90b4-129bd0521531')
+               .with(body: { entity_type: { id: '5d70b630-4248-11e7-90b4-129bd0521531', name: 'assignment' } })
+               .to_return(status: 200)]
           end
 
           it 'should create \'assignment\' relationship_type and push relationship' do
@@ -401,7 +405,11 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
                        ministry: '41f767fd-86f4-42e2-8d24-cbc3f697b794'
                      } }, client_integration_id: community.id } },
                      query: { full_response: 'true', fields: 'ministry:relationship' })
-               .to_return(body: file_fixture('put_entities_community_relationship.json'), status: 200)]
+               .to_return(body: file_fixture('put_entities_community_relationship.json'), status: 200),
+             stub_request(:put,
+                          'https://backend.global-registry.org/entity_types/f854900f-9dcf-473a-be1b-399dda75edae')
+               .with(body: { entity_type: { id: 'f854900f-9dcf-473a-be1b-399dda75edae', name: 'infobase_ministry' } })
+               .to_return(status: 200)]
           end
           it 'should push relationship_type and infobase_ministry relationship' do
             worker.push_relationship_to_global_registry

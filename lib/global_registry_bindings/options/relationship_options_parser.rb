@@ -21,7 +21,7 @@ module GlobalRegistry #:nodoc:
             related_relationship_name: nil,
             related_global_registry_id: nil,
             exclude_fields: %i[id created_at updated_at],
-            extra_fields: {}, ensure_relationship_type: true
+            extra_fields: {}, ensure_relationship_type: true, rename_entity_type: true
           }.freeze
         end
 

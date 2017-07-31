@@ -31,6 +31,10 @@ module GlobalRegistry #:nodoc:
         def ensure_relationship_type?
           @options.ensure_relationship_type.present?
         end
+
+        def rename_entity_type?
+          @options.rename_entity_type.present?
+        end
       end
     end
   end

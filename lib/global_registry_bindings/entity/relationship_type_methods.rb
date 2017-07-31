@@ -34,6 +34,7 @@ module GlobalRegistry #:nodoc:
                   relationship2: global_registry_relationship(type).related_relationship_name
                 }
               )['relationship_type']
+            rename_relationship_entity_type(relationship_type)
           end
           push_global_registry_relationship_type_fields(relationship_type)
           relationship_type
@@ -79,8 +80,14 @@ module GlobalRegistry #:nodoc:
                         .reject { |k, _v| existing_fields.include? k }
                         .map { |name, type| { name: name, field_type: type } }
           return if fields.empty?
-          GlobalRegistry::RelationshipType.put(relationship_type['id'],
-                                               relationship_type: { fields: fields })
+          GlobalRegistry::RelationshipType.put(relationship_type['id'], relationship_type: { fields: fields })
+        end
+
+        def rename_relationship_entity_type(relationship_type)
+          return unless global_registry_relationship(type).rename_entity_type?
+          entity_type_id = relationship_type&.dig('relationship_entity_type_id')
+          GlobalRegistry::EntityType.put(entity_type_id, entity_type: { id: entity_type_id,
+                                                                        name: global_registry_relationship(type).type })
         end
 
         def relationship_type_cache_key
