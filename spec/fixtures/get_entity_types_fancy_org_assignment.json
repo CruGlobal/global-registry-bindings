@@ -1,0 +1,35 @@
+{
+  "entity_types": [
+    {
+      "id": "5d70b630-4248-11e7-90b4-129bd0521531",
+      "name": "fancy_org_assignment",
+      "data_visibility": "public",
+      "fields": [
+        {
+          "id": "235ce6fc-4249-11e7-944f-129bd0521531",
+          "name": "role",
+          "data_visibility": "public",
+          "field_type": "string",
+          "is_editable": false,
+          "unique_value": false
+        },
+        {
+          "id": "675bd9ee-4249-11e7-9e93-129bd0521531",
+          "name": "hired_at",
+          "data_visibility": "public",
+          "field_type": "datetime",
+          "is_editable": false,
+          "unique_value": false
+        }
+      ],
+      "is_editable": false,
+      "unique_value": false
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "next_page": false,
+    "from": 1,
+    "to": 1
+  }
+}

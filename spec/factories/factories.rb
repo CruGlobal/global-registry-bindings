@@ -47,6 +47,8 @@ FactoryGirl.define do
     person_id nil
     organization_id nil
     global_registry_id nil
+    assigned_by_id nil
+    assigned_by_gr_rel_id nil
   end
 
   factory :area do

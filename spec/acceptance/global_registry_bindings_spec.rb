@@ -70,15 +70,16 @@ RSpec.describe 'GlobalRegistry::Bindings' do
       person = build(:person)
       org = build(:organization)
       assignment = build(:assignment, person: person, organization: org)
-      expect(Assignment.global_registry_relationship(:assignment).id_column).to be :global_registry_id
-      expect(Assignment.global_registry_relationship(:assignment).type).to be :assignment
-      expect(Assignment.global_registry_relationship(:assignment).primary_association).to be :person
-      expect(Assignment.global_registry_relationship(:assignment).related_association).to be :organization
-      expect(assignment.global_registry_relationship(:assignment).primary_relationship_name).to be :person
-      expect(assignment.global_registry_relationship(:assignment).related_relationship_name).to be :fancy_org
-      expect(assignment.global_registry_relationship(:assignment).exclude_fields)
-        .to contain_exactly(:global_registry_id, :id, :created_at, :updated_at, :person_id, :organization_id)
-      expect(assignment.global_registry_relationship(:assignment).extra_fields).to be_a(Hash).and be_empty
+      expect(Assignment.global_registry_relationship(:fancy_org_assignment).id_column).to be :global_registry_id
+      expect(Assignment.global_registry_relationship(:fancy_org_assignment).type).to be :fancy_org_assignment
+      expect(Assignment.global_registry_relationship(:fancy_org_assignment).primary_association).to be :person
+      expect(Assignment.global_registry_relationship(:fancy_org_assignment).related_association).to be :organization
+      expect(assignment.global_registry_relationship(:fancy_org_assignment).primary_relationship_name).to be :person
+      expect(assignment.global_registry_relationship(:fancy_org_assignment).related_relationship_name).to be :fancy_org
+      expect(assignment.global_registry_relationship(:fancy_org_assignment).exclude_fields)
+        .to contain_exactly(:global_registry_id, :id, :created_at, :updated_at, :person_id, :organization_id,
+                            :assigned_by_id, :assigned_by_gr_rel_id)
+      expect(assignment.global_registry_relationship(:fancy_org_assignment).extra_fields).to be_a(Hash).and be_empty
     end
   end
 end

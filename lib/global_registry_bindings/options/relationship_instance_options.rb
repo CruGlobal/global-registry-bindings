@@ -6,6 +6,7 @@ module GlobalRegistry #:nodoc:
       class RelationshipInstanceOptions
         delegate :id_column,
                  :push_on,
+                 :primary_binding,
                  :primary_association,
                  :primary_association_class,
                  :primary_association_foreign_key,
@@ -60,11 +61,21 @@ module GlobalRegistry #:nodoc:
         end
 
         def primary_type
-          primary&.global_registry_entity&.type
+          case primary_binding
+          when :entity
+            primary&.global_registry_entity&.type
+          else
+            primary&.global_registry_relationship(primary_binding)&.type
+          end
         end
 
         def primary_id_value
-          primary&.global_registry_entity&.id_value
+          case primary_binding
+          when :entity
+            primary&.global_registry_entity&.id_value
+          else
+            primary&.global_registry_relationship(primary_binding)&.id_value
+          end
         end
 
         def primary_class_is_self?

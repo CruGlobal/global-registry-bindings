@@ -10,6 +10,7 @@ module GlobalRegistry #:nodoc:
                  :type,
                  :push_on,
                  :client_integration_id,
+                 :primary_binding,
                  :primary_association,
                  :primary_association_class,
                  :primary_association_foreign_key,

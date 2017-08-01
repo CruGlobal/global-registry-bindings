@@ -34,7 +34,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
 
   describe '#push_relationship_to_global_registry' do
     describe Assignment do
-      let(:worker) { GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new assignment, :assignment }
+      let(:worker) { GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new assignment, :fancy_org_assignment }
       context 'as create' do
         let(:person) { create(:person, global_registry_id: '22527d88-3cba-11e7-b876-129bd0521531') }
         let(:organization) { create(:organization, gr_id: 'aebb4170-3f34-11e7-bba6-129bd0521531') }
@@ -74,7 +74,8 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
                .to_return(body: file_fixture('put_relationship_types_fields.json'), status: 200),
              stub_request(:put,
                           'https://backend.global-registry.org/entity_types/5d70b630-4248-11e7-90b4-129bd0521531')
-               .with(body: { entity_type: { id: '5d70b630-4248-11e7-90b4-129bd0521531', name: 'assignment' } })
+               .with(body: { entity_type: { id: '5d70b630-4248-11e7-90b4-129bd0521531',
+                                            name: 'fancy_org_assignment' } })
                .to_return(status: 200)]
           end
 
@@ -227,6 +228,74 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
               worker.push_relationship_to_global_registry
             end.to raise_error(GlobalRegistry::Bindings::RelatedEntityMissingGlobalRegistryId).and(
               change(GlobalRegistry::Bindings::Workers::PushEntityWorker.jobs, :size).by(2)
+            )
+          end
+        end
+      end
+    end
+
+    describe Assignment do
+      let(:worker) { GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new assignment, :assigned_by }
+
+      context 'as create' do
+        let(:person) { create(:person, global_registry_id: '22527d88-3cba-11e7-b876-129bd0521531') }
+        let(:organization) { create(:organization, gr_id: 'aebb4170-3f34-11e7-bba6-129bd0521531') }
+
+        context '\'assigned_by\' relationship_type does not exist' do
+          let(:assignment) do
+            create(:assignment, person: person, organization: organization, assigned_by: person,
+                                global_registry_id: '51a014a4-4252-11e7-944f-129bd0521531')
+          end
+
+          let!(:requests) do
+            [stub_request(:get, 'https://backend.global-registry.org/entity_types')
+              .with(query: { 'filters[name]' => 'fancy_org_assignment' })
+              .to_return(body: file_fixture('get_entity_types_fancy_org_assignment.json'), status: 200),
+             stub_request(:get, 'https://backend.global-registry.org/entity_types')
+               .with(query: { 'filters[name]' => 'person', 'filters[parent_id]' => nil })
+               .to_return(body: file_fixture('get_entity_types_person.json'), status: 200),
+             stub_request(:get, 'https://backend.global-registry.org/relationship_types')
+               .with(query: { 'filters[between]' =>
+                                '5d70b630-4248-11e7-90b4-129bd0521531,ee13a693-3ce7-4c19-b59a-30c8f137acd8' })
+               .to_return(body: file_fixture('get_relationship_types.json'), status: 200),
+             stub_request(:post, 'https://backend.global-registry.org/relationship_types')
+               .with(body: { relationship_type: { entity_type1_id: '5d70b630-4248-11e7-90b4-129bd0521531',
+                                                  entity_type2_id: 'ee13a693-3ce7-4c19-b59a-30c8f137acd8',
+                                                  relationship1: 'assigned_by', relationship2: 'person' } })
+               .to_return(body: file_fixture('post_relationship_types_assigned_by.json'), status: 200),
+             stub_request(:put,
+                          'https://backend.global-registry.org/entity_types/4f5d8150-76c7-11e7-b3f0-129bd0521531')
+               .with(body: { entity_type: { id: '4f5d8150-76c7-11e7-b3f0-129bd0521531',
+                                            name: 'assigned_by' } })
+               .to_return(status: 200),
+             stub_request(:put, "https://backend.global-registry.org/entities/#{assignment.global_registry_id}")
+               .with(body: { entity: { fancy_org_assignment: { 'person:relationship': {
+                       client_integration_id: assignment.id,
+                       client_updated_at: '2001-02-03 00:00:00', person: person.global_registry_id
+                     } }, client_integration_id: assignment.id } },
+                     query: { full_response: 'true', fields: 'person:relationship' })
+               .to_return(body: file_fixture('put_entities_fancy_org_assignment_assigned_by.json'), status: 200)]
+          end
+
+          it 'should create \'assigned_by\' relationship_type and push relationship' do
+            worker.push_relationship_to_global_registry
+            requests.each { |r| expect(r).to have_been_requested.once }
+            expect(assignment.assigned_by_gr_rel_id).to eq '0fd8b8b8-76c9-11e7-b15c-129bd0521531'
+          end
+        end
+
+        context 'fancy_org_assignment missing global_registry_id' do
+          let(:assignment) do
+            create(:assignment, person: person, organization: organization, assigned_by: person)
+          end
+
+          it 'should raise an exception' do
+            clear_sidekiq_jobs_and_locks
+
+            expect do
+              worker.push_relationship_to_global_registry
+            end.to raise_error(GlobalRegistry::Bindings::RelatedEntityMissingGlobalRegistryId).and(
+              change(GlobalRegistry::Bindings::Workers::PushRelationshipWorker.jobs, :size).by(2)
             )
           end
         end

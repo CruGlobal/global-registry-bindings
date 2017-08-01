@@ -1,0 +1,20 @@
+{
+  "entity": {
+    "fancy_org_assignment": {
+      "id": "51a014a4-4252-11e7-944f-129bd0521531",
+      "person:relationship": {
+        "person": "22527d88-3cba-11e7-b876-129bd0521531",
+        "relationship_entity_id": "0fd8b8b8-76c9-11e7-b15c-129bd0521531",
+        "client_integration_id": "1"
+      },
+      "person": {
+        "id": "22527d88-3cba-11e7-b876-129bd0521531"
+      },
+      "fancy_org": {
+        "id": "aebb4170-3f34-11e7-bba6-129bd0521531"
+      },
+      "client_integration_id": "1"
+    }
+  },
+  "meta": {}
+}

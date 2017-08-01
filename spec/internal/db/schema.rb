@@ -38,10 +38,12 @@ ActiveRecord::Schema.define(version: 0) do
 
   create_table :assignments, force: true do |t|
     t.string :global_registry_id
+    t.string :assigned_by_gr_rel_id
     t.string :role
     t.datetime :hired_at
     t.references :person, index: true
     t.references :organization, index: true
+    t.references :assigned_by, index: true
     t.timestamps
   end
 

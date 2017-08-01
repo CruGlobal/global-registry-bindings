@@ -50,14 +50,31 @@ module GlobalRegistry #:nodoc:
           return if relationship.primary_id_value && relationship.related_id_value
           # Enqueue push_entity worker for related entities missing global_registry_id and retry relationship push
           names = []
-          [relationship.primary, relationship.related].each do |model|
-            next if model.global_registry_entity.id_value?
-            names << "#{model.class.name}(#{model.id})"
-            model.push_entity_to_global_registry_async
+          unless relationship.primary_id_value
+            names << push_primary_to_global_registry
+          end
+          unless relationship.related_id_value
+            names << push_related_to_global_registry
           end
           raise GlobalRegistry::Bindings::RelatedEntityMissingGlobalRegistryId,
-                "#{model.class.name}(#{model.id}) has related entities [#{names.join ', '}] missing " \
+                "#{model.class.name}(#{model.id}) has related entities [#{names.compact.join ', '}] missing " \
                 'global_registry_id; will retry.'
+        end
+
+        def push_primary_to_global_registry
+          model = relationship.primary
+          if relationship.primary_binding == :entity
+            model.push_entity_to_global_registry_async
+          else
+            model.push_relationships_to_global_registry_async(relationship.primary_binding)
+          end
+          "#{model.class.name}(#{model.id})"
+        end
+
+        def push_related_to_global_registry
+          model = relationship.related
+          model.push_entity_to_global_registry_async
+          "#{model.class.name}(#{model.id})"
         end
 
         def relationship_entity

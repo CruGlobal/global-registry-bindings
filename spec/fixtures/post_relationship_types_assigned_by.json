@@ -1,0 +1,16 @@
+{
+  "relationship_type": {
+    "id": "4f5e565c-76c7-11e7-b3f0-129bd0521531",
+    "relationship_entity_type_id": "4f5d8150-76c7-11e7-b3f0-129bd0521531",
+    "relationship1": {
+      "entity_type": "fancy_org_assignment",
+      "relationship_name": "assigned_by"
+    },
+    "relationship2": {
+      "entity_type": "person",
+      "relationship_name": "person"
+    },
+    "fields": [],
+    "is_editable": true
+  }
+}
