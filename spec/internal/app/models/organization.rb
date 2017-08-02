@@ -22,7 +22,8 @@ class Organization < ApplicationRecord
                            related_association: :area,
                            exclude_fields: proc { |_type, _model| %i[] },
                            extra_fields: proc { |_type, _model| { priority: :string } },
-                           rename_entity_type: false
+                           rename_entity_type: false,
+                           include_all_columns: false
 
   def exclude_gr_fields(_type)
     %i[id created_at updated_at gr_id parent_id area_id global_registry_area_id]

@@ -12,6 +12,7 @@ module GlobalRegistry #:nodoc:
                  :parent_association_class,
                  :mdm_worker_class_name,
                  :ensure_entity_type?,
+                 :include_all_columns?,
                  to: :@class_options
 
         def initialize(model)

@@ -36,6 +36,10 @@ module GlobalRegistry #:nodoc:
         def rename_entity_type?
           @options.rename_entity_type.present?
         end
+
+        def include_all_columns?
+          @options.include_all_columns.present?
+        end
       end
     end
   end

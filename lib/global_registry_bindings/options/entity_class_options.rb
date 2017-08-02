@@ -25,6 +25,10 @@ module GlobalRegistry #:nodoc:
           @options.ensure_entity_type.present?
         end
 
+        def include_all_columns?
+          @options.include_all_columns.present?
+        end
+
         def mdm_worker_class_name
           "Pull#{@model_class.name.tr(':', '')}MdmIdWorker"
         end

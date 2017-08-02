@@ -14,6 +14,7 @@ class Assignment < ApplicationRecord
   global_registry_bindings binding: :relationship,
                            type: :assigned_by,
                            id_column: :assigned_by_gr_rel_id,
+                           include_all_columns: false,
                            primary_binding: :fancy_org_assignment,
                            primary_relationship_name: :assigned_by,
                            related_association: :assigned_by

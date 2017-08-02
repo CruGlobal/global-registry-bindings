@@ -19,6 +19,7 @@ module GlobalRegistry #:nodoc:
             parent_relationship_name: nil,
             exclude_fields: %i[id created_at updated_at],
             extra_fields: {},
+            include_all_columns: true,
             mdm_timeout: 1.minute,
             ensure_entity_type: true
           }.freeze

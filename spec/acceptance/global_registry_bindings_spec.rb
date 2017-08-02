@@ -78,8 +78,9 @@ RSpec.describe 'GlobalRegistry::Bindings' do
       expect(assignment.global_registry_relationship(:fancy_org_assignment).related_relationship_name).to be :fancy_org
       expect(assignment.global_registry_relationship(:fancy_org_assignment).exclude_fields)
         .to contain_exactly(:global_registry_id, :id, :created_at, :updated_at, :person_id, :organization_id,
-                            :assigned_by_id, :assigned_by_gr_rel_id)
-      expect(assignment.global_registry_relationship(:fancy_org_assignment).extra_fields).to be_a(Hash).and be_empty
+                            :assigned_by_gr_rel_id, :assigned_by_id)
+      expect(assignment.global_registry_relationship(:fancy_org_assignment).extra_fields)
+        .to be_a(Hash)
     end
   end
 end

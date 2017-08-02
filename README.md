@@ -71,6 +71,10 @@ hierarchy or to push child entity types. (Ex: person -> address) (default: `nil`
 to determine the parent class. This can happen if parent is defined by another gem, like `ancestry`.
 (default: `nil`) **[`:entity`]**
 
+* `:primary_binding`: Determines what type of global-registry-binding the primary association points to. Defaults
+to `:entity`, but can be set to a `:relationship` type name (ex: `:assignment`) to create a relationship_type
+between a relationship and an entity. (default: `:entity`) **[`:relationship`]**
+
 * `:primary_association`: Name of the Active Record primary association. Must be defined before calling
 global_registry_bindings in order to determine foreign_key for use in exclude_fields. (default: `nil`)
 **[`:relationship`]**
@@ -114,6 +118,10 @@ should cache this as it may be requested multiple times. (default: `nil`) **[`:r
 
 * `:client_integration_id`: Client Integration ID for relationship. Proc or Symbol.
 (default: `:primary_association.id`) **[`:relationship`]**
+
+* `:include_all_columns`: Include all model columns in the fields to push to Global Registry. If `false`, fields must
+be defined in the `:extra_fields` option. (default: `true`)
+**[`:entity`, `:relationship`]**
 
 * `:exclude_fields`: Array, Proc or Symbol. Array of Model fields (as symbols) to exclude when pushing to Global
 Registry. Array Will additionally include `:mdm_id_column` and `:parent_association` foreign key when defined.

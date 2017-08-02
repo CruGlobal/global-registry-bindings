@@ -28,7 +28,8 @@ module Namespaced
                              exclude_fields: :exclude_cos_fields,
                              extra_fields: :extra_cos_fields,
                              ensure_relationship_type: false,
-                             rename_entity_type: false
+                             rename_entity_type: false,
+                             include_all_columns: false
 
     global_registry_bindings binding: :relationship,
                              type: :country_of_residence,
@@ -36,7 +37,8 @@ module Namespaced
                              client_integration_id: ->(model) { "cor_#{model.id}" },
                              related_association: :country_of_residence,
                              ensure_relationship_type: false,
-                             rename_entity_type: false
+                             rename_entity_type: false,
+                             include_all_columns: false
 
     def entity_attributes_to_push
       entity_attributes = super

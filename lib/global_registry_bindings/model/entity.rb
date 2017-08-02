@@ -36,15 +36,19 @@ module GlobalRegistry #:nodoc:
         end
 
         def entity_columns_to_push
-          @columns_to_push ||= self
-                               .class
-                               .columns
-                               .collect do |c|
-                                 { c.name.underscore.to_sym => normalize_entity_column_type(c.type, c.name) }
-                               end # rubocop:disable Style/MultilineBlockChain
-                               .reduce(&:merge)
-                               .reject { |k, _v| global_registry_entity.exclude_fields.include? k }
-                               .merge(global_registry_entity.extra_fields)
+          @columns_to_push ||= if global_registry_entity.include_all_columns?
+                                 self
+                                   .class
+                                   .columns
+                                   .collect do |c|
+                                   { c.name.underscore.to_sym => normalize_entity_column_type(c.type, c.name) }
+                                 end # rubocop:disable Style/MultilineBlockChain
+                                   .reduce(&:merge)
+                                   .reject { |k, _v| global_registry_entity.exclude_fields.include? k }
+                                   .merge(global_registry_entity.extra_fields)
+                               else
+                                 global_registry_entity.extra_fields
+                               end
         end
 
         protected

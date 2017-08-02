@@ -35,10 +35,7 @@ module GlobalRegistry #:nodoc:
 
         def relationship_columns_to_push(type)
           @relationship_columns_to_push ||= {}
-          @relationship_columns_to_push[type] ||=
-            relationship_entity_columns(type)
-            .reject { |k, _v| global_registry_relationship(type).exclude_fields.include? k }
-            .merge(global_registry_relationship(type).extra_fields)
+          @relationship_columns_to_push[type] ||= relationship_entity_columns(type)
         end
 
         protected
@@ -54,13 +51,18 @@ module GlobalRegistry #:nodoc:
         end
 
         def relationship_entity_columns(type)
-          return {} if global_registry_relationship(type).primary_class_is_self?
-          self.class
-              .columns
-              .collect do |c|
-            { c.name.underscore.to_sym => normalize_relationship_column_type(c.type, c.name) }
+          if global_registry_relationship(type).include_all_columns?
+            self.class
+                .columns
+                .collect do |c|
+              { c.name.underscore.to_sym => normalize_relationship_column_type(c.type, c.name) }
+            end # rubocop:disable Style/MultilineBlockChain
+                .reduce(&:merge)
+                .reject { |k, _v| global_registry_relationship(type).exclude_fields.include? k }
+                .merge(global_registry_relationship(type).extra_fields)
+          else
+            global_registry_relationship(type).extra_fields || {}
           end
-              .reduce(&:merge)
         end
       end
     end

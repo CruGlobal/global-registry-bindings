@@ -16,11 +16,11 @@ module GlobalRegistry #:nodoc:
             primary_association: nil,
             primary_association_class: nil,
             primary_relationship_name: nil,
-            related_association: nil, related_binding: :entity,
+            related_association: nil,
             related_association_class: nil, related_association_type: nil,
             related_relationship_name: nil,
             related_global_registry_id: nil,
-            exclude_fields: %i[id created_at updated_at],
+            exclude_fields: %i[id created_at updated_at], include_all_columns: true,
             extra_fields: {}, ensure_relationship_type: true, rename_entity_type: true
           }.freeze
         end

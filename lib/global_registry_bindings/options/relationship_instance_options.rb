@@ -15,6 +15,7 @@ module GlobalRegistry #:nodoc:
                  :related_association_foreign_key,
                  :ensure_relationship_type?,
                  :rename_entity_type?,
+                 :include_all_columns?,
                  to: :@class_options
 
         def initialize(type, model)
