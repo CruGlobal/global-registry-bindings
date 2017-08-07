@@ -98,11 +98,11 @@ used to determine the related class. (default: `nil`) **[`:relationship`]**
 not be determined from `:primary_association`. (default: `:primary_association.foreign_key`)
 **[`:relationship`]**
 
-* `:primary_relationship_name`: Name of primary relationship role. Required if `:ensure_relationship_type` is
-`true`. (default: `nil`) **[`:relationship`]**
+* `:primary_relationship_name`: **Required** Name of primary relationship. Should be unique to prevent
+ambiguous relationship names. (default: `nil`) **[`:relationship`]**
 
-* `:related_relationship_name`: Name of the related relationship role. Required if `:ensure_relationship_type`
-is `true`. (default: `nil`) **[`:relationship`]**
+* `:related_relationship_name`: **Required** Name of the related relationship. Should be unique to prevent
+ambiguous relationship names (default: `nil`) **[`:relationship`]**
 
 * `:related_association_type`: Name of the related association entity_type. Required if unable to determined
 `:type` from related. (default: `nil`) **[`:relationship`]**

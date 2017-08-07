@@ -43,11 +43,17 @@ module GlobalRegistry #:nodoc:
           ::GlobalRegistry::Bindings::Workers::DeleteEntityWorker.new.perform(
             global_registry_relationship(type).id_value
           )
+          update_column( # rubocop:disable Rails/SkipsModelValidations
+            global_registry_relationship(type).id_column, nil
+          )
           ::GlobalRegistry::Bindings::Workers::PushRelationshipWorker.perform_async(self.class, id, type)
         end
 
         def global_registry_relationship_async_delete(type)
           delete_relationships_from_global_registry_async(type)
+          update_column( # rubocop:disable Rails/SkipsModelValidations
+            global_registry_relationship(type).id_column, nil
+          )
         end
 
         def global_registry_relationship_async_ignore(_type); end # noop
