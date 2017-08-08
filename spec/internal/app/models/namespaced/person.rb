@@ -17,19 +17,19 @@ module Namespaced
     global_registry_bindings binding: :entity,
                              mdm_id_column: :global_registry_mdm_id,
                              mdm_timeout: 24.hours,
-                             exclude_fields: %i[guid country_of_service_gr_id country_of_service_id
-                                                country_of_residence_gr_id country_of_residence_id]
+                             include_all_columns: true,
+                             exclude: %i[guid country_of_service_gr_id country_of_service_id
+                                         country_of_residence_gr_id country_of_residence_id]
 
     global_registry_bindings binding: :relationship,
                              type: :country_of_service,
                              id_column: :country_of_service_gr_id,
                              client_integration_id: ->(model) { "cos_#{model.id}" },
                              related_association: :country_of_service,
-                             exclude_fields: :exclude_cos_fields,
-                             extra_fields: :extra_cos_fields,
+                             exclude: :exclude_cos_fields,
+                             fields: :extra_cos_fields,
                              ensure_relationship_type: false,
-                             rename_entity_type: false,
-                             include_all_columns: false
+                             rename_entity_type: false
 
     global_registry_bindings binding: :relationship,
                              type: :country_of_residence,
@@ -37,8 +37,7 @@ module Namespaced
                              client_integration_id: ->(model) { "cor_#{model.id}" },
                              related_association: :country_of_residence,
                              ensure_relationship_type: false,
-                             rename_entity_type: false,
-                             include_all_columns: false
+                             rename_entity_type: false
 
     def entity_attributes_to_push
       entity_attributes = super

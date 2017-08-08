@@ -13,8 +13,8 @@ module GlobalRegistry #:nodoc:
                  :push_on,
                  :parent_association,
                  :parent_association_class,
-                 :exclude_fields,
-                 :extra_fields, to: :@options
+                 :exclude,
+                 :fields, to: :@options
 
         def initialize(model_class)
           @model_class = model_class

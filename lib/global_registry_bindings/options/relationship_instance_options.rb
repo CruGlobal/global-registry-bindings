@@ -111,8 +111,8 @@ module GlobalRegistry #:nodoc:
           @class_options.related_relationship_name || related_type
         end
 
-        def exclude_fields
-          option = @class_options.exclude_fields
+        def exclude
+          option = @class_options.exclude
           case option
           when Proc
             option.call(type, @model)
@@ -123,8 +123,8 @@ module GlobalRegistry #:nodoc:
           end
         end
 
-        def extra_fields
-          option = @class_options.extra_fields
+        def fields
+          option = @class_options.fields
           case option
           when Proc
             option.call(type, @model)

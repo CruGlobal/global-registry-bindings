@@ -35,7 +35,7 @@ module GlobalRegistry #:nodoc:
     #   (default: `[:create, :update, :destroy]`) **[`:entity`]**
     #
     # * `:parent_association`: Name of the Active Record parent association. Must be defined before calling
-    #   global_registry_bindings in order to determine foreign_key for use in exclude_fields. Used to create a
+    #   global_registry_bindings in order to determine foreign_key for use in exclude. Used to create a
     #   hierarchy or to push child entity types. (Ex: person -> address) (default: `nil`) **[`:entity`]**
     #
     # * `:parent_association_class`: Class name of the parent model. Required if `:parent_association` can not be used
@@ -47,7 +47,7 @@ module GlobalRegistry #:nodoc:
     #   between a relationship and an entity. (default: `:entity`) **[`:relationship`]**
     #
     # * `:primary_association`: Name of the Active Record primary association. Must be defined before calling
-    #   global_registry_bindings in order to determine foreign_key for use in exclude_fields. (default: `nil`)
+    #   global_registry_bindings in order to determine foreign_key for use in exclude. (default: `nil`)
     #   **[`:relationship`]**
     #
     # * `:primary_association_class`: Class name of the primary model. Required if `:primary_association` can not be
@@ -90,21 +90,21 @@ module GlobalRegistry #:nodoc:
     # * `:client_integration_id`: Client Integration ID for relationship. Proc or Symbol.
     #   (default: `:primary_association.id`) **[`:relationship`]**
     #
-    # * `:exclude_fields`: Array, Proc or Symbol. Array of Model fields (as symbols) to exclude when pushing to Global
+    # * `:exclude`: Array, Proc or Symbol. Array of Model fields (as symbols) to exclude when pushing to Global
     #   Registry. Array Will additionally include `:mdm_id_column` and `:parent_association` foreign key when defined.
     #   If Proc, is passed type and model instance and should return an Array of the fields to exclude. If Symbol,
     #   this should be a method name the Model instance responds to. It is passed the type and should return an Array
     #   of fields to exclude. When Proc or Symbol are used, you must explicitly return the standard defaults.
     #   (default:  `[:id, :created_at, :updated_at, :global_registry_id]`) **[`:entity`, `:relationship`]**
     #
-    # * `:extra_fields`: Additional fields to send to Global Registry. Hash, Proc or Symbol. As a Hash, names are the
+    # * `:fields`: Additional fields to send to Global Registry. Hash, Proc or Symbol. As a Hash, names are the
     #   keys and :type attributes are the values. Ex: `{language: :string}`. Name is a symbol and type is an
     #   ActiveRecord column type. As a Proc, it is passed the type and model instance, and should return a Hash.
     #   As a Symbol, the model should respond to this method, is passed the type, and should return a Hash.
     #   **[`:entity`, `:relationship`]**
     #
     # * `:include_all_columns`: Include all model columns in the fields to push to Global Registry. If `false`, fields
-    #   must be defined in the `:extra_fields` option. (default: `true`) **[`:entity`, `:relationship`]**
+    #   must be defined in the `:fields` option. (default: `false`) **[`:entity`, `:relationship`]**
     #
     # * `:mdm_id_column`: Column used to enable MDM tracking and set the name of the column. MDM is disabled when this
     #   option is nil or empty. (default: `nil`) **[`:entity`]**

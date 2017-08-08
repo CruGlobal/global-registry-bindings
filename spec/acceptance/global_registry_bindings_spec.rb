@@ -18,9 +18,9 @@ RSpec.describe 'GlobalRegistry::Bindings' do
         .to contain_exactly(:create, :update, :destroy)
       expect(Default.global_registry_entity.mdm_timeout).to eq 1.minute
       expect(Default.global_registry_entity.type).to be :default
-      expect(Default.global_registry_entity.exclude_fields)
+      expect(Default.global_registry_entity.exclude)
         .to contain_exactly(:global_registry_id, :id, :created_at, :updated_at)
-      expect(Default.global_registry_entity.extra_fields).to be_a(Hash).and be_empty
+      expect(Default.global_registry_entity.fields).to be_a(Hash).and be_empty
     end
 
     it 'should parse and set mdm options' do
@@ -28,11 +28,11 @@ RSpec.describe 'GlobalRegistry::Bindings' do
       expect(Namespaced::Person.global_registry_entity.mdm_id_column).to be :global_registry_mdm_id
       expect(Namespaced::Person.global_registry_entity.mdm_timeout).to eq 24.hours
       expect(Namespaced::Person.global_registry_entity.type).to be :person
-      expect(Namespaced::Person.global_registry_entity.exclude_fields)
+      expect(Namespaced::Person.global_registry_entity.exclude)
         .to contain_exactly(:country_of_residence_gr_id, :country_of_residence_id, :country_of_service_gr_id,
                             :country_of_service_id, :created_at, :global_registry_id, :global_registry_mdm_id,
                             :guid, :id, :updated_at)
-      expect(Namespaced::Person.global_registry_entity.extra_fields).to be_a(Hash).and be_empty
+      expect(Namespaced::Person.global_registry_entity.fields).to be_a(Hash).and be_empty
       expect(GlobalRegistry::Bindings::Workers::PullNamespacedPersonMdmIdWorker.get_sidekiq_options)
         .to include('unique' => :until_timeout, 'unique_expiration' => 24.hours)
     end
@@ -43,11 +43,11 @@ RSpec.describe 'GlobalRegistry::Bindings' do
       expect(Address.global_registry_entity.mdm_id_column).to be nil
       expect(Address.global_registry_entity.type).to be :address
       expect(Address.global_registry_entity.parent_association).to be :person
-      expect(Address.global_registry_entity.exclude_fields).to be_a Proc
-      expect(address.global_registry_entity.exclude_fields)
+      expect(Address.global_registry_entity.exclude).to be_a Proc
+      expect(address.global_registry_entity.exclude)
         .to contain_exactly(:global_registry_id, :id, :created_at, :updated_at, :person_id, :address1)
-      expect(Address.global_registry_entity.extra_fields).to be_a Symbol
-      expect(address.global_registry_entity.extra_fields)
+      expect(Address.global_registry_entity.fields).to be_a Symbol
+      expect(address.global_registry_entity.fields)
         .to include(line1: :string, postal_code: :string)
     end
 
@@ -59,11 +59,11 @@ RSpec.describe 'GlobalRegistry::Bindings' do
       expect(org.global_registry_entity.type).to be :fancy_org
       expect(Organization.global_registry_entity.parent_association).to be :parent
       expect(Organization.global_registry_entity.push_on).to be_an(Array).and eq(%i[create destroy])
-      expect(Organization.global_registry_entity.exclude_fields).to be_a Symbol
-      expect(org.global_registry_entity.exclude_fields)
+      expect(Organization.global_registry_entity.exclude).to be_a Symbol
+      expect(org.global_registry_entity.exclude)
         .to contain_exactly(:gr_id, :id, :created_at, :updated_at, :parent_id, :area_id, :global_registry_area_id)
-      expect(Organization.global_registry_entity.extra_fields).to be_a Proc
-      expect(org.global_registry_entity.extra_fields).to be_a(Hash).and be_empty
+      expect(Organization.global_registry_entity.fields).to be_a Proc
+      expect(org.global_registry_entity.fields).to be_a(Hash).and be_empty
     end
 
     it 'should parse and set relationship fields' do
@@ -76,10 +76,10 @@ RSpec.describe 'GlobalRegistry::Bindings' do
       expect(Assignment.global_registry_relationship(:fancy_org_assignment).related_association).to be :organization
       expect(assignment.global_registry_relationship(:fancy_org_assignment).primary_relationship_name).to be :person
       expect(assignment.global_registry_relationship(:fancy_org_assignment).related_relationship_name).to be :fancy_org
-      expect(assignment.global_registry_relationship(:fancy_org_assignment).exclude_fields)
+      expect(assignment.global_registry_relationship(:fancy_org_assignment).exclude)
         .to contain_exactly(:global_registry_id, :id, :created_at, :updated_at, :person_id, :organization_id,
                             :assigned_by_gr_rel_id, :assigned_by_id)
-      expect(assignment.global_registry_relationship(:fancy_org_assignment).extra_fields)
+      expect(assignment.global_registry_relationship(:fancy_org_assignment).fields)
         .to be_a(Hash)
     end
   end

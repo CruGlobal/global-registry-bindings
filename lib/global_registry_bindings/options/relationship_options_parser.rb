@@ -20,8 +20,8 @@ module GlobalRegistry #:nodoc:
             related_association_class: nil, related_association_type: nil,
             related_relationship_name: nil,
             related_global_registry_id: nil,
-            exclude_fields: %i[id created_at updated_at], include_all_columns: true,
-            extra_fields: {}, ensure_relationship_type: true, rename_entity_type: true
+            exclude: %i[id created_at updated_at], include_all_columns: false,
+            fields: {}, ensure_relationship_type: true, rename_entity_type: true
           }.freeze
         end
 
@@ -37,7 +37,7 @@ module GlobalRegistry #:nodoc:
 
         def merge_defaults(options_hash = {})
           @options = defaults.merge(options_hash) do |key, oldval, newval|
-            if key == :exclude_fields
+            if key == :exclude
               case newval
               when Proc, Symbol
                 newval
@@ -73,15 +73,15 @@ module GlobalRegistry #:nodoc:
         end
 
         def update_excludes
-          return unless @options[:exclude_fields].is_a? Array
-          @options[:exclude_fields] << @options[:id_column]
-          @options[:exclude_fields] << @options[:mdm_id_column] if @options[:mdm_id_column].present?
+          return unless @options[:exclude].is_a? Array
+          @options[:exclude] << @options[:id_column]
+          @options[:exclude] << @options[:mdm_id_column] if @options[:mdm_id_column].present?
 
           if @options[:primary_association_foreign_key]
-            @options[:exclude_fields] << @options[:primary_association_foreign_key]
+            @options[:exclude] << @options[:primary_association_foreign_key]
           end
           if @options[:related_association_foreign_key] # rubocop:disable Style/GuardClause
-            @options[:exclude_fields] << @options[:related_association_foreign_key]
+            @options[:exclude] << @options[:related_association_foreign_key]
           end
         end
 

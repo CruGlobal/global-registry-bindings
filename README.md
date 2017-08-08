@@ -64,7 +64,7 @@ is a unique name to identify the relationship. **[`:entity`, `:relationship`]**
 (default: `[:create, :update, :destroy]`) **[`:entity`]**
 
 * `:parent_association`: Name of the Active Record parent association. Must be defined before calling
-global_registry_bindings in order to determine foreign_key for use in exclude_fields. Used to create a
+global_registry_bindings in order to determine foreign_key for use in exclude. Used to create a
 hierarchy or to push child entity types. (Ex: person -> address) (default: `nil`) **[`:entity`]**
 
 * `:parent_association_class`: Class name of the parent model. Required if `:parent_association` can not be used
@@ -76,7 +76,7 @@ to `:entity`, but can be set to a `:relationship` type name (ex: `:assignment`) 
 between a relationship and an entity. (default: `:entity`) **[`:relationship`]**
 
 * `:primary_association`: Name of the Active Record primary association. Must be defined before calling
-global_registry_bindings in order to determine foreign_key for use in exclude_fields. (default: `nil`)
+global_registry_bindings in order to determine foreign_key for use in exclude. (default: `nil`)
 **[`:relationship`]**
 
 * `:primary_association_class`: Class name of the primary model. Required if `:primary_association` can not be
@@ -120,17 +120,17 @@ should cache this as it may be requested multiple times. (default: `nil`) **[`:r
 (default: `:primary_association.id`) **[`:relationship`]**
 
 * `:include_all_columns`: Include all model columns in the fields to push to Global Registry. If `false`, fields must
-be defined in the `:extra_fields` option. (default: `true`)
+be defined in the `:fields` option. (default: `false`)
 **[`:entity`, `:relationship`]**
 
-* `:exclude_fields`: Array, Proc or Symbol. Array of Model fields (as symbols) to exclude when pushing to Global
+* `:exclude`: Array, Proc or Symbol. Array of Model fields (as symbols) to exclude when pushing to Global
 Registry. Array Will additionally include `:mdm_id_column` and `:parent_association` foreign key when defined.
 If Proc, is passed type and model instance and should return an Array of the fields to exclude. If Symbol,
 this should be a method name the Model instance responds to. It is passed the type and should return an Array
 of fields to exclude. When Proc or Symbol are used, you must explicitly return the standard defaults.
 (default:  `[:id, :created_at, :updated_at, :global_registry_id]`) **[`:entity`, `:relationship`]**
 
-* `:extra_fields`: Additional fields to send to Global Registry. Hash, Proc or Symbol. As a Hash, names are the
+* `:fields`: Additional fields to send to Global Registry. Hash, Proc or Symbol. As a Hash, names are the
 keys and :type attributes are the values. Ex: `{language: :string}`. Name is a symbol and type is an
 ActiveRecord column type. As a Proc, it is passed the type and model instance, and should return a Hash.
 As a Symbol, the model should respond to this method, is passed the type, and should return a Hash.
@@ -142,7 +142,7 @@ option is nil or empty. (default: `nil`) **[`:entity`]**
 * `:mdm_timeout`: Only pull mdm information at most once every `:mdm_timeout`. (default: `1.minute`)
 **[`:entity`]**
 
-## Values for `extra_fields`
+## Values for `fields`
 
 Values sent to Global Registry are calculated by sending the field `name` to the model. They can be overidden by
 aliasing an existing method, adding a new method to the model or by overriding the `entity_attributes_to_push`
@@ -151,8 +151,8 @@ method. If a model does not respond to a name or raises a `NoMethodError`, the f
 ```ruby
 class Person < ActiveRecord::Base
   # Person has first_name, last_name and guid columns
-  global_registry_bindings extra_fields: {full_name: :string, identity: :uuid, blargh: :integer},
-                           exclude_fields: %i[guid]
+  global_registry_bindings fields: {full_name: :string, identity: :uuid, blargh: :integer},
+                           exclude: %i[guid]
   
   # Person doesn't respond to 'blargh' so it is omitted from the attributes to push
  

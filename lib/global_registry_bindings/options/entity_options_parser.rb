@@ -17,9 +17,9 @@ module GlobalRegistry #:nodoc:
             parent_association: nil,
             parent_association_class: nil,
             parent_relationship_name: nil,
-            exclude_fields: %i[id created_at updated_at],
-            extra_fields: {},
-            include_all_columns: true,
+            exclude: %i[id created_at updated_at],
+            fields: {},
+            include_all_columns: false,
             mdm_timeout: 1.minute,
             ensure_entity_type: true
           }.freeze
@@ -36,7 +36,7 @@ module GlobalRegistry #:nodoc:
 
         def merge_defaults(options_hash = {})
           @options = defaults.merge(options_hash) do |key, oldval, newval|
-            if key == :exclude_fields
+            if key == :exclude
               case newval
               when Proc, Symbol
                 newval
@@ -56,12 +56,12 @@ module GlobalRegistry #:nodoc:
         end
 
         def update_excludes
-          return unless @options[:exclude_fields].is_a? Array
-          @options[:exclude_fields] << @options[:id_column]
-          @options[:exclude_fields] << @options[:mdm_id_column] if @options[:mdm_id_column].present?
+          return unless @options[:exclude].is_a? Array
+          @options[:exclude] << @options[:id_column]
+          @options[:exclude] << @options[:mdm_id_column] if @options[:mdm_id_column].present?
 
           parent_id_column = association_foreign_key @options[:parent_association]
-          @options[:exclude_fields] << parent_id_column.to_sym if parent_id_column
+          @options[:exclude] << parent_id_column.to_sym if parent_id_column
         end
 
         def association_foreign_key(name)

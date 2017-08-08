@@ -10,7 +10,7 @@ module GlobalRegistry #:nodoc:
           entity_attributes = relationship_columns_to_push(type).map do |name, t|
             relationship_value_for_global_registry(name, t)
           end.compact.to_h
-          unless global_registry_relationship(type).exclude_fields.include?(:client_integration_id)
+          unless global_registry_relationship(type).exclude.include?(:client_integration_id)
             entity_attributes[:client_integration_id] = global_registry_relationship(type).client_integration_id
           end
           entity_attributes[:client_updated_at] = updated_at.to_s(:db) if respond_to?(:updated_at)
@@ -58,10 +58,10 @@ module GlobalRegistry #:nodoc:
               { c.name.underscore.to_sym => normalize_relationship_column_type(c.type, c.name) }
             end # rubocop:disable Style/MultilineBlockChain
                 .reduce(&:merge)
-                .reject { |k, _v| global_registry_relationship(type).exclude_fields.include? k }
-                .merge(global_registry_relationship(type).extra_fields)
+                .reject { |k, _v| global_registry_relationship(type).exclude.include? k }
+                .merge(global_registry_relationship(type).fields)
           else
-            global_registry_relationship(type).extra_fields || {}
+            global_registry_relationship(type).fields || {}
           end
         end
       end
