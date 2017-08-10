@@ -61,8 +61,8 @@ module GlobalRegistry #:nodoc:
         # rubocop:disable Metrics/PerceivedComplexity
         # rubocop:disable Metrics/AbcSize
         def global_registry_relationship_change_action(type)
-          [global_registry_relationship(type).primary_association_foreign_key,
-           global_registry_relationship(type).related_association_foreign_key].each do |key|
+          [global_registry_relationship(type).primary_foreign_key,
+           global_registry_relationship(type).related_foreign_key].each do |key|
             if previous_changes.key?(key)
               # Delete if changed from anything to nil
               return :delete if previous_changes[key].last.nil?

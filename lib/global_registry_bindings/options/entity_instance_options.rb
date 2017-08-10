@@ -8,10 +8,8 @@ module GlobalRegistry #:nodoc:
                  :mdm_id_column,
                  :mdm_timeout,
                  :push_on,
-                 :parent_association,
-                 :parent_association_class,
                  :mdm_worker_class_name,
-                 :ensure_entity_type?,
+                 :ensure_type?,
                  :include_all_columns?,
                  to: :@class_options
 
@@ -38,12 +36,12 @@ module GlobalRegistry #:nodoc:
         end
 
         def parent
-          @model.send(parent_association) if parent_association.present?
+          @model.send(@class_options.parent) if @class_options.parent.present?
         end
 
         def parent_class
-          return if parent_association.blank?
-          parent_association_class
+          return if @class_options.parent.blank?
+          @class_options.parent_class
         end
 
         def parent_type
@@ -55,11 +53,11 @@ module GlobalRegistry #:nodoc:
         end
 
         def parent_required?
-          parent_association.present? && !parent_is_self?
+          @class_options.parent.present? && !parent_is_self?
         end
 
         def parent_is_self?
-          parent_association.present? && parent_class == @model.class
+          @class_options.parent.present? && parent_class == @model.class
         end
 
         def exclude

@@ -37,7 +37,7 @@ module GlobalRegistry #:nodoc:
           relationships = Array.wrap entity.dig(
             'entity',
             relationship.primary_type.to_s,
-            "#{relationship.related_relationship_name}:relationship"
+            "#{relationship.related_name}:relationship"
           )
           relationships.detect do |rel|
             cid = rel['client_integration_id']
@@ -79,7 +79,7 @@ module GlobalRegistry #:nodoc:
 
         def relationship_entity
           { entity: { relationship.primary_type => {
-            "#{relationship.related_relationship_name}:relationship" =>
+            "#{relationship.related_name}:relationship" =>
               model.relationship_attributes_to_push(type)
                    .merge(relationship.related_type =>
                          relationship.related_id_value)
@@ -92,7 +92,7 @@ module GlobalRegistry #:nodoc:
             relationship_entity,
             params: {
               full_response: true,
-              fields: "#{relationship.related_relationship_name}:relationship"
+              fields: "#{relationship.related_name}:relationship"
             }
           )
         rescue RestClient::BadRequest => e
@@ -109,7 +109,7 @@ module GlobalRegistry #:nodoc:
           )
           return unless and_retry
           raise GlobalRegistry::Bindings::RelatedEntityExistsWithCID,
-                "#{model.class.name}(#{model.id}) #{relationship.related_relationship_name}" \
+                "#{model.class.name}(#{model.id}) #{relationship.related_name}" \
                 ':relationship already exists with client_integration_id(' \
                 "#{relationship.client_integration_id}). Will delete and retry."
         end

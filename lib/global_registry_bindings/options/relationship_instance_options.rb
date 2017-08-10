@@ -7,13 +7,9 @@ module GlobalRegistry #:nodoc:
         delegate :id_column,
                  :push_on,
                  :primary_binding,
-                 :primary_association,
-                 :primary_association_class,
-                 :primary_association_foreign_key,
-                 :related_association,
-                 :related_association_class,
-                 :related_association_foreign_key,
-                 :ensure_relationship_type?,
+                 :primary_foreign_key,
+                 :related_foreign_key,
+                 :ensure_type?,
                  :rename_entity_type?,
                  :include_all_columns?,
                  to: :@class_options
@@ -53,12 +49,12 @@ module GlobalRegistry #:nodoc:
         end
 
         def primary
-          return @model.send(primary_association) if primary_association.present?
+          return @model.send(@class_options.primary) if @class_options.primary.present?
           @model
         end
 
         def primary_class
-          primary_association_class || primary.class
+          @class_options.primary_class || primary.class
         end
 
         def primary_type
@@ -83,16 +79,16 @@ module GlobalRegistry #:nodoc:
           primary_class == @model.class
         end
 
-        def primary_relationship_name
-          @class_options.primary_relationship_name || primary_type
+        def primary_name
+          @class_options.primary_name || primary_type
         end
 
         def related
-          @model.send(related_association) if related_association.present?
+          @model.send(@class_options.related) if @class_options.related.present?
         end
 
         def related_type
-          @class_options.related_association_type || related&.global_registry_entity&.type
+          @class_options.related_type || related&.global_registry_entity&.type
         end
 
         def related_id_value
@@ -107,8 +103,8 @@ module GlobalRegistry #:nodoc:
           end
         end
 
-        def related_relationship_name
-          @class_options.related_relationship_name || related_type
+        def related_name
+          @class_options.related_name || related_type
         end
 
         def exclude

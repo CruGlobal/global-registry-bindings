@@ -9,7 +9,7 @@ module GlobalRegistry #:nodoc:
         extend ActiveSupport::Concern
 
         def push_entity_type_to_global_registry
-          return unless global_registry_entity.ensure_entity_type?
+          return unless global_registry_entity.ensure_type?
           parent_entity_id = parent_entity_type_id
           entity_type = Rails.cache.fetch(entity_type_cache_key, expires_in: 1.hour) do
             GlobalRegistry::EntityType.get('filters[name]' => global_registry_entity.type,

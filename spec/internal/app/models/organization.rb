@@ -12,7 +12,7 @@ class Organization < ApplicationRecord
   global_registry_bindings id_column: :gr_id,
                            type: ->(_model) { :fancy_org },
                            push_on: %i[create destroy],
-                           parent_association: :parent,
+                           parent: :parent,
                            include_all_columns: true,
                            exclude: :exclude_gr_fields,
                            fields: proc { |_type, _model| {} }
@@ -20,7 +20,7 @@ class Organization < ApplicationRecord
   global_registry_bindings binding: :relationship,
                            type: :area,
                            id_column: :global_registry_area_id,
-                           related_association: :area,
+                           related: :area,
                            exclude: proc { |_type, _model| %i[] },
                            fields: proc { |_type, _model| { priority: :string } },
                            rename_entity_type: false

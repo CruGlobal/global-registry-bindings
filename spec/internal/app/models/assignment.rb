@@ -7,8 +7,8 @@ class Assignment < ApplicationRecord
 
   global_registry_bindings binding: :relationship,
                            type: :fancy_org_assignment,
-                           primary_association: :person,
-                           related_association: :organization,
+                           primary: :person,
+                           related: :organization,
                            include_all_columns: true,
                            exclude: %i[assigned_by_id assigned_by_gr_rel_id]
 
@@ -16,6 +16,6 @@ class Assignment < ApplicationRecord
                            type: :assigned_by,
                            id_column: :assigned_by_gr_rel_id,
                            primary_binding: :fancy_org_assignment,
-                           primary_relationship_name: :assigned_by,
-                           related_association: :assigned_by
+                           primary_name: :assigned_by,
+                           related: :assigned_by
 end

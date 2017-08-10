@@ -11,8 +11,8 @@ module GlobalRegistry #:nodoc:
                  :type,
                  :mdm_timeout,
                  :push_on,
-                 :parent_association,
-                 :parent_association_class,
+                 :parent,
+                 :parent_class,
                  :exclude,
                  :fields, to: :@options
 
@@ -21,8 +21,8 @@ module GlobalRegistry #:nodoc:
           @options = OpenStruct.new model_class._global_registry_bindings_options[:entity]
         end
 
-        def ensure_entity_type?
-          @options.ensure_entity_type.present?
+        def ensure_type?
+          @options.ensure_type.present?
         end
 
         def include_all_columns?

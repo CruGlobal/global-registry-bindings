@@ -11,7 +11,7 @@ module GlobalRegistry #:nodoc:
         # rubocop:disable Metrics/MethodLength
         # rubocop:disable Metrics/AbcSize
         def push_global_registry_relationship_type
-          return unless global_registry_relationship(type).ensure_relationship_type?
+          return unless global_registry_relationship(type).ensure_type?
           primary_entity_type_id = primary_associated_entity_type_id
           related_entity_type_id = related_associated_entity_type_id
 
@@ -20,15 +20,15 @@ module GlobalRegistry #:nodoc:
               'filters[between]' => "#{primary_entity_type_id},#{related_entity_type_id}"
             )['relationship_types'].detect do |r|
               r['relationship1']['relationship_name'] ==
-                global_registry_relationship(type).primary_relationship_name.to_s
+                global_registry_relationship(type).primary_name.to_s
             end
             unless rel
               rel = GlobalRegistry::RelationshipType.post(
                 relationship_type: {
                   entity_type1_id: primary_entity_type_id,
                   entity_type2_id: related_entity_type_id,
-                  relationship1: global_registry_relationship(type).primary_relationship_name,
-                  relationship2: global_registry_relationship(type).related_relationship_name
+                  relationship1: global_registry_relationship(type).primary_name,
+                  relationship2: global_registry_relationship(type).related_name
                 }
               )['relationship_type']
               rename_relationship_entity_type(rel)
@@ -95,7 +95,7 @@ module GlobalRegistry #:nodoc:
         def relationship_type_cache_key
           "GlobalRegistry::Bindings::RelationshipType::#{global_registry_relationship(type).primary_type}::" \
             "#{global_registry_relationship(type).related_type}::" \
-            "#{global_registry_relationship(type).primary_relationship_name}"
+            "#{global_registry_relationship(type).primary_name}"
         end
       end
     end

@@ -13,7 +13,7 @@ RSpec.describe 'GlobalRegistry::Bindings' do
     it 'should have default values for all options' do
       expect(Default.global_registry_entity.id_column).to be :global_registry_id
       expect(Default.global_registry_entity.mdm_id_column).to be nil
-      expect(Default.global_registry_entity.parent_association).to be nil
+      expect(Default.global_registry_entity.parent).to be nil
       expect(Default.global_registry_entity.push_on)
         .to contain_exactly(:create, :update, :destroy)
       expect(Default.global_registry_entity.mdm_timeout).to eq 1.minute
@@ -42,7 +42,7 @@ RSpec.describe 'GlobalRegistry::Bindings' do
       expect(Address.global_registry_entity.id_column).to be :global_registry_id
       expect(Address.global_registry_entity.mdm_id_column).to be nil
       expect(Address.global_registry_entity.type).to be :address
-      expect(Address.global_registry_entity.parent_association).to be :person
+      expect(Address.global_registry_entity.parent).to be :person
       expect(Address.global_registry_entity.exclude).to be_a Proc
       expect(address.global_registry_entity.exclude)
         .to contain_exactly(:global_registry_id, :id, :created_at, :updated_at, :person_id, :address1)
@@ -57,7 +57,7 @@ RSpec.describe 'GlobalRegistry::Bindings' do
       expect(Organization.global_registry_entity.mdm_id_column).to be nil
       expect(Organization.global_registry_entity.type).to be_a Proc
       expect(org.global_registry_entity.type).to be :fancy_org
-      expect(Organization.global_registry_entity.parent_association).to be :parent
+      expect(Organization.global_registry_entity.parent).to be :parent
       expect(Organization.global_registry_entity.push_on).to be_an(Array).and eq(%i[create destroy])
       expect(Organization.global_registry_entity.exclude).to be_a Symbol
       expect(org.global_registry_entity.exclude)
@@ -72,10 +72,10 @@ RSpec.describe 'GlobalRegistry::Bindings' do
       assignment = build(:assignment, person: person, organization: org)
       expect(Assignment.global_registry_relationship(:fancy_org_assignment).id_column).to be :global_registry_id
       expect(Assignment.global_registry_relationship(:fancy_org_assignment).type).to be :fancy_org_assignment
-      expect(Assignment.global_registry_relationship(:fancy_org_assignment).primary_association).to be :person
-      expect(Assignment.global_registry_relationship(:fancy_org_assignment).related_association).to be :organization
-      expect(assignment.global_registry_relationship(:fancy_org_assignment).primary_relationship_name).to be :person
-      expect(assignment.global_registry_relationship(:fancy_org_assignment).related_relationship_name).to be :fancy_org
+      expect(Assignment.global_registry_relationship(:fancy_org_assignment).primary).to be :person
+      expect(Assignment.global_registry_relationship(:fancy_org_assignment).related).to be :organization
+      expect(assignment.global_registry_relationship(:fancy_org_assignment).primary_name).to be :person
+      expect(assignment.global_registry_relationship(:fancy_org_assignment).related_name).to be :fancy_org
       expect(assignment.global_registry_relationship(:fancy_org_assignment).exclude)
         .to contain_exactly(:global_registry_id, :id, :created_at, :updated_at, :person_id, :organization_id,
                             :assigned_by_gr_rel_id, :assigned_by_id)

@@ -10,22 +10,23 @@ module GlobalRegistry #:nodoc:
 
         def defaults
           {
+            binding: :entity,
             id_column: :global_registry_id,
             mdm_id_column: nil,
             type: @model_class.name.demodulize.underscore.to_sym,
             push_on: %i[create update destroy],
-            parent_association: nil,
-            parent_association_class: nil,
-            parent_relationship_name: nil,
+            parent: nil,
+            parent_class: nil,
             exclude: %i[id created_at updated_at],
             fields: {},
             include_all_columns: false,
             mdm_timeout: 1.minute,
-            ensure_entity_type: true
+            ensure_type: true
           }.freeze
         end
 
         def parse(options_hash = {})
+          validate_options! options_hash
           merge_defaults options_hash
           update_association_classes
           update_excludes
@@ -33,6 +34,11 @@ module GlobalRegistry #:nodoc:
         end
 
         private
+
+        def validate_options!(options = {})
+          unknown = options.keys - defaults.keys
+          raise ArgumentError, "global-registry-bindings: Unknown options (#{unknown.join ', '})" unless unknown.empty?
+        end
 
         def merge_defaults(options_hash = {})
           @options = defaults.merge(options_hash) do |key, oldval, newval|
@@ -50,8 +56,8 @@ module GlobalRegistry #:nodoc:
         end
 
         def update_association_classes
-          unless @options[:parent_association_class] # rubocop:disable Style/GuardClause
-            @options[:parent_association_class] = association_class @options[:parent_association]
+          unless @options[:parent_class] # rubocop:disable Style/GuardClause
+            @options[:parent_class] = association_class @options[:parent]
           end
         end
 
@@ -60,7 +66,7 @@ module GlobalRegistry #:nodoc:
           @options[:exclude] << @options[:id_column]
           @options[:exclude] << @options[:mdm_id_column] if @options[:mdm_id_column].present?
 
-          parent_id_column = association_foreign_key @options[:parent_association]
+          parent_id_column = association_foreign_key @options[:parent]
           @options[:exclude] << parent_id_column.to_sym if parent_id_column
         end
 

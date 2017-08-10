@@ -11,15 +11,15 @@ module GlobalRegistry #:nodoc:
                  :push_on,
                  :client_integration_id,
                  :primary_binding,
-                 :primary_association,
-                 :primary_association_class,
-                 :primary_association_foreign_key,
-                 :primary_relationship_name,
-                 :related_association,
-                 :related_association_class,
-                 :related_association_foreign_key,
-                 :related_association_type,
-                 :related_relationship_name,
+                 :primary,
+                 :primary_class,
+                 :primary_foreign_key,
+                 :primary_name,
+                 :related,
+                 :related_class,
+                 :related_foreign_key,
+                 :related_type,
+                 :related_name,
                  :related_global_registry_id,
                  :exclude,
                  :fields, to: :@options
@@ -29,8 +29,8 @@ module GlobalRegistry #:nodoc:
           @options = OpenStruct.new model_class._global_registry_bindings_options[:relationships][type]
         end
 
-        def ensure_relationship_type?
-          @options.ensure_relationship_type.present?
+        def ensure_type?
+          @options.ensure_type.present?
         end
 
         def rename_entity_type?

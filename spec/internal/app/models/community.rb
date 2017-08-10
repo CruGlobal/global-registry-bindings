@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 class Community < ApplicationRecord
-  global_registry_bindings ensure_entity_type: false,
+  global_registry_bindings ensure_type: false,
                            include_all_columns: true,
                            exclude: %i[infobase_id infobase_gr_id]
 
   global_registry_bindings binding: :relationship,
                            type: :infobase_ministry,
                            id_column: :infobase_gr_id,
-                           related_relationship_name: :ministry,
-                           related_association_type: :ministry,
-                           related_association_foreign_key: :infobase_id,
+                           related_name: :ministry,
+                           related_type: :ministry,
+                           related_foreign_key: :infobase_id,
                            related_global_registry_id: :pull_infobase_global_registry_id
 
   def pull_infobase_global_registry_id(_type)

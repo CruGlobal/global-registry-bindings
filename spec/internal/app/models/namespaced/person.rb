@@ -25,18 +25,18 @@ module Namespaced
                              type: :country_of_service,
                              id_column: :country_of_service_gr_id,
                              client_integration_id: ->(model) { "cos_#{model.id}" },
-                             related_association: :country_of_service,
+                             related: :country_of_service,
                              exclude: :exclude_cos_fields,
                              fields: :extra_cos_fields,
-                             ensure_relationship_type: false,
+                             ensure_type: false,
                              rename_entity_type: false
 
     global_registry_bindings binding: :relationship,
                              type: :country_of_residence,
                              id_column: :country_of_residence_gr_id,
                              client_integration_id: ->(model) { "cor_#{model.id}" },
-                             related_association: :country_of_residence,
-                             ensure_relationship_type: false,
+                             related: :country_of_residence,
+                             ensure_type: false,
                              rename_entity_type: false
 
     def entity_attributes_to_push
