@@ -2,7 +2,6 @@
 
 Global Registry Bindings are a set of bindings to push ActiveRecord models to the Global Registry.
 
-
 ## Installation
 
 Add to your Gemfile:
@@ -237,6 +236,99 @@ class Pet < ActiveRecord::Base
                            related: :person
 end
 ```
+
+## Fields and Values
+
+Both Entities and Relationships include fields that will be pushed to Global Registry.
+
+### Fields
+
+The fields that are pushed to Global Registry are defined with a combination of the `:fields`, `:exclude` and
+`:include_all_columns` options. The `:fields` option defines the fields and field types to be pushed. If
+`:include_all_columns` is set to `true`,`:fields` are appended to the list of all model columns. `:exclude` option is
+then used to remove fields from the list. 
+
+Given an Active Record model:
+```ruby
+create_table :products do |t|
+  t.string :name
+  t.text :description
+  t.string :global_registry_id
+  t.references :supplier, index: true, foreign_key: true
+  t.string :supplier_gr_rel_id, null: true, default: nil
+  t.timestamps null: false
+end
+```
+And the following `global_registry_bindings`:
+```ruby
+class Product < ActiveRecord::Base
+  belongs_to :supplier
+  global_registry_bindings fields: { name: string, description: :text }
+end
+```
+Will result in the following fields `{:name=>:string, :description=>:text}`
+
+```ruby
+class Product < ActiveRecord::Base
+  belongs_to :supplier
+  global_registry_bindings include_all_columns: true,
+                           exclude: %i[supplier_id]
+end
+```
+Will result in the following fields `{:name=>:string, :description=>:text}`, `:id`, `:global_registry_id` and timestamp
+fields are excluded by default when `:include_all_columns` is `true`.
+
+You can add additional fields by specifying them in the `:fields` option.
+```ruby
+class Product < ActiveRecord::Base
+  belongs_to :supplier
+  global_registry_bindings include_all_columns: true,
+                           exclude: %i[supplier_id],
+                           fields: {color: :string}
+end
+```
+Will result in the following fields `{:name=>:string, :description=>:text, :color=>:string}`
+
+Relationships can also include fields:
+```ruby
+class Product < ActiveRecord::Base
+  belongs_to :supplier
+  global_registry_bindings fields: { name: string, description: :text }
+  global_registry_bindings binding: :relationship,
+                           type: :supplier,
+                           related: :supplier,
+                           id_column: :supplier_gr_rel_id,
+                           extra: {quantity: :integer}
+end
+```
+Will result in the following fields `{:quantity=>:integer}`
+
+`:fields` and `:exclude` can also be defined as a proc, labmda or symbol. Symbol must point to a method that will
+return either the extra or excluded fields.
+```ruby
+class Product < ActiveRecord::Base
+  belongs_to :supplier
+  global_registry_bindings include_all_columns: true,
+                           exclude: ->(type, model) { model.name == 'Sprocket' ? [] : %i[:field1] },
+                           fields: :extra_fields
+  def extra_fields(type)
+    # type === :product
+    {field1: :string, field2: :boolean}
+  end
+end
+```
+
+You can debug the current fields that will be pushed using the rails console:
+```ruby
+irb> Product.first.entity_columns_to_push
+=> {:name=>:string, :description=>:text}
+irb> Product.first.relationship_entity_columns(:supplier)
+=> {}
+```
+
+### Values
+
+
 ## Example Models
 
 Example models can be found in the [specs](https://github.com/CruGlobal/global-registry-bindings/tree/master/spec/internal/app/models).
