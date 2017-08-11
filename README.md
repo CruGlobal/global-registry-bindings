@@ -246,7 +246,10 @@ Both Entities and Relationships include fields that will be pushed to Global Reg
 The fields that are pushed to Global Registry are defined with a combination of the `:fields`, `:exclude` and
 `:include_all_columns` options. The `:fields` option defines the fields and field types to be pushed. If
 `:include_all_columns` is set to `true`,`:fields` are appended to the list of all model columns. `:exclude` option is
-then used to remove fields from the list. 
+then used to remove fields from the list. If `:ensure_type` is `true`, the Global Registry EntityType or
+RelationshipType will be updated when new fields are defined. If `:ensure_type` is false, and fields are missing
+from the EntityType or RelationshipType, Global Registry will throw an error. It is the developers job to ensure Global
+Registry Entity and Relationship Types are accurate when `:ensure_type` is disabled.
 
 Given an Active Record model:
 ```ruby
@@ -328,6 +331,37 @@ irb> Product.first.relationship_entity_columns(:supplier)
 
 ### Values
 
+When a model is pushed to global registry, `global-registry-bindings` will attempt to determined the values for
+each of the fields. This is done by calling the field name on the model. If the model responds, the value will be sent
+with the entity. Model and implement or override values with a few different options. They can use
+`alias_attribute :new_name, :old_name`, define a method `def field_name; "value"; end` or override
+`entity_attributes_to_push` or `relationship_attributes_to_push` respectively. When the `*_attributes_to_push` methods
+are used, you can modify values for other attributes as well as add additional fields and values. This is helpful
+when adding fields and values which may not be tracked directly on this model. An instance of this is adding an
+`authentication: { guid: 'UUID' }` field to a `person` entity_type to utilize Global Registry linked_identities.
+See [Entity Matching](https://github.com/CruGlobal/global_registry_docs/wiki/Entity-Matching).
+
+```ruby
+class Person < ActiveRecord::Base
+  alias_attribute :field1, :name
+
+  global_registry_bindings fields: { name: string, description: :text, field1: :boolean, field2: :integer }
+  
+  def field2
+    "#{name}:2"
+  end
+  
+  def entity_attributes_to_push
+    attrs = super # Calls super to get field values, then modify them.
+    attrs[:description] = "Huge: #{attrs[:description]}"
+    attrs[:authentication] = { guid: 'UUID' }
+    attrs
+  end
+end
+```
+As an example, this would alias `field1` to `name` and use the method `field2` to determine the value for `field2`. It
+subsequently changes the value of `:description` and adds an `:authentication` field using the
+`entity_attributes_to_push` override.
 
 ## Example Models
 
