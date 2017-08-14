@@ -23,8 +23,8 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'activerecord', '>= 4.0.0', '< 6'
   s.add_runtime_dependency 'global_registry', '~> 1.4', '< 2'
-  s.add_runtime_dependency 'sidekiq', '~> 4.0', '< 6'
-  s.add_runtime_dependency 'sidekiq-unique-jobs', '~> 4.0', '< 6'
+  s.add_runtime_dependency 'sidekiq', '>= 4.0.0', '< 6'
+  s.add_runtime_dependency 'sidekiq-unique-jobs', '>= 4.0.0', '< 6'
 
   s.add_development_dependency 'combustion', '~> 0.6.0'
   s.add_development_dependency 'rails', '>= 4.2.2'
