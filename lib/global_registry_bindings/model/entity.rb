@@ -12,7 +12,9 @@ module GlobalRegistry #:nodoc:
           end.compact.to_h
           entity_attributes[:client_integration_id] = id unless global_registry_entity.exclude
                                                                                       .include?(:client_integration_id)
-          entity_attributes[:client_updated_at] = updated_at.to_s(:db) if respond_to?(:updated_at)
+          if respond_to?(:updated_at) && updated_at.present?
+            entity_attributes[:client_updated_at] = updated_at.to_s(:db)
+          end
           if global_registry_entity.parent_is_self?
             entity_attributes[:parent_id] = global_registry_entity.parent_id_value
           end
