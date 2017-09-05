@@ -95,6 +95,11 @@ RSpec.describe 'GlobalRegistry::Bindings' do
           config.sidekiq_options = { queue: :custom }
         end
       end
+      after do
+        GlobalRegistry::Bindings.configure do |config|
+          config.sidekiq_options = {}
+        end
+      end
       let(:job) do
         GlobalRegistry::Bindings::Workers::DeleteEntityWorker.perform_async(123)
         GlobalRegistry::Bindings::Workers::DeleteEntityWorker.jobs.last
