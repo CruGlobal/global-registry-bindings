@@ -1,13 +1,14 @@
 sudo: false
 language: ruby
+cache: bundler
 rvm:
   - 2.3.4
   - 2.4.1
 script:
-  - bundle exec rspec -v
   - bundle exec rspec
-  - bundle exec rubocop -v
   - bundle exec rubocop -R
 gemfiles:
   - gemfiles/sidekiq_4.gemfile
   - gemfiles/sidekiq_5.gemfile
+matrix:
+  fast_finish: true
