@@ -8,6 +8,7 @@ class Community < ApplicationRecord
   global_registry_bindings binding: :relationship,
                            type: :infobase_ministry,
                            id_column: :infobase_gr_id,
+                           related_binding: :remote,
                            related_name: :ministry,
                            related_type: :ministry,
                            related_foreign_key: :infobase_id,
