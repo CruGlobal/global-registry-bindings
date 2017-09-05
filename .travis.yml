@@ -7,7 +7,7 @@ rvm:
 script:
   - bundle exec rspec
   - bundle exec rubocop -R
-gemfiles:
+gemfile:
   - gemfiles/sidekiq_4.gemfile
   - gemfiles/sidekiq_5.gemfile
 matrix:
