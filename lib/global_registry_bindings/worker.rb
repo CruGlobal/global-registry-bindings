@@ -20,6 +20,12 @@ module GlobalRegistry #:nodoc:
         klass = model_class.is_a?(String) ? model_class.constantize : model_class
         self.model = klass.find(id)
       end
+
+      def self.perform_async(*args)
+        # Set global sidekiq_options
+        set(GlobalRegistry::Bindings.sidekiq_options)
+        super(*args)
+      end
     end
   end
 end
