@@ -285,7 +285,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
         end
 
         context 'fancy_org_assignment missing global_registry_id' do
-          let(:assignment) do
+          let!(:assignment) do
             create(:assignment, person: person, organization: organization, assigned_by: person)
           end
 
@@ -295,7 +295,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
             expect do
               worker.push_relationship_to_global_registry
             end.to raise_error(GlobalRegistry::Bindings::RelatedEntityMissingGlobalRegistryId).and(
-              change(GlobalRegistry::Bindings::Workers::PushRelationshipWorker.jobs, :size).by(2)
+              change(GlobalRegistry::Bindings::Workers::PushRelationshipWorker.jobs, :size).by(1)
             )
           end
         end
