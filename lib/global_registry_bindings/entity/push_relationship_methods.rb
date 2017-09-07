@@ -14,21 +14,25 @@ module GlobalRegistry #:nodoc:
         end
 
         def push_relationship_to_global_registry
-          # We can't push relationship if related model is missing, but we may need to delete
+          return unless valid_update?
+          ensure_related_entities_have_global_registry_ids!
+          push_global_registry_relationship_type
+          create_relationship_in_global_registry
+        end
+
+        def valid_update?
+          # We can't update relationship if related model is missing, but we may need to delete
           if relationship.related.nil?
             if relationship.related_id_value.nil? && relationship.id_value
               # Delete relationship if it exists and the related id_value is missing
               delete_relationship_from_global_registry(false)
-              return
-            elsif relationship.related_binding == :entity
-              # Do nothing if related model is missing and related_binding is :entity, :remote binding allows
-              # empty related model
-              return
+              return false
             end
+            # Do nothing if related model is missing and related_binding is :entity, :remote binding allows
+            # empty related model
+            return false if relationship.related_binding == :entity
           end
-          ensure_related_entities_have_global_registry_ids!
-          push_global_registry_relationship_type
-          create_relationship_in_global_registry
+          true
         end
 
         def create_relationship_in_global_registry
