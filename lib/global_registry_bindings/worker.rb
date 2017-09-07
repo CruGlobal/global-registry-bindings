@@ -22,7 +22,6 @@ module GlobalRegistry #:nodoc:
       end
 
       def self.perform_async(*args)
-        # return super(*args) if GlobalRegistry::Bindings.sidekiq_options.empty?
         # Set global sidekiq_options
         worker = set(GlobalRegistry::Bindings.sidekiq_options)
         if worker == self # sidekiq 4.x
