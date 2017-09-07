@@ -8,6 +8,7 @@ module GlobalRegistry #:nodoc:
                  :push_on,
                  :primary_binding,
                  :primary_foreign_key,
+                 :related_binding,
                  :related_foreign_key,
                  :ensure_type?,
                  :rename_entity_type?,

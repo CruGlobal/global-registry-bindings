@@ -375,6 +375,17 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
             expect(person.country_of_service_gr_id).to eq '420d2fd1-7a73-41ed-9d8f-5dc79b00a688'
           end
         end
+
+        context 'missing related model' do
+          let(:person) do
+            create(:person, global_registry_id: '2f0c62f1-5738-4860-88bd-5706fb801d7b', country_of_service_id: 12_345)
+          end
+
+          it 'should do nothing' do
+            worker.push_relationship_to_global_registry
+            expect(person.country_of_service_gr_id).to be nil
+          end
+        end
       end
 
       describe 'country_of_residence' do

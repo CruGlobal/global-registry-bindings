@@ -15,6 +15,7 @@ module GlobalRegistry #:nodoc:
                  :primary_class,
                  :primary_foreign_key,
                  :primary_name,
+                 :related_binding,
                  :related,
                  :related_class,
                  :related_foreign_key,
