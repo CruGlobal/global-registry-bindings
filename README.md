@@ -19,8 +19,19 @@ GlobalRegistry.configure do |config|
   config.base_url = ENV['GLOBAL_REGISTRY_URL'] || 'https://backend.global-registry.org'
 end
 ```
-
 Make sure sidekiq is configured. See [Using Redis](https://github.com/mperham/sidekiq/wiki/Using-Redis) for information.
+
+### Aditional Sidekiq Configuration
+
+The `global-registry-bindings` gem allows for configuring default sidekiq options for all workers. You can configure
+this by creating a custom initializer, or adding to the global_registry initializer the following.
+```ruby
+GlobalRegistry::Bindings.configure do |config|
+# Run global-registry-bindings workers in a :custom queue
+  config.sidekiq_options = { queue: :custom }
+end
+```
+Custom sidekiq options will apply to all Global Registry Bindings sidekiq Workers.
 
 ## Usage
 

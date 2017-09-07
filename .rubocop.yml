@@ -1,5 +1,7 @@
 AllCops:
   Exclude:
+    - Appraisals
+    - gemfiles/**/*
     - vendor/**/*
     - bin/**/*
   DisplayCopNames: true

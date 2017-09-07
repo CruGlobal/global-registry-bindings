@@ -20,6 +20,16 @@ module GlobalRegistry #:nodoc:
         klass = model_class.is_a?(String) ? model_class.constantize : model_class
         self.model = klass.find(id)
       end
+
+      def self.perform_async(*args)
+        # Set global sidekiq_options
+        worker = set(GlobalRegistry::Bindings.sidekiq_options)
+        if worker == self # sidekiq 4.x
+          super(*args)
+        else # sidekiq 5.x
+          worker.perform_async(*args)
+        end
+      end
     end
   end
 end

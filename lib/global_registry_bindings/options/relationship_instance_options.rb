@@ -54,10 +54,6 @@ module GlobalRegistry #:nodoc:
           @model
         end
 
-        def primary_class
-          @class_options.primary_class || primary.class
-        end
-
         def primary_type
           case primary_binding
           when :entity
@@ -74,10 +70,6 @@ module GlobalRegistry #:nodoc:
           else
             primary&.global_registry_relationship(primary_binding)&.id_value
           end
-        end
-
-        def primary_class_is_self?
-          primary_class == @model.class
         end
 
         def primary_name

@@ -83,4 +83,32 @@ RSpec.describe 'GlobalRegistry::Bindings' do
         .to be_a(Hash)
     end
   end
+
+  describe 'configure' do
+    it 'should have default sidekiq_options' do
+      expect(GlobalRegistry::Bindings.sidekiq_options).to be_a(Hash).and be_empty
+    end
+
+    context 'custom sidekiq queue' do
+      before do
+        GlobalRegistry::Bindings.configure do |config|
+          config.sidekiq_options = { queue: :custom }
+        end
+      end
+      after do
+        GlobalRegistry::Bindings.configure do |config|
+          config.sidekiq_options = {}
+        end
+      end
+      let(:job) do
+        GlobalRegistry::Bindings::Workers::DeleteEntityWorker.perform_async(123)
+        GlobalRegistry::Bindings::Workers::DeleteEntityWorker.jobs.last
+      end
+
+      it 'should contain global custom queue' do
+        expect(GlobalRegistry::Bindings.sidekiq_options).to be_a(Hash).and(include(queue: :custom))
+        expect(job).to include('queue' => 'custom')
+      end
+    end
+  end
 end
