@@ -16,6 +16,7 @@ require 'factory_girl'
 require 'simplecov'
 
 require 'global_registry_bindings'
+require 'global_registry_bindings/testing'
 
 require 'sidekiq/testing'
 require 'sidekiq_unique_jobs/testing'

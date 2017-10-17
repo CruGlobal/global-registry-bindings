@@ -377,3 +377,34 @@ subsequently changes the value of `:description` and adds an `:authentication` f
 ## Example Models
 
 Example models can be found in the [specs](https://github.com/CruGlobal/global-registry-bindings/tree/master/spec/internal/app/models).
+
+## Testing
+
+Global Registry Bindings includes a testing helper to better help test your project when `gelobal-registry-bindings`
+are included. Since Global Registry Bindings uses sidekiq, it's possible to have these workers executed in your
+projects tests (ex: running sidekiq/testing in [inline!](https://github.com/mperham/sidekiq/wiki/Testing) mode). You
+can use the following test modes:
+
+```ruby
+require 'global_registry_bindings/testing'
+GlobalRegistry::Bindings::Testing.disable_test_helper! # disables the test helper, adding workers to a queue. (default).
+GlobalRegistry::Bindings::Testing.skip_workers!
+```
+
+Each of the above methods also accepts a block.
+```ruby
+require 'global_registry_bindings/testing'
+GlobalRegistry::Bindings::Testing.disable_test_helper!
+
+# Some tests
+
+around(:example) do |example|
+  GlobalRegistry::Bindings::Testing.skip_workers!(&example)
+end
+
+# OR
+
+GlobalRegistry::Bindings::Testing.skip_workers! do
+  # Some other tests
+end
+```
