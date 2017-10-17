@@ -387,14 +387,14 @@ can use the following test modes:
 
 ```ruby
 require 'global_registry_bindings/testing'
-GlobalRegistry::Bindings::Testing.disable! # disables the test helper, adding workers to a queue. (default). 
+GlobalRegistry::Bindings::Testing.disable_test_helper! # disables the test helper, adding workers to a queue. (default).
 GlobalRegistry::Bindings::Testing.skip_workers!
 ```
 
 Each of the above methods also accepts a block.
 ```ruby
 require 'global_registry_bindings/testing'
-GlobalRegistry::Bindings::Testing.disable!
+GlobalRegistry::Bindings::Testing.disable_test_helper!
 
 # Some tests
 

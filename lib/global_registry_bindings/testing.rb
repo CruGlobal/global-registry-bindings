@@ -24,7 +24,7 @@ module GlobalRegistry #:nodoc:
           __set_test_mode(:skip, &block)
         end
 
-        def disable!(&block)
+        def disable_test_helper!(&block)
           __set_test_mode(:disable, &block)
         end
 
@@ -56,4 +56,4 @@ module GlobalRegistry #:nodoc:
 end
 
 # Default to disabling testing helpers
-GlobalRegistry::Bindings::Testing.disable!
+GlobalRegistry::Bindings::Testing.disable_test_helper!

@@ -15,10 +15,10 @@ RSpec.describe GlobalRegistry::Bindings::Testing do
       end.to change(Sidekiq::Worker.jobs, :size).by(0)
     end
 
-    context 'disable! &block' do
+    context 'disable_test_helper! &block' do
       it 'should enqueue sidekiq jobs' do
         expect(GlobalRegistry::Bindings::Testing.enabled?).to be true
-        GlobalRegistry::Bindings::Testing.disable! do
+        GlobalRegistry::Bindings::Testing.disable_test_helper! do
           expect(GlobalRegistry::Bindings::Testing.enabled?).to be false
           expect(GlobalRegistry::Bindings::Testing.disabled?).to be true
           person = build(:person)
@@ -42,7 +42,7 @@ RSpec.describe GlobalRegistry::Bindings::Testing do
       GlobalRegistry::Bindings::Testing.skip_workers!
     end
     after do
-      GlobalRegistry::Bindings::Testing.disable!
+      GlobalRegistry::Bindings::Testing.disable_test_helper!
     end
 
     it 'should not enqueue sidekiq jobs' do
