@@ -149,6 +149,10 @@ option is nil or empty. (default: `nil`) **[`:entity`]**
 * `:mdm_timeout`: Only pull mdm information at most once every `:mdm_timeout`. (default: `1.minute`)
 **[`:entity`]**
 
+* `:if`, `:unless`: Proc or Symbol, called to determine if the change should be sent (enqueue a worker) to Global
+Registry. Proc and Symbol will both receive the model for an entity, and the type and model for a relationship.
+**[`:entity`, `:relationship`]**
+
 ## Entities
 
 `global-registry-bindings` default bindings is to push an Active Record class as an Entity to Global Registry.

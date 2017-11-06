@@ -17,7 +17,7 @@ module GlobalRegistry #:nodoc:
             related: nil, related_class: nil, related_type: nil, related_name: nil, related_foreign_key: nil,
             related_global_registry_id: nil, related_binding: :entity,
             exclude: %i[id created_at updated_at], include_all_columns: false,
-            fields: {}, ensure_type: true, rename_entity_type: true
+            fields: {}, ensure_type: true, rename_entity_type: true, if: nil, unless: nil
           }.freeze
         end
 
