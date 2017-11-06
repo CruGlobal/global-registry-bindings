@@ -21,17 +21,28 @@ end
 ```
 Make sure sidekiq is configured. See [Using Redis](https://github.com/mperham/sidekiq/wiki/Using-Redis) for information.
 
-### Aditional Sidekiq Configuration
+### Additional Configuration
 
+#### Sidekiq options
 The `global-registry-bindings` gem allows for configuring default sidekiq options for all workers. You can configure
 this by creating a custom initializer, or adding to the global_registry initializer the following.
 ```ruby
 GlobalRegistry::Bindings.configure do |config|
-# Run global-registry-bindings workers in a :custom queue
+  # Run global-registry-bindings workers in a :custom queue
   config.sidekiq_options = { queue: :custom }
 end
 ```
 Custom sidekiq options will apply to all Global Registry Bindings sidekiq Workers.
+
+#### Redis Error Action
+This option defines what `global-registry-bindings` does when a Redis error is encountered while adding a sidekiq
+worker to the queue. Valid actions are `:ignore`, `:log` and `:raise`.
+```ruby
+GlobalRegistry::Bindings.configure do |config|
+  config.redis_error_action = :ignore # Silently ignore redis issues
+end
+```
+The default behaviour is to `:log` the error to `Rollbar` if present.
 
 ## Usage
 
