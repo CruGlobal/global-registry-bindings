@@ -29,6 +29,15 @@ module GlobalRegistry #:nodoc:
         else # sidekiq 5.x
           worker.perform_async(*args)
         end
+      rescue Redis::BaseError => e
+        case GlobalRegistry::Bindings.redis_error_action
+        when :raise
+          raise
+        when :log
+          ::Rollbar.error(e) if Module.const_defined? :Rollbar
+        when :ignore
+          return
+        end
       end
     end
   end

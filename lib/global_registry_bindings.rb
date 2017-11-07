@@ -17,6 +17,15 @@ module GlobalRegistry
     def self.sidekiq_options=(opts)
       @sidekiq_options = opts
     end
+
+    def self.redis_error_action
+      @redis_error_action ||= :log
+    end
+
+    def self.redis_error_action=(action)
+      action = :log unless %i[ignore log raise].include? action
+      @redis_error_action = action
+    end
   end
 end
 
