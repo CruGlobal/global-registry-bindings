@@ -89,6 +89,10 @@ RSpec.describe 'GlobalRegistry::Bindings' do
       expect(GlobalRegistry::Bindings.sidekiq_options).to be_a(Hash).and be_empty
     end
 
+    it 'should have default redis_error_action' do
+      expect(GlobalRegistry::Bindings.redis_error_action).to be :log
+    end
+
     context 'custom sidekiq queue' do
       before do
         GlobalRegistry::Bindings.configure do |config|
@@ -108,6 +112,79 @@ RSpec.describe 'GlobalRegistry::Bindings' do
       it 'should contain global custom queue' do
         expect(GlobalRegistry::Bindings.sidekiq_options).to be_a(Hash).and(include(queue: :custom))
         expect(job).to include('queue' => 'custom')
+      end
+    end
+
+    describe 'redis_error_action' do
+      around do |example|
+        class Rollbar; end
+        example.run
+        Object.send(:remove_const, :Rollbar)
+      end
+
+      context ':ignore' do
+        around do |example|
+          GlobalRegistry::Bindings.configure do |config|
+            config.redis_error_action = :ignore
+          end
+          example.run
+          GlobalRegistry::Bindings.configure do |config|
+            config.redis_error_action = :log
+          end
+        end
+
+        it 'should silently ignore redis errors' do
+          allow(Rollbar).to receive(:error)
+          expect(GlobalRegistry::Bindings::Worker).to receive(:set).and_raise(Redis::BaseError)
+          expect do
+            GlobalRegistry::Bindings::Worker.perform_async
+          end.to_not raise_error
+          expect(GlobalRegistry::Bindings::Worker.jobs.size).to be 0
+          expect(Rollbar).not_to have_received(:error)
+        end
+      end
+
+      context ':log' do
+        around do |example|
+          GlobalRegistry::Bindings.configure do |config|
+            config.redis_error_action = :log
+          end
+          example.run
+          GlobalRegistry::Bindings.configure do |config|
+            config.redis_error_action = :log
+          end
+        end
+
+        it 'should log redis errors' do
+          allow(Rollbar).to receive(:error)
+          expect(GlobalRegistry::Bindings::Worker).to receive(:set).and_raise(Redis::BaseError)
+          expect do
+            GlobalRegistry::Bindings::Worker.perform_async
+          end.to_not raise_error
+          expect(GlobalRegistry::Bindings::Worker.jobs.size).to be 0
+          expect(Rollbar).to have_received(:error)
+        end
+      end
+
+      context ':raise' do
+        around do |example|
+          GlobalRegistry::Bindings.configure do |config|
+            config.redis_error_action = :raise
+          end
+          example.run
+          GlobalRegistry::Bindings.configure do |config|
+            config.redis_error_action = :log
+          end
+        end
+
+        it 'should re-raise redis errors' do
+          allow(Rollbar).to receive(:error)
+          expect(GlobalRegistry::Bindings::Worker).to receive(:set).and_raise(Redis::BaseError)
+          expect do
+            GlobalRegistry::Bindings::Worker.perform_async
+          end.to raise_error(Redis::BaseError)
+          expect(GlobalRegistry::Bindings::Worker.jobs.size).to be 0
+        end
       end
     end
   end
