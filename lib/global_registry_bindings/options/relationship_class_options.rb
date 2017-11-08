@@ -23,7 +23,9 @@ module GlobalRegistry #:nodoc:
                  :related_name,
                  :related_global_registry_id,
                  :exclude,
-                 :fields, to: :@options
+                 :fields,
+                 :if,
+                 :unless, to: :@options
 
         def initialize(type, model_class)
           @model_class = model_class

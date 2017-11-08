@@ -26,6 +26,8 @@ module GlobalRegistry #:nodoc:
           types = types.empty? ? self.class.global_registry_relationship_types : types
           types.each do |type|
             next unless global_registry_relationship(type).id_value?
+            next if global_registry_relationship(type).condition?(:if)
+            next unless global_registry_relationship(type).condition?(:unless)
             ::GlobalRegistry::Bindings::Workers::DeleteEntityWorker.perform_async(
               global_registry_relationship(type).id_value
             )
@@ -35,10 +37,14 @@ module GlobalRegistry #:nodoc:
         protected
 
         def global_registry_relationship_async_push(type)
+          return if global_registry_relationship(type).condition?(:if)
+          return unless global_registry_relationship(type).condition?(:unless)
           ::GlobalRegistry::Bindings::Workers::PushRelationshipWorker.perform_async(self.class, id, type)
         end
 
         def global_registry_relationship_async_replace(type)
+          return if global_registry_relationship(type).condition?(:if)
+          return unless global_registry_relationship(type).condition?(:unless)
           # Replace deletes GR relationship immediately before scheduling an async update
           ::GlobalRegistry::Bindings::Workers::DeleteEntityWorker.new.perform(
             global_registry_relationship(type).id_value
@@ -50,6 +56,8 @@ module GlobalRegistry #:nodoc:
         end
 
         def global_registry_relationship_async_delete(type)
+          return if global_registry_relationship(type).condition?(:if)
+          return unless global_registry_relationship(type).condition?(:unless)
           delete_relationships_from_global_registry_async(type)
           update_column( # rubocop:disable Rails/SkipsModelValidations
             global_registry_relationship(type).id_column, nil

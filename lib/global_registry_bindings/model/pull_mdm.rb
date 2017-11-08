@@ -14,6 +14,8 @@ module GlobalRegistry #:nodoc:
         end
 
         def pull_mdm_id_from_global_registry_async
+          return if global_registry_entity.condition?(:if)
+          return unless global_registry_entity.condition?(:unless)
           "::GlobalRegistry::Bindings::Workers::#{global_registry_entity.mdm_worker_class_name}"
             .constantize .perform_async(self.class, id)
         end

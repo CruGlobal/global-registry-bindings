@@ -160,6 +160,10 @@ option is nil or empty. (default: `nil`) **[`:entity`]**
 * `:mdm_timeout`: Only pull mdm information at most once every `:mdm_timeout`. (default: `1.minute`)
 **[`:entity`]**
 
+* `:if`, `:unless`: Proc or Symbol, called to determine if the change should be sent (enqueue a worker) to Global
+Registry. Proc and Symbol will both receive the model for an entity, and the type and model for a relationship. See
+[Conditional Push](#conditional-push) for examples. **[`:entity`, `:relationship`]**
+
 ## Entities
 
 `global-registry-bindings` default bindings is to push an Active Record class as an Entity to Global Registry.
@@ -384,6 +388,29 @@ end
 As an example, this would alias `field1` to `name` and use the method `field2` to determine the value for `field2`. It
 subsequently changes the value of `:description` and adds an `:authentication` field using the
 `entity_attributes_to_push` override.
+
+## Conditional Push
+
+Entities and relationships can be conditionally pushed to Global Registry using the `:if` and `:unless` options. These
+options take either a Proc or a Symbol and should return true/false depending on if the Model should be pushed.
+
+Using a proc:
+```ruby
+class Product < ActiveRecord::Base
+  attr_accessor :should_push
+  global_registry_bindings if: proc { |model| model.should_push }
+end
+```
+Using a Symbol:
+```ruby
+class Product < ActiveRecord::Base
+  global_registry_bindings unless: :should_push
+
+  def should_push(_model)
+    return ::GlobalConfig.gr_enabled?
+  end
+end
+```
 
 ## Example Models
 

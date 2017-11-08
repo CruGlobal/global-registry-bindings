@@ -13,6 +13,8 @@ module GlobalRegistry #:nodoc:
         end
 
         def push_entity_to_global_registry_async
+          return if global_registry_entity.condition?(:if)
+          return unless global_registry_entity.condition?(:unless)
           ::GlobalRegistry::Bindings::Workers::PushEntityWorker.perform_async(self.class, id)
         end
       end

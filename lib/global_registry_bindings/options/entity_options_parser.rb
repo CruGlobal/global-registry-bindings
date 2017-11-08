@@ -21,7 +21,8 @@ module GlobalRegistry #:nodoc:
             fields: {},
             include_all_columns: false,
             mdm_timeout: 1.minute,
-            ensure_type: true
+            ensure_type: true,
+            if: nil, unless: nil
           }.freeze
         end
 

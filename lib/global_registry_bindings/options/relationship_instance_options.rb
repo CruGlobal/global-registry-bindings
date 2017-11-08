@@ -123,6 +123,18 @@ module GlobalRegistry #:nodoc:
             option
           end
         end
+
+        def condition?(cond)
+          option = @class_options.send(cond)
+          case option
+          when Proc
+            option.call(type, @model)
+          when Symbol
+            @model.send(option, type, @model)
+          else
+            :if != cond
+          end
+        end
       end
     end
   end

@@ -68,4 +68,9 @@ ActiveRecord::Schema.define(version: 0) do
     t.string :infobase_gr_id
     t.timestamps
   end
+
+  create_table :foos, force: true do |t|
+    t.string :global_registry_id
+    t.timestamps
+  end
 end
