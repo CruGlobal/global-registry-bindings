@@ -10,6 +10,8 @@ ActiveRecord::Migration.verbose = false
 require 'combustion'
 Combustion.initialize! :active_record
 
+Combustion::Database.setup
+
 require 'rspec/rails'
 require 'webmock/rspec'
 require 'factory_girl'

@@ -27,8 +27,8 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'sidekiq-unique-jobs', '>= 5.0.0', '< 6'
 
   s.add_development_dependency 'appraisal'
-  s.add_development_dependency 'combustion', '~> 0.6.0'
-  s.add_development_dependency 'rails', '>= 4.2.2'
+  s.add_development_dependency 'combustion', '~> 1.0'
+  s.add_development_dependency 'rails', '~> 5.2'
   s.add_development_dependency 'bundler', '~>1.14'
   s.add_development_dependency 'rake', '~> 12'
   s.add_development_dependency 'rspec-rails', '~> 3.5.0'
