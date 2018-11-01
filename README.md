@@ -23,23 +23,42 @@ Make sure sidekiq is configured. See [Using Redis](https://github.com/mperham/si
 
 ### Additional Configuration
 
-#### Sidekiq options
-The `global-registry-bindings` gem allows for configuring default sidekiq options for all workers. You can configure
+#### ActiveJob options
+The `global-registry-bindings` gem allows for configuring default ActiveJob options for all workers. You can configure
 this by creating a custom initializer, or adding to the global_registry initializer the following.
 ```ruby
 GlobalRegistry::Bindings.configure do |config|
-  # Run global-registry-bindings workers in a :custom queue
-  config.sidekiq_options = { queue: :custom }
+  # Run global-registry-bindings workers in a 'service-1-dev-std' queue with a 5 seconds delay
+  config.activejob_options = { queue: :default, wait: 5.seconds }
+  config.queues = {
+      default: 'service-1-dev-std', 
+      unique:  'service-1-dev.fifo'
+  }
 end
 ```
-Custom sidekiq options will apply to all Global Registry Bindings sidekiq Workers.
 
-#### Redis Error Action
-This option defines what `global-registry-bindings` does when a Redis error is encountered while adding a sidekiq
-worker to the queue. Valid actions are `:ignore`, `:log` and `:raise`.
+Available ActiveJob options:
+- `queue:` - a name of the queue (String or Symbol). If the value is a symbol and the `queues` configuration is provided, 
+the value is resolved to the queue name. If a queue name is not provided a default value from `queues` is used.
+- `wait:` - the message will be available after a given period
+- `wait_until:` - the message will be delivered not before a given date (eg. `Time.new('12:34 10.11.2018')`)
+
+_Keep in mind, that if the ActiveJob Adapter is Shoryuken (or other SQS based), the delay cannot be longer than 15 minutes!_
+
+##### Queue configuration
+
+The configuration option `queues` may be:
+ - a Hash where keys are symbols and values are queue names. 
+ In such case, if a value of `activejob_options.queue` is also a symbol, the `queues` map is used 
+ to resolve the value to a queue name.
+ - a String - a default queue name.
+
+#### SQS Error Action
+This option defines what `global-registry-bindings` does when SQS error is encountered while adding a message to 
+the queue. Valid actions are `:ignore`, `:log` and `:raise`.
 ```ruby
 GlobalRegistry::Bindings.configure do |config|
-  config.redis_error_action = :ignore # Silently ignore redis issues
+  config.sqs_error_action = :ignore # Silently ignore SQS issues
 end
 ```
 The default behaviour is to `:log` the error to `Rollbar` if present.
