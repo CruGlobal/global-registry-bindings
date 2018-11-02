@@ -23,6 +23,7 @@ require 'global_registry_bindings'
 require 'global_registry_bindings/testing'
 
 ActiveJob::Base.queue_adapter = :test
+ActiveJob::Base.logger = nil
 
 ActionController::Base.cache_store = :memory_store
 
@@ -35,8 +36,6 @@ RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
   config.include ActiveSupport::Testing::TimeHelpers
   config.include FactoryGirl::Syntax::Methods
-  # config.include SidekiqHelpers
-  # config.include WithQueueDefinition
   config.include RSpec::Rails::Matchers::ActiveJob
 
   config.before(:suite) do

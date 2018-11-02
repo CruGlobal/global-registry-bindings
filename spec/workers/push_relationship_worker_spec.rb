@@ -3,6 +3,9 @@
 require 'spec_helper'
 
 RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
+  before(:each) do
+    Rails.cache.clear
+  end
   before do
     GlobalRegistry::Bindings.configure do |config|
       config.queues = 'default-queue'
@@ -90,8 +93,6 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
           end
 
           it 'should create \'assignment\' relationship_type and push relationship' do
-            puts "======================= worker #{worker.inspect} ======================================="
-            puts "======================= worker.relationship #{worker.relationship.inspect} ======================================="
             worker.push_relationship_to_global_registry
             (requests + sub_requests).each { |r| expect(r).to have_been_requested.once }
             expect(assignment.global_registry_id).to eq '51a014a4-4252-11e7-944f-129bd0521531'
@@ -202,13 +203,13 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
           let!(:assignment) { create(:assignment, person: person, organization: organization) }
 
           it 'should raise an exception' do
-            clear_sidekiq_jobs_and_locks
-
             expect do
               worker.push_relationship_to_global_registry
-            end.to raise_error(GlobalRegistry::Bindings::RelatedEntityMissingGlobalRegistryId).and(
-              change(GlobalRegistry::Bindings::Workers::PushEntityWorker.jobs, :size).by(1)
-            )
+            end.to raise_error(GlobalRegistry::Bindings::RelatedEntityMissingGlobalRegistryId).
+                and have_enqueued_job(GlobalRegistry::Bindings::Workers::PushEntityWorker).
+                with{ |*queued_params|
+                  expect(queued_params).to eq ["Namespaced::Person", 1]
+                }
           end
         end
 
@@ -218,29 +219,35 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
           let!(:assignment) { create(:assignment, person: person, organization: organization) }
 
           it 'should raise an exception' do
-            clear_sidekiq_jobs_and_locks
-
             expect do
               worker.push_relationship_to_global_registry
-            end.to raise_error(GlobalRegistry::Bindings::RelatedEntityMissingGlobalRegistryId).and(
-              change(GlobalRegistry::Bindings::Workers::PushEntityWorker.jobs, :size).by(1)
-            )
+            end.to raise_error(GlobalRegistry::Bindings::RelatedEntityMissingGlobalRegistryId).
+                and have_enqueued_job(GlobalRegistry::Bindings::Workers::PushEntityWorker).
+                    with{ |*queued_params|
+                      expect(queued_params).to eq ["Organization", 1]
+                    }
           end
         end
 
         context '\'person\' and \'organization\' missing global_registry_id' do
+          results = [
+              ["Namespaced::Person", 1],
+              ["Organization", 1]
+          ]
           let(:person) { build(:person) }
           let(:organization) { build(:organization) }
           let!(:assignment) { create(:assignment, person: person, organization: organization) }
 
           it 'should raise an exception' do
-            clear_sidekiq_jobs_and_locks
-
             expect do
               worker.push_relationship_to_global_registry
-            end.to raise_error(GlobalRegistry::Bindings::RelatedEntityMissingGlobalRegistryId).and(
-              change(GlobalRegistry::Bindings::Workers::PushEntityWorker.jobs, :size).by(2)
-            )
+            end.to raise_error(GlobalRegistry::Bindings::RelatedEntityMissingGlobalRegistryId).
+                and have_enqueued_job(GlobalRegistry::Bindings::Workers::PushEntityWorker).exactly(2).
+                with{ |*queued_params|
+                  expect(queued_params).to be_in(results)
+                  results.delete(queued_params)
+                }
+            expect(results).to be_empty
           end
         end
       end
@@ -251,6 +258,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
         worker = GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new
         worker.model = assignment
         worker.type = :assigned_by
+        worker
       }
 
       context 'as create' do
@@ -306,20 +314,25 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
           end
 
           it 'should raise an exception' do
-            clear_sidekiq_jobs_and_locks
-
             expect do
               worker.push_relationship_to_global_registry
-            end.to raise_error(GlobalRegistry::Bindings::RelatedEntityMissingGlobalRegistryId).and(
-              change(GlobalRegistry::Bindings::Workers::PushRelationshipWorker.jobs, :size).by(1)
-            )
+            end.to raise_error(GlobalRegistry::Bindings::RelatedEntityMissingGlobalRegistryId).
+                and have_enqueued_job(GlobalRegistry::Bindings::Workers::PushRelationshipWorker).
+                with{ |*queued_params|
+                  expect(queued_params).to eq ["Assignment", 1, "fancy_org_assignment"]
+                }
           end
         end
       end
     end
 
     describe Organization do
-      let(:worker) { GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new organization, :area }
+      let(:worker) {
+        worker = GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new
+        worker.model = organization
+        worker.type = :area
+        worker
+      }
       context 'as create' do
         let(:area) { create(:area, global_registry_id: '0fdb70c5-f51e-4628-a1fe-caa37fae53cd') }
         let(:organization) { create(:organization, gr_id: 'aebb4170-3f34-11e7-bba6-129bd0521531', area: area) }
@@ -368,7 +381,12 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
 
     describe Namespaced::Person do
       describe 'country_of_service' do
-        let(:worker) { GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new person, :country_of_service }
+        let(:worker) {
+          worker = GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new
+          worker.model = person
+          worker.type = :country_of_service
+          worker
+        }
         context 'as create' do
           let(:country) { create(:country, global_registry_id: '0f9089a3-2b93-4de8-9b81-92be0261f325') }
           let(:person) do
@@ -405,7 +423,12 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
       end
 
       describe 'country_of_residence' do
-        let(:worker) { GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new person, :country_of_residence }
+        let(:worker) {
+          worker = GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new
+          worker.model = person
+          worker.type = :country_of_residence
+          worker
+        }
         context 'as create' do
           let(:country) { create(:country, global_registry_id: '7cdaf399-d449-4008-8c6b-3c64a2b2730c') }
           let(:person) do
@@ -432,7 +455,12 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
     end
 
     describe Community do
-      let(:worker) { GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new community, :infobase_ministry }
+      let(:worker) {
+        worker = GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new
+        worker.model = community
+        worker.type = :infobase_ministry
+        worker
+      }
 
       context '\'ministry\' entity_type does not exist' do
         let(:community) do

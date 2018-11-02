@@ -5,6 +5,10 @@ require 'spec_helper'
 RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
   include WithQueueDefinition
 
+  before(:each) do
+    Rails.cache.clear
+  end
+
   around { |example| travel_to Time.utc(2001, 2, 3), &example }
   describe '#perform(model_class, id)' do
     context Namespaced::Person do
@@ -121,7 +125,11 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
     end
 
     describe Namespaced::Person do
-      let(:worker) { GlobalRegistry::Bindings::Workers::PushEntityWorker.new person }
+      let(:worker) {
+        worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new
+        worker.model = person
+        worker
+      }
       context 'as create' do
         let(:person) { create(:person) }
 
@@ -282,7 +290,11 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
     end
 
     describe Address do
-      let(:worker) { GlobalRegistry::Bindings::Workers::PushEntityWorker.new address }
+      let(:worker) {
+        worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new
+        worker.model = address
+        worker
+      }
       context 'as create' do
         context '\'address\' record does not belong to a person' do
           let(:address) { create(:address) }
@@ -463,7 +475,11 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
     end
 
     describe Community do
-      let(:worker) { GlobalRegistry::Bindings::Workers::PushEntityWorker.new community }
+      let(:worker) {
+        worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new
+        worker.model = community
+        worker
+      }
       let(:community) { create(:community, infobase_id: 234) }
       let!(:request) do
         stub_request(:post, 'https://backend.global-registry.org/entities')

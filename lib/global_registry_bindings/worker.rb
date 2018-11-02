@@ -24,9 +24,7 @@ module GlobalRegistry #:nodoc:
       end
 
       def self.perform_job(job_options, *args)
-        puts "============== job_options : #{job_options} ============="
         activejob_options = GlobalRegistry::Bindings.resolve_activejob_options(job_options)
-        puts "============== activejob_options : #{activejob_options} ============="
         worker = set(activejob_options)
         begin
           worker.perform_later(*args)
