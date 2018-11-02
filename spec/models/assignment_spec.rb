@@ -13,10 +13,10 @@ RSpec.describe Assignment do
 
       expect do
         assignment.save
-      end.to have_enqueued_job(GlobalRegistry::Bindings::Workers::PushRelationshipWorker).
-          with do |*queued_params|
-            expect(queued_params).to eq(["Assignment", 1, "fancy_org_assignment"])
-      end
+      end.to(have_enqueued_job(GlobalRegistry::Bindings::Workers::PushRelationshipWorker)
+        .with do |*queued_params|
+          expect(queued_params).to eq(['Assignment', 1, 'fancy_org_assignment'])
+        end)
     end
   end
 
@@ -29,10 +29,10 @@ RSpec.describe Assignment do
       expect do
         assignment.role = 'boss'
         assignment.save
-      end.to have_enqueued_job(GlobalRegistry::Bindings::Workers::PushRelationshipWorker).
-          with do |*queued_params|
-        expect(queued_params).to eq(["Assignment", 1, "fancy_org_assignment"])
-      end
+      end.to(have_enqueued_job(GlobalRegistry::Bindings::Workers::PushRelationshipWorker)
+          .with do |*queued_params|
+            expect(queued_params).to eq(['Assignment', 1, 'fancy_org_assignment'])
+          end)
     end
   end
 
@@ -44,10 +44,10 @@ RSpec.describe Assignment do
 
       expect do
         assignment.destroy
-      end.to have_enqueued_job(GlobalRegistry::Bindings::Workers::DeleteEntityWorker).
-          with do |*queued_params|
-        expect(queued_params).to eq(['abc'])
-      end
+      end.to(have_enqueued_job(GlobalRegistry::Bindings::Workers::DeleteEntityWorker)
+        .with do |*queued_params|
+          expect(queued_params).to eq(['abc'])
+        end)
     end
   end
 end

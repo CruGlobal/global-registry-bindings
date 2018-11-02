@@ -13,11 +13,11 @@ module GlobalRegistry #:nodoc:
 
         attr_accessor :type
 
-        # def initialize(model = nil, type = nil)
-        #   super model
-        #   self.type = type.to_sym if type
-        # end
-        #
+        def setup(model, type = nil)
+          super model
+          self.type = type.to_sym if type
+        end
+
         def perform(model_class, id, type)
           super model_class, id
           self.type = type.to_sym

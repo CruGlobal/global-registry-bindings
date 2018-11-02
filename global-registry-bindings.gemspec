@@ -23,10 +23,8 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'activerecord', '>= 4.0.0', '< 6'
   s.add_runtime_dependency 'global_registry', '~> 1.4', '< 2'
-  s.add_runtime_dependency 'sidekiq', '>= 4.0.0', '< 6'
-  s.add_runtime_dependency 'sidekiq-unique-jobs', '>= 5.0.0', '< 6'
-  s.add_runtime_dependency 'activesupport', '>= 4.0.0'
-  s.add_runtime_dependency 'activejob', '>= 4.0.0'
+  s.add_runtime_dependency 'activesupport', '>= 4.0.0', '< 6'
+  s.add_runtime_dependency 'activejob', '>= 4.0.0', '< 6'
 
   s.add_development_dependency 'appraisal'
   s.add_development_dependency 'combustion', '~> 1.0'
@@ -39,7 +37,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rubocop', '0.48.1'
   s.add_development_dependency 'database_cleaner'
   s.add_development_dependency 'sqlite3'
-  s.add_development_dependency 'mock_redis', '~> 0.17.0'
   s.add_development_dependency 'simplecov', '~> 0.14.0'
   s.add_development_dependency 'pry'
   s.add_development_dependency 'pry-byebug'

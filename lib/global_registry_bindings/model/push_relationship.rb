@@ -30,8 +30,8 @@ module GlobalRegistry #:nodoc:
             next unless global_registry_relationship(type).condition?(:unless)
             job_options = global_registry_relationship(type).job
             ::GlobalRegistry::Bindings::Workers::DeleteEntityWorker.perform_job(
-                job_options,
-                global_registry_relationship(type).id_value
+              job_options,
+              global_registry_relationship(type).id_value
             )
           end
         end
@@ -42,7 +42,8 @@ module GlobalRegistry #:nodoc:
           return if global_registry_relationship(type).condition?(:if)
           return unless global_registry_relationship(type).condition?(:unless)
           job_options = global_registry_relationship(type).job
-          ::GlobalRegistry::Bindings::Workers::PushRelationshipWorker.perform_job(job_options, self.class.name, id, type.to_s)
+          ::GlobalRegistry::Bindings::Workers::PushRelationshipWorker
+            .perform_job(job_options, self.class.name, id, type.to_s)
         end
 
         def global_registry_relationship_async_replace(type)
@@ -56,7 +57,8 @@ module GlobalRegistry #:nodoc:
             global_registry_relationship(type).id_column, nil
           )
           job_options = global_registry_relationship(type).job
-          ::GlobalRegistry::Bindings::Workers::PushRelationshipWorker.perform_job(job_options, self.class.name, id, type.to_s)
+          ::GlobalRegistry::Bindings::Workers::PushRelationshipWorker
+            .perform_job(job_options, self.class.name, id, type.to_s)
         end
 
         def global_registry_relationship_async_delete(type)

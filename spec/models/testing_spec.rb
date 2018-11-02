@@ -26,13 +26,13 @@ RSpec.describe GlobalRegistry::Bindings::Testing do
           person = build(:person)
           expect do
             person.save
-          end.to have_enqueued_job(GlobalRegistry::Bindings::Workers::PushEntityWorker).
-              with{ |*queued_params|
-                expect(queued_params).to eq ["Namespaced::Person", 1]
-          }.and have_enqueued_job(GlobalRegistry::Bindings::Workers::PullNamespacedPersonMdmIdWorker).
-              with{ |*queued_params|
-                expect(queued_params).to eq ["Namespaced::Person", 1]
-          }
+          end.to(have_enqueued_job(GlobalRegistry::Bindings::Workers::PushEntityWorker)
+          .with do |*queued_params|
+            expect(queued_params).to eq ['Namespaced::Person', 1]
+          end.and(have_enqueued_job(GlobalRegistry::Bindings::Workers::PullNamespacedPersonMdmIdWorker)
+              .with do |*queued_params|
+                expect(queued_params).to eq ['Namespaced::Person', 1]
+              end))
         end
         expect(GlobalRegistry::Bindings::Testing.enabled?).to be true
       end

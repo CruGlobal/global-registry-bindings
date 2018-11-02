@@ -11,7 +11,7 @@ class Assignment < ApplicationRecord
                            related: :organization,
                            include_all_columns: true,
                            exclude: %i[assigned_by_id assigned_by_gr_rel_id],
-                           job: {queue: :default}
+                           job: { queue: :default }
 
   global_registry_bindings binding: :relationship,
                            type: :assigned_by,
@@ -19,5 +19,5 @@ class Assignment < ApplicationRecord
                            primary_binding: :fancy_org_assignment,
                            primary_name: :assigned_by,
                            related: :assigned_by,
-                           job: {queue: :default}
+                           job: { queue: :default }
 end

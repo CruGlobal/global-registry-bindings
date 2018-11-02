@@ -2,9 +2,7 @@
 
 require 'spec_helper'
 
-
 RSpec.describe 'GlobalRegistry::Bindings' do
-
   describe 'ActiveRecord::Base extensions' do
     it 'should respond to global_registry_bindings' do
       expect(::ActiveRecord::Base).to respond_to :global_registry_bindings

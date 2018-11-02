@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe GlobalRegistry::Bindings::Workers::DeleteEntityWorker, :type => :job do
+RSpec.describe GlobalRegistry::Bindings::Workers::DeleteEntityWorker, type: :job do
   context 'entity 22527d88-3cba-11e7-b876-129bd0521531' do
     context 'valid global_registry_id' do
       let!(:request) do
@@ -36,14 +36,13 @@ RSpec.describe GlobalRegistry::Bindings::Workers::DeleteEntityWorker, :type => :
       include WithQueueDefinition
 
       it 'should contain global custom queue' do
-        expect(GlobalRegistry::Bindings.activejob_options).to be_a(Hash).and eq({ queue: :default })
-        expect{
+        expect(GlobalRegistry::Bindings.activejob_options).to be_a(Hash).and eq(queue: :default)
+        expect do
           GlobalRegistry::Bindings::Workers::DeleteEntityWorker.perform_job({}, 'abcd')
-        }.to have_enqueued_job.with{ |*queued_params|
+        end.to(have_enqueued_job.with do |*queued_params|
           expect(queued_params).to eq(['abcd'])
-        }
+        end)
       end
     end
   end
-
 end

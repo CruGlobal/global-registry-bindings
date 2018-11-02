@@ -43,7 +43,7 @@ module GlobalRegistry #:nodoc:
           parent = global_registry_entity&.parent
           return if parent.blank? || global_registry_entity.parent_is_self?
           worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new
-          worker.model = parent
+          worker.setup(parent)
           parent_entity_type = worker.send :push_entity_type_to_global_registry
           parent_entity_type&.dig('id')
         end

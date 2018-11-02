@@ -17,8 +17,8 @@ module GlobalRegistry #:nodoc:
           return if global_registry_entity.condition?(:if)
           return unless global_registry_entity.condition?(:unless)
           ::GlobalRegistry::Bindings::Workers::DeleteEntityWorker.perform_job(
-              global_registry_entity.job,
-              global_registry_entity.id_value
+            global_registry_entity.job,
+            global_registry_entity.id_value
           )
         end
       end

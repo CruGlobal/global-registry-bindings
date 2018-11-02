@@ -39,11 +39,11 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
 
   describe '#push_entity_to_global_registry' do
     describe Organization do
-      let(:worker) {
+      let(:worker) do
         worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new
-        worker.model = organization
+        worker.setup(organization)
         worker
-      }
+      end
       context 'and unknown \'fancy_org\' entity_type' do
         let!(:requests) do
           [stub_request(:get, 'https://backend.global-registry.org/entity_types')
@@ -125,11 +125,11 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
     end
 
     describe Namespaced::Person do
-      let(:worker) {
+      let(:worker) do
         worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new
-        worker.model = person
+        worker.setup(person)
         worker
-      }
+      end
       context 'as create' do
         let(:person) { create(:person) }
 
@@ -290,11 +290,11 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
     end
 
     describe Address do
-      let(:worker) {
+      let(:worker) do
         worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new
-        worker.model = address
+        worker.setup(address)
         worker
-      }
+      end
       context 'as create' do
         context '\'address\' record does not belong to a person' do
           let(:address) { create(:address) }
@@ -475,11 +475,11 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
     end
 
     describe Community do
-      let(:worker) {
+      let(:worker) do
         worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new
-        worker.model = community
+        worker.setup(community)
         worker
-      }
+      end
       let(:community) { create(:community, infobase_id: 234) }
       let!(:request) do
         stub_request(:post, 'https://backend.global-registry.org/entities')

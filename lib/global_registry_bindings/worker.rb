@@ -8,15 +8,13 @@ require 'active_job'
 module GlobalRegistry #:nodoc:
   module Bindings #:nodoc:
     class Worker < ActiveJob::Base
-
       attr_accessor :model
       delegate :global_registry_entity, to: :model
       delegate :global_registry_relationship, to: :model
 
-      # def initialize(model = nil)
-      #   super
-      #   self.model = model
-      # end
+      def setup(model)
+        self.model = model
+      end
 
       def perform(model_class, id)
         klass = model_class.is_a?(String) ? model_class.constantize : model_class

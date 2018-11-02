@@ -52,11 +52,11 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PullMdmIdWorker do
 
   describe '#pull_mdm_id_from_global_registry' do
     context Namespaced::Person do
-      let(:worker) { GlobalRegistry::Bindings::Workers::PullNamespacedPersonMdmIdWorker.new }
-      before do
-        worker.model = person
+      let(:worker) do
+        worker = GlobalRegistry::Bindings::Workers::PullNamespacedPersonMdmIdWorker.new
+        worker.setup(person)
+        worker
       end
-
       context 'model missing global_registry_id' do
         let(:person) { create(:person) }
 

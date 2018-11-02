@@ -19,8 +19,6 @@ GlobalRegistry.configure do |config|
   config.base_url = ENV['GLOBAL_REGISTRY_URL'] || 'https://backend.global-registry.org'
 end
 ```
-Make sure sidekiq is configured. See [Using Redis](https://github.com/mperham/sidekiq/wiki/Using-Redis) for information.
-
 ### Additional Configuration
 
 #### ActiveJob options
@@ -437,7 +435,7 @@ Example models can be found in the [specs](https://github.com/CruGlobal/global-r
 
 ## Testing
 
-Global Registry Bindings includes a testing helper to better help test your project when `gelobal-registry-bindings`
+Global Registry Bindings includes a testing helper to better help test your project when `global-registry-bindings`
 are included. Since Global Registry Bindings uses sidekiq, it's possible to have these workers executed in your
 projects tests (ex: running sidekiq/testing in [inline!](https://github.com/mperham/sidekiq/wiki/Testing) mode). You
 can use the following test modes:
