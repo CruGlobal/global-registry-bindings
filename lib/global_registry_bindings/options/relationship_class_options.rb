@@ -25,7 +25,8 @@ module GlobalRegistry #:nodoc:
                  :exclude,
                  :fields,
                  :if,
-                 :unless, to: :@options
+                 :unless,
+                 :job, to: :@options
 
         def initialize(type, model_class)
           @model_class = model_class

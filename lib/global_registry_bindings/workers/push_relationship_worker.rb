@@ -10,15 +10,14 @@ module GlobalRegistry #:nodoc:
       class PushRelationshipWorker < GlobalRegistry::Bindings::Worker
         include GlobalRegistry::Bindings::Entity::RelationshipTypeMethods
         include GlobalRegistry::Bindings::Entity::PushRelationshipMethods
-        sidekiq_options unique: :until_and_while_executing
 
         attr_accessor :type
 
-        def initialize(model = nil, type = nil)
-          super model
-          self.type = type.to_sym if type
-        end
-
+        # def initialize(model = nil, type = nil)
+        #   super model
+        #   self.type = type.to_sym if type
+        # end
+        #
         def perform(model_class, id, type)
           super model_class, id
           self.type = type.to_sym

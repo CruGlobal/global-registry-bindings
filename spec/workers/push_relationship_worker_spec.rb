@@ -3,6 +3,11 @@
 require 'spec_helper'
 
 RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
+  before do
+    GlobalRegistry::Bindings.configure do |config|
+      config.queues = 'default-queue'
+    end
+  end
   around { |example| travel_to Time.utc(2001, 2, 3), &example }
   describe '#perform(model_class, id, type)' do
     context Assignment do
@@ -34,7 +39,12 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
 
   describe '#push_relationship_to_global_registry' do
     describe Assignment do
-      let(:worker) { GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new assignment, :fancy_org_assignment }
+      let(:worker) {
+        worker = GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new
+        worker.model = assignment
+        worker.type = :fancy_org_assignment
+        worker
+      }
       context 'as create' do
         let(:person) { create(:person, global_registry_id: '22527d88-3cba-11e7-b876-129bd0521531') }
         let(:organization) { create(:organization, gr_id: 'aebb4170-3f34-11e7-bba6-129bd0521531') }
@@ -80,6 +90,8 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
           end
 
           it 'should create \'assignment\' relationship_type and push relationship' do
+            puts "======================= worker #{worker.inspect} ======================================="
+            puts "======================= worker.relationship #{worker.relationship.inspect} ======================================="
             worker.push_relationship_to_global_registry
             (requests + sub_requests).each { |r| expect(r).to have_been_requested.once }
             expect(assignment.global_registry_id).to eq '51a014a4-4252-11e7-944f-129bd0521531'
@@ -235,7 +247,11 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushRelationshipWorker do
     end
 
     describe Assignment do
-      let(:worker) { GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new assignment, :assigned_by }
+      let(:worker) {
+        worker = GlobalRegistry::Bindings::Workers::PushRelationshipWorker.new
+        worker.model = assignment
+        worker.type = :assigned_by
+      }
 
       context 'as create' do
         let(:person) { create(:person, global_registry_id: '22527d88-3cba-11e7-b876-129bd0521531') }

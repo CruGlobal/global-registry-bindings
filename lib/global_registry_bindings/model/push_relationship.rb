@@ -28,8 +28,10 @@ module GlobalRegistry #:nodoc:
             next unless global_registry_relationship(type).id_value?
             next if global_registry_relationship(type).condition?(:if)
             next unless global_registry_relationship(type).condition?(:unless)
-            ::GlobalRegistry::Bindings::Workers::DeleteEntityWorker.perform_async(
-              global_registry_relationship(type).id_value
+            job_options = global_registry_relationship(type).job
+            ::GlobalRegistry::Bindings::Workers::DeleteEntityWorker.perform_job(
+                job_options,
+                global_registry_relationship(type).id_value
             )
           end
         end
@@ -39,7 +41,8 @@ module GlobalRegistry #:nodoc:
         def global_registry_relationship_async_push(type)
           return if global_registry_relationship(type).condition?(:if)
           return unless global_registry_relationship(type).condition?(:unless)
-          ::GlobalRegistry::Bindings::Workers::PushRelationshipWorker.perform_async(self.class, id, type)
+          job_options = global_registry_relationship(type).job
+          ::GlobalRegistry::Bindings::Workers::PushRelationshipWorker.perform_job(job_options, self.class.name, id, type.to_s)
         end
 
         def global_registry_relationship_async_replace(type)
@@ -52,7 +55,8 @@ module GlobalRegistry #:nodoc:
           update_column( # rubocop:disable Rails/SkipsModelValidations
             global_registry_relationship(type).id_column, nil
           )
-          ::GlobalRegistry::Bindings::Workers::PushRelationshipWorker.perform_async(self.class, id, type)
+          job_options = global_registry_relationship(type).job
+          ::GlobalRegistry::Bindings::Workers::PushRelationshipWorker.perform_job(job_options, self.class.name, id, type.to_s)
         end
 
         def global_registry_relationship_async_delete(type)

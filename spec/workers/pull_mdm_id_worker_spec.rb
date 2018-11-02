@@ -3,6 +3,8 @@
 require 'spec_helper'
 
 RSpec.describe GlobalRegistry::Bindings::Workers::PullMdmIdWorker do
+  include WithQueueDefinition
+
   context Namespaced::Person do
     let(:person) { create(:person) }
 
@@ -120,14 +122,8 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PullMdmIdWorker do
       expect(MdmTest::Klass.global_registry_entity).to(
         receive(:mdm_worker_class_name).and_return('PullMdmTestKlassMdmIdWorker')
       )
-      expect(MdmTest::Klass.global_registry_entity).to(
-        receive(:mdm_timeout).and_return(33.minutes)
-      )
-
       GlobalRegistry::Bindings::Workers.mdm_worker_class(MdmTest::Klass)
       expect(GlobalRegistry::Bindings::Workers.const_defined?(:PullMdmTestKlassMdmIdWorker)).to be true
-      expect(GlobalRegistry::Bindings::Workers::PullMdmTestKlassMdmIdWorker.get_sidekiq_options)
-        .to include('unique' => :until_timeout, 'unique_expiration' => 33.minutes)
     end
   end
 end

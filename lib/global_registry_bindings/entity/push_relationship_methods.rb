@@ -14,6 +14,7 @@ module GlobalRegistry #:nodoc:
         end
 
         def push_relationship_to_global_registry
+          puts "***************** valid_update? #{valid_update?} ********************"
           return unless valid_update?
           ensure_related_entities_have_global_registry_ids!
           push_global_registry_relationship_type

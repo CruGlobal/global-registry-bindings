@@ -49,34 +49,34 @@ module GlobalRegistry
       end
     end
 
-    def self.sqs_error_action
-      @sqs_error_action ||= :log
+    def self.runtime_error_action
+      @runtime_error_action ||= :log
     end
 
-    def self.sqs_error_action=(action)
+    def self.runtime_error_action=(action)
       action = :log unless %i[ignore log raise].include? action
-      @sqs_error_action = action
+      @runtime_error_action = action
     end
 
     def self.resolve_activejob_options(options_spec)
-      opts = @activejob_options.merge(options_spec || {})
+      opts = activejob_options.merge(options_spec || {})
       opts[:queue] = resolve_queue_name(opts[:queue])
       opts.delete_if {|_, v| v.nil?}
     end
 
     def self.resolve_queue_name(queue_spec)
       if queue_spec.nil? || queue_spec.empty?
-        if @queues.empty? || @queues[:default].nil?
+        if queues.empty? || queues[:default].nil?
           raise ArgumentError, 'Cannot determine default queue name'
         else
           queue_spec = :default
         end
       end
-      if queue_spec.is_a?(Symbol) && @queues.any?
-        if @queues[queue_spec].nil?
+      if queue_spec.is_a?(Symbol) && queues.any?
+        if queues[queue_spec].nil?
           raise ArgumentError, "Cannot resolve queue name from #{queue_spec}"
         else
-          @queues[queue_spec]
+          queues[queue_spec]
         end
       else
         queue_spec

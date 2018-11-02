@@ -5,6 +5,7 @@ require 'bundler/setup'
 require 'pry'
 
 require 'active_record'
+require 'active_job'
 ActiveRecord::Migration.verbose = false
 
 require 'combustion'
@@ -13,6 +14,7 @@ Combustion.initialize! :active_record
 Combustion::Database.setup
 
 require 'rspec/rails'
+require 'rspec/rails/matchers/active_job'
 require 'webmock/rspec'
 require 'factory_girl'
 require 'simplecov'
@@ -20,16 +22,11 @@ require 'simplecov'
 require 'global_registry_bindings'
 require 'global_registry_bindings/testing'
 
-require 'sidekiq/testing'
-require 'sidekiq_unique_jobs/testing'
-Sidekiq::Testing.fake!
-
-require 'mock_redis'
-MOCK_REDIS = MockRedis.new
+ActiveJob::Base.queue_adapter = :test
 
 ActionController::Base.cache_store = :memory_store
 
-require 'helpers/sidekiq_helpers'
+require 'helpers/activejob_helpers'
 
 RSpec.configure do |config|
   config.use_transactional_fixtures = true
@@ -38,20 +35,11 @@ RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
   config.include ActiveSupport::Testing::TimeHelpers
   config.include FactoryGirl::Syntax::Methods
-  config.include SidekiqHelpers
+  # config.include SidekiqHelpers
+  # config.include WithQueueDefinition
+  config.include RSpec::Rails::Matchers::ActiveJob
 
   config.before(:suite) do
     FactoryGirl.find_definitions
-  end
-
-  config.before(:each) do
-    SidekiqUniqueJobs.configure do |c|
-      c.redis_test_mode = :mock
-    end
-    allow(Sidekiq).to receive(:redis).and_yield(MOCK_REDIS)
-
-    clear_sidekiq_jobs_and_locks
-
-    Rails.cache.clear
   end
 end

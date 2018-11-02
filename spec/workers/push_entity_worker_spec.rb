@@ -3,6 +3,8 @@
 require 'spec_helper'
 
 RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
+  include WithQueueDefinition
+
   around { |example| travel_to Time.utc(2001, 2, 3), &example }
   describe '#perform(model_class, id)' do
     context Namespaced::Person do
@@ -33,7 +35,11 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
 
   describe '#push_entity_to_global_registry' do
     describe Organization do
-      let(:worker) { GlobalRegistry::Bindings::Workers::PushEntityWorker.new organization }
+      let(:worker) {
+        worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new
+        worker.model = organization
+        worker
+      }
       context 'and unknown \'fancy_org\' entity_type' do
         let!(:requests) do
           [stub_request(:get, 'https://backend.global-registry.org/entity_types')

@@ -13,6 +13,7 @@ module GlobalRegistry #:nodoc:
                  :ensure_type?,
                  :rename_entity_type?,
                  :include_all_columns?,
+                 :job,
                  to: :@class_options
 
         def initialize(type, model)

@@ -11,9 +11,12 @@ module GlobalRegistry #:nodoc:
         # rubocop:disable Metrics/MethodLength
         # rubocop:disable Metrics/AbcSize
         def push_global_registry_relationship_type
+          puts "***************** global_registry_relationship(type).ensure_type? -- #{global_registry_relationship(type).ensure_type?} ********************"
           return unless global_registry_relationship(type).ensure_type?
           primary_entity_type_id = primary_associated_entity_type_id
           related_entity_type_id = related_associated_entity_type_id
+          puts "================= primary_entity_type_id -- #{primary_entity_type_id} ----"
+          puts "================= related_entity_type_id -- #{related_entity_type_id} ----"
 
           relationship_type = Rails.cache.fetch(relationship_type_cache_key, expires_in: 1.hour) do
             rel = GlobalRegistry::RelationshipType.get(
@@ -42,11 +45,13 @@ module GlobalRegistry #:nodoc:
         # rubocop:enable Metrics/AbcSize
 
         def primary_associated_entity_type_id
-          primary_worker =
-            GlobalRegistry::Bindings::Workers::PushEntityWorker.new global_registry_relationship(type).primary
+          primary_worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new
+          primary_worker.model = global_registry_relationship(type).primary
           entity_type = primary_worker.send(:push_entity_type_to_global_registry)
+          puts "============ entity_type -- #{entity_type} --------"
           unless entity_type
             primary_type = global_registry_relationship(type).primary_type
+            puts "============ primary_type -- #{primary_type} --------"
             entity_type = GlobalRegistry::EntityType.get(
               'filters[name]' => primary_type
             )['entity_types']&.first
@@ -55,8 +60,10 @@ module GlobalRegistry #:nodoc:
         end
 
         def related_associated_entity_type_id
+          puts "============ global_registry_relationship(type).related -- #{global_registry_relationship(type).related} --------"
           unless global_registry_relationship(type).related
             related_type = global_registry_relationship(type).related_type
+            puts "============ related_type -- #{related_type} --------"
             # remote foreign_key doesn't have a model class in rails. Short-circuit and fetch entity_type by name
             entity_type = GlobalRegistry::EntityType.get(
               'filters[name]' => related_type
@@ -68,8 +75,8 @@ module GlobalRegistry #:nodoc:
             end
             return entity_type&.dig('id')
           end
-          related_worker =
-            GlobalRegistry::Bindings::Workers::PushEntityWorker.new global_registry_relationship(type).related
+          related_worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new
+          related_worker.model = global_registry_relationship(type).related
           related_worker.send(:push_entity_type_to_global_registry)&.dig('id')
         end
 

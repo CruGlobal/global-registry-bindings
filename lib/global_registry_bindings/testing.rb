@@ -44,11 +44,11 @@ module GlobalRegistry #:nodoc:
 
     class Worker
       class << self
-        alias perform_async_real perform_async
+        alias perform_job_real perform_job
 
-        def perform_async(*args)
+        def perform_job(*args)
           return if GlobalRegistry::Bindings::Testing.skip?
-          perform_async_real(*args)
+          perform_job_real(*args)
         end
       end
     end

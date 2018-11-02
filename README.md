@@ -53,12 +53,12 @@ The configuration option `queues` may be:
  to resolve the value to a queue name.
  - a String - a default queue name.
 
-#### SQS Error Action
-This option defines what `global-registry-bindings` does when SQS error is encountered while adding a message to 
+#### Runtime Error Action
+This option defines what `global-registry-bindings` does when Runtime error is encountered while adding a message to 
 the queue. Valid actions are `:ignore`, `:log` and `:raise`.
 ```ruby
 GlobalRegistry::Bindings.configure do |config|
-  config.sqs_error_action = :ignore # Silently ignore SQS issues
+  config.runtime_error_action = :ignore # Silently ignore runtime errors during seinding messages
 end
 ```
 The default behaviour is to `:log` the error to `Rollbar` if present.

@@ -3,15 +3,14 @@
 require 'spec_helper'
 
 RSpec.describe 'GlobalRegistry::Bindings' do
-
   describe 'configure' do
 
     it 'should have default activejob_options' do
       expect(GlobalRegistry::Bindings.activejob_options).to be_a(Hash).and be_empty
     end
 
-    it 'should have default sqs_error_action' do
-      expect(GlobalRegistry::Bindings.sqs_error_action).to be :log
+    it 'should have default runtime_error_action' do
+      expect(GlobalRegistry::Bindings.runtime_error_action).to be :log
     end
 
     context 'custom GlobalRegistry::Bindings config' do
@@ -19,37 +18,37 @@ RSpec.describe 'GlobalRegistry::Bindings' do
         GlobalRegistry::Bindings.configure do |config|
           config.activejob_options = {}
           config.queues = {}
-          config.sqs_error_action = nil
+          config.runtime_error_action = nil
         end
       end
 
-      context 'sqs_error_action' do
+      context 'runtime_error_action' do
         it 'schould contain :ignore' do
           GlobalRegistry::Bindings.configure do |config|
-            config.sqs_error_action = :ignore
+            config.runtime_error_action = :ignore
           end
-          expect(GlobalRegistry::Bindings.sqs_error_action).to eq(:ignore)
+          expect(GlobalRegistry::Bindings.runtime_error_action).to eq(:ignore)
         end
 
         it 'schould contain :raise' do
           GlobalRegistry::Bindings.configure do |config|
-            config.sqs_error_action = :raise
+            config.runtime_error_action = :raise
           end
-          expect(GlobalRegistry::Bindings.sqs_error_action).to eq(:raise)
+          expect(GlobalRegistry::Bindings.runtime_error_action).to eq(:raise)
         end
 
         it 'schould contain :log' do
           GlobalRegistry::Bindings.configure do |config|
-            config.sqs_error_action = :log
+            config.runtime_error_action = :log
           end
-          expect(GlobalRegistry::Bindings.sqs_error_action).to eq(:log)
+          expect(GlobalRegistry::Bindings.runtime_error_action).to eq(:log)
         end
 
         it 'schould retreat to :log when the value is unknown' do
           GlobalRegistry::Bindings.configure do |config|
-            config.sqs_error_action = :something
+            config.runtime_error_action = :something
           end
-          expect(GlobalRegistry::Bindings.sqs_error_action).to eq(:log)
+          expect(GlobalRegistry::Bindings.runtime_error_action).to eq(:log)
         end
       end
 

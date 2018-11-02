@@ -3,20 +3,22 @@
 require 'spec_helper'
 
 RSpec.describe GlobalRegistry::Bindings::Testing do
+  include WithQueueDefinition
+
   describe 'skip_workers! &block' do
     around(:example) do |example|
       GlobalRegistry::Bindings::Testing.skip_workers!(&example)
     end
 
-    it 'should not enqueue sidekiq jobs' do
+    it 'should not enqueue ActiveJob jobs' do
       person = build(:person)
       expect do
         person.save
-      end.to change(Sidekiq::Worker.jobs, :size).by(0)
+      end.to have_enqueued_job.exactly(0)
     end
 
     context 'disable_test_helper! &block' do
-      it 'should enqueue sidekiq jobs' do
+      it 'should enqueue ActiveJob jobs' do
         expect(GlobalRegistry::Bindings::Testing.enabled?).to be true
         GlobalRegistry::Bindings::Testing.disable_test_helper! do
           expect(GlobalRegistry::Bindings::Testing.enabled?).to be false
@@ -24,13 +26,13 @@ RSpec.describe GlobalRegistry::Bindings::Testing do
           person = build(:person)
           expect do
             person.save
-          end.to change(GlobalRegistry::Bindings::Workers::PushEntityWorker.jobs, :size).by(1).and(
-            change(GlobalRegistry::Bindings::Workers::PullNamespacedPersonMdmIdWorker.jobs, :size).by(1).and(
-              change(GlobalRegistry::Bindings::Workers::PushRelationshipWorker.jobs, :size).by(0).and(
-                change(GlobalRegistry::Bindings::Workers::DeleteEntityWorker.jobs, :size).by(0)
-              )
-            )
-          )
+          end.to have_enqueued_job(GlobalRegistry::Bindings::Workers::PushEntityWorker).
+              with{ |*queued_params|
+                expect(queued_params).to eq ["Namespaced::Person", 1]
+          }.and have_enqueued_job(GlobalRegistry::Bindings::Workers::PullNamespacedPersonMdmIdWorker).
+              with{ |*queued_params|
+                expect(queued_params).to eq ["Namespaced::Person", 1]
+          }
         end
         expect(GlobalRegistry::Bindings::Testing.enabled?).to be true
       end
@@ -45,11 +47,11 @@ RSpec.describe GlobalRegistry::Bindings::Testing do
       GlobalRegistry::Bindings::Testing.disable_test_helper!
     end
 
-    it 'should not enqueue sidekiq jobs' do
+    it 'should not enqueue ActiveJob jobs' do
       person = build(:person)
       expect do
         person.save
-      end.to change(Sidekiq::Worker.jobs, :size).by(0)
+      end.to have_enqueued_job.exactly(0)
     end
   end
 end
