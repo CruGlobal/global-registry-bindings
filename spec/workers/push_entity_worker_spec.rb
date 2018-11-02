@@ -3,6 +3,12 @@
 require 'spec_helper'
 
 RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
+  include WithQueueDefinition
+
+  before(:each) do
+    Rails.cache.clear
+  end
+
   around { |example| travel_to Time.utc(2001, 2, 3), &example }
   describe '#perform(model_class, id)' do
     context Namespaced::Person do
@@ -33,7 +39,11 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
 
   describe '#push_entity_to_global_registry' do
     describe Organization do
-      let(:worker) { GlobalRegistry::Bindings::Workers::PushEntityWorker.new organization }
+      let(:worker) do
+        worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new
+        worker.setup(organization)
+        worker
+      end
       context 'and unknown \'fancy_org\' entity_type' do
         let!(:requests) do
           [stub_request(:get, 'https://backend.global-registry.org/entity_types')
@@ -115,7 +125,11 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
     end
 
     describe Namespaced::Person do
-      let(:worker) { GlobalRegistry::Bindings::Workers::PushEntityWorker.new person }
+      let(:worker) do
+        worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new
+        worker.setup(person)
+        worker
+      end
       context 'as create' do
         let(:person) { create(:person) }
 
@@ -276,7 +290,11 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
     end
 
     describe Address do
-      let(:worker) { GlobalRegistry::Bindings::Workers::PushEntityWorker.new address }
+      let(:worker) do
+        worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new
+        worker.setup(address)
+        worker
+      end
       context 'as create' do
         context '\'address\' record does not belong to a person' do
           let(:address) { create(:address) }
@@ -457,7 +475,11 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
     end
 
     describe Community do
-      let(:worker) { GlobalRegistry::Bindings::Workers::PushEntityWorker.new community }
+      let(:worker) do
+        worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new
+        worker.setup(community)
+        worker
+      end
       let(:community) { create(:community, infobase_id: 234) }
       let!(:request) do
         stub_request(:post, 'https://backend.global-registry.org/entities')

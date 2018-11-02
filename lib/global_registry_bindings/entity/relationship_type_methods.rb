@@ -42,8 +42,8 @@ module GlobalRegistry #:nodoc:
         # rubocop:enable Metrics/AbcSize
 
         def primary_associated_entity_type_id
-          primary_worker =
-            GlobalRegistry::Bindings::Workers::PushEntityWorker.new global_registry_relationship(type).primary
+          primary_worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new
+          primary_worker.setup(global_registry_relationship(type).primary)
           entity_type = primary_worker.send(:push_entity_type_to_global_registry)
           unless entity_type
             primary_type = global_registry_relationship(type).primary_type
@@ -68,8 +68,8 @@ module GlobalRegistry #:nodoc:
             end
             return entity_type&.dig('id')
           end
-          related_worker =
-            GlobalRegistry::Bindings::Workers::PushEntityWorker.new global_registry_relationship(type).related
+          related_worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new
+          related_worker.setup(global_registry_relationship(type).related)
           related_worker.send(:push_entity_type_to_global_registry)&.dig('id')
         end
 

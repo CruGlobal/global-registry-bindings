@@ -3,19 +3,20 @@
 require 'spec_helper'
 
 RSpec.describe Assignment do
+  include WithQueueDefinition
+
   describe 'after_commit on: :create' do
     it 'should enqueue sidekiq job' do
       person = create(:person)
       organization = create(:organization)
       assignment = build(:assignment, person: person, organization: organization)
-      clear_sidekiq_jobs_and_locks
+
       expect do
         assignment.save
-      end.to change(GlobalRegistry::Bindings::Workers::PushEntityWorker.jobs, :size).by(0).and(
-        change(GlobalRegistry::Bindings::Workers::PushRelationshipWorker.jobs, :size).by(1).and(
-          change(GlobalRegistry::Bindings::Workers::DeleteEntityWorker.jobs, :size).by(0)
-        )
-      )
+      end.to(have_enqueued_job(GlobalRegistry::Bindings::Workers::PushRelationshipWorker)
+        .with do |*queued_params|
+          expect(queued_params).to eq(['Assignment', 1, 'fancy_org_assignment'])
+        end)
     end
   end
 
@@ -24,15 +25,14 @@ RSpec.describe Assignment do
       person = create(:person)
       organization = create(:organization)
       assignment = create(:assignment, person: person, organization: organization)
-      clear_sidekiq_jobs_and_locks
+
       expect do
         assignment.role = 'boss'
         assignment.save
-      end.to change(GlobalRegistry::Bindings::Workers::PushEntityWorker.jobs, :size).by(0).and(
-        change(GlobalRegistry::Bindings::Workers::PushRelationshipWorker.jobs, :size).by(1).and(
-          change(GlobalRegistry::Bindings::Workers::DeleteEntityWorker.jobs, :size).by(0)
-        )
-      )
+      end.to(have_enqueued_job(GlobalRegistry::Bindings::Workers::PushRelationshipWorker)
+          .with do |*queued_params|
+            expect(queued_params).to eq(['Assignment', 1, 'fancy_org_assignment'])
+          end)
     end
   end
 
@@ -41,14 +41,13 @@ RSpec.describe Assignment do
       person = create(:person)
       organization = create(:organization)
       assignment = create(:assignment, person: person, organization: organization, global_registry_id: 'abc')
-      clear_sidekiq_jobs_and_locks
+
       expect do
         assignment.destroy
-      end.to change(GlobalRegistry::Bindings::Workers::PushEntityWorker.jobs, :size).by(0).and(
-        change(GlobalRegistry::Bindings::Workers::PushRelationshipWorker.jobs, :size).by(0).and(
-          change(GlobalRegistry::Bindings::Workers::DeleteEntityWorker.jobs, :size).by(1)
-        )
-      )
+      end.to(have_enqueued_job(GlobalRegistry::Bindings::Workers::DeleteEntityWorker)
+        .with do |*queued_params|
+          expect(queued_params).to eq(['abc'])
+        end)
     end
   end
 end

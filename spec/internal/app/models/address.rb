@@ -6,7 +6,8 @@ class Address < ApplicationRecord
   global_registry_bindings parent: :person,
                            exclude: proc { |_type, _model| EXCLUDE_GR_FIELDS },
                            fields: :global_registry_extra_fields,
-                           include_all_columns: true
+                           include_all_columns: true,
+                           job: { queue: :default }
 
   alias_attribute :line1, :address1
   alias_attribute :postal_code, :zip

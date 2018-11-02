@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
-require 'sidekiq'
-require 'sidekiq-unique-jobs'
+# require 'sidekiq'
+# require 'sidekiq-unique-jobs'
+
+require 'active_job'
 
 module GlobalRegistry #:nodoc:
   module Bindings #:nodoc:
-    class Worker
-      include Sidekiq::Worker
-
+    class Worker < ActiveJob::Base
       attr_accessor :model
       delegate :global_registry_entity, to: :model
       delegate :global_registry_relationship, to: :model
 
-      def initialize(model = nil)
+      def setup(model)
         self.model = model
       end
 
@@ -21,22 +21,20 @@ module GlobalRegistry #:nodoc:
         self.model = klass.find(id)
       end
 
-      def self.perform_async(*args)
-        # Set global sidekiq_options
-        worker = set(GlobalRegistry::Bindings.sidekiq_options)
-        if worker == self # sidekiq 4.x
-          super(*args)
-        else # sidekiq 5.x
-          worker.perform_async(*args)
-        end
-      rescue Redis::BaseError => e
-        case GlobalRegistry::Bindings.redis_error_action
-        when :raise
-          raise
-        when :log
-          ::Rollbar.error(e) if Module.const_defined? :Rollbar
-        when :ignore
-          return
+      def self.perform_job(job_options, *args)
+        activejob_options = GlobalRegistry::Bindings.resolve_activejob_options(job_options)
+        worker = set(activejob_options)
+        begin
+          worker.perform_later(*args)
+        rescue RuntimeError => e
+          case GlobalRegistry::Bindings.runtime_error_action
+          when :raise
+            raise
+          when :log
+            ::Rollbar.error(e) if Module.const_defined? :Rollbar
+          when :ignore
+            return
+          end
         end
       end
     end

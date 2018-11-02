@@ -14,11 +14,11 @@ RSpec.describe 'Options' do
           Foo.class_eval { global_registry_bindings type: :foo, if: proc { |_model| true } }
         end
 
-        it 'should not enqueue sidekiq job' do
+        it 'should not enqueue ActiveJob job' do
           foo = Foo.new
           expect do
             foo.save
-          end.not_to change(GlobalRegistry::Bindings::Workers::PushEntityWorker.jobs, :size)
+          end.to have_enqueued_job(GlobalRegistry::Bindings::Workers::PushEntityWorker).exactly(0)
         end
       end
 
@@ -32,11 +32,11 @@ RSpec.describe 'Options' do
           end
         end
 
-        it 'should not enqueue sidekiq job' do
+        it 'should not enqueue ActiveJob job' do
           foo = Foo.new
           expect do
             foo.save
-          end.not_to change(GlobalRegistry::Bindings::Workers::PushEntityWorker.jobs, :size)
+          end.to have_enqueued_job(GlobalRegistry::Bindings::Workers::PushEntityWorker).exactly(0)
         end
       end
     end
@@ -47,11 +47,11 @@ RSpec.describe 'Options' do
           Foo.class_eval { global_registry_bindings type: :foo, unless: proc { |_model| false } }
         end
 
-        it 'should not enqueue sidekiq job' do
+        it 'should not enqueue ActiveJob job' do
           foo = Foo.new
           expect do
             foo.save
-          end.not_to change(GlobalRegistry::Bindings::Workers::PushEntityWorker.jobs, :size)
+          end.to have_enqueued_job(GlobalRegistry::Bindings::Workers::PushEntityWorker).exactly(0)
         end
       end
 
@@ -65,11 +65,11 @@ RSpec.describe 'Options' do
           end
         end
 
-        it 'should not enqueue sidekiq job' do
+        it 'should not enqueue ActiveJob job' do
           foo = Foo.new
           expect do
             foo.save
-          end.not_to change(GlobalRegistry::Bindings::Workers::PushEntityWorker.jobs, :size)
+          end.to have_enqueued_job(GlobalRegistry::Bindings::Workers::PushEntityWorker).exactly(0)
         end
       end
     end
@@ -82,11 +82,11 @@ RSpec.describe 'Options' do
           Foo.class_eval { global_registry_bindings binding: :relationship, type: :foo, if: proc { |_model| true } }
         end
 
-        it 'should not enqueue sidekiq job' do
+        it 'should not enqueue ActiveJob job' do
           foo = Foo.new
           expect do
             foo.save
-          end.not_to change(GlobalRegistry::Bindings::Workers::PushRelationshipWorker.jobs, :size)
+          end.to have_enqueued_job(GlobalRegistry::Bindings::Workers::PushEntityWorker).exactly(0)
         end
       end
 
@@ -100,11 +100,11 @@ RSpec.describe 'Options' do
           end
         end
 
-        it 'should not enqueue sidekiq job' do
+        it 'should not enqueue ActiveJob job' do
           foo = Foo.new
           expect do
             foo.save
-          end.not_to change(GlobalRegistry::Bindings::Workers::PushRelationshipWorker.jobs, :size)
+          end.to have_enqueued_job(GlobalRegistry::Bindings::Workers::PushRelationshipWorker).exactly(0)
         end
       end
     end
@@ -117,11 +117,11 @@ RSpec.describe 'Options' do
           end
         end
 
-        it 'should not enqueue sidekiq job' do
+        it 'should not enqueue ActiveJob job' do
           foo = Foo.new
           expect do
             foo.save
-          end.not_to change(GlobalRegistry::Bindings::Workers::PushRelationshipWorker.jobs, :size)
+          end.to have_enqueued_job(GlobalRegistry::Bindings::Workers::PushRelationshipWorker).exactly(0)
         end
       end
 
@@ -135,11 +135,11 @@ RSpec.describe 'Options' do
           end
         end
 
-        it 'should not enqueue sidekiq job' do
+        it 'should not enqueue ActiveJob job' do
           foo = Foo.new
           expect do
             foo.save
-          end.not_to change(GlobalRegistry::Bindings::Workers::PushRelationshipWorker.jobs, :size)
+          end.to have_enqueued_job(GlobalRegistry::Bindings::Workers::PushRelationshipWorker).exactly(0)
         end
       end
     end

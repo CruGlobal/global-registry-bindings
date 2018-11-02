@@ -11,6 +11,7 @@ module GlobalRegistry #:nodoc:
                  :mdm_worker_class_name,
                  :ensure_type?,
                  :include_all_columns?,
+                 :job,
                  to: :@class_options
 
         def initialize(model)
