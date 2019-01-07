@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'deepsort', '>= 0.4.1', '< 1.0.0'
 
   s.add_development_dependency 'appraisal'
-  s.add_development_dependency 'combustion', '~> 0.6.0'
+  s.add_development_dependency 'combustion', '~> 1.0'
   s.add_development_dependency 'rails', '>= 4.2.2'
   s.add_development_dependency 'bundler', '~>1.14'
   s.add_development_dependency 'rake', '~> 12'
