@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'deepsort'
+require 'digest/md5'
+
 module GlobalRegistry #:nodoc:
   module Bindings #:nodoc:
     module Entity #:nodoc:
@@ -71,6 +74,17 @@ module GlobalRegistry #:nodoc:
                 "#{model.class.name}(#{model.id}) has parent entity " \
                 "#{global_registry_entity.parent.class.name}(#{global_registry_entity.parent.id}) missing " \
                 'global_registry_id; will retry.'
+        end
+
+        def checksums_match?
+          # Checksum never matches if id_value is missing (never been pushed to Global Registry)
+          return false unless global_registry_entity.id_value?
+          # Checksum never matches if previous checksum is missing.
+          old_checksum = model.send(global_registry_entity.checksum_column)
+          return false if old_checksum.blank?
+          checksum = Digest::MD5.hexdigest(Marshal.dump(model.entity_attributes_to_push))
+          return true if old_checksum == checksum
+          false
         end
       end
     end

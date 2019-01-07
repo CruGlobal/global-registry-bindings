@@ -11,8 +11,7 @@ module GlobalRegistry #:nodoc:
         def defaults
           {
             binding: :entity,
-            id_column: :global_registry_id,
-            mdm_id_column: nil,
+            id_column: :global_registry_id, mdm_id_column: nil, checksum_column: nil,
             type: @model_class.name.demodulize.underscore.to_sym,
             push_on: %i[create update destroy],
             parent: nil,
@@ -66,6 +65,7 @@ module GlobalRegistry #:nodoc:
           return unless @options[:exclude].is_a? Array
           @options[:exclude] << @options[:id_column]
           @options[:exclude] << @options[:mdm_id_column] if @options[:mdm_id_column].present?
+          @options[:exclude] << @options[:checksum_column] if @options[:checksum_column].present?
 
           parent_id_column = association_foreign_key @options[:parent]
           @options[:exclude] << parent_id_column.to_sym if parent_id_column

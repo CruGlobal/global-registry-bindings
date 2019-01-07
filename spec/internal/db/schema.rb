@@ -6,6 +6,7 @@ ActiveRecord::Schema.define(version: 0) do
   create_table :people, force: true do |t|
     t.string :global_registry_id
     t.string :global_registry_mdm_id
+    t.string :global_registry_checksum
     t.string :first_name
     t.string :last_name
     t.string :guid

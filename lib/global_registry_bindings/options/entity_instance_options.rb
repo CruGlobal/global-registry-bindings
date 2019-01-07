@@ -6,6 +6,7 @@ module GlobalRegistry #:nodoc:
       class EntityInstanceOptions
         delegate :id_column,
                  :mdm_id_column,
+                 :checksum_column,
                  :mdm_timeout,
                  :push_on,
                  :mdm_worker_class_name,
