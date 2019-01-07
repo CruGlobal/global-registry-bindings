@@ -4,9 +4,12 @@ cache: bundler
 rvm:
   - 2.3.4
   - 2.4.1
+before_install:
+  - sqlite3 -version
 script:
   - bundle exec rspec
   - bundle exec rubocop -R
+  - cat spec/internal/log/test.log
 gemfile:
   - gemfiles/sidekiq_4.gemfile
   - gemfiles/sidekiq_5.gemfile

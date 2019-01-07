@@ -1,4 +1,4 @@
 test:
   adapter:  sqlite3
-  database: ":memory:"
-  verbosity: quiet
+  database: db/test.sqlite
+  timeout: 500
