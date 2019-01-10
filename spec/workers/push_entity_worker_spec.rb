@@ -160,7 +160,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
             worker.push_entity_to_global_registry
             requests.each { |r| expect(r).to have_been_requested.once }
             expect(person.global_registry_id).to eq '22527d88-3cba-11e7-b876-129bd0521531'
-            expect(person.global_registry_checksum).to eq '64b7a7f6daebe8d8e8234651ae4c51d4'
+            expect(person.global_registry_checksum).to eq '4c671c203b5dd19cdc1920ba5434cf64'
           end
         end
 
@@ -183,7 +183,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
             worker.push_entity_to_global_registry
             requests.each { |r| expect(r).to have_been_requested.once }
             expect(person.global_registry_id).to eq '22527d88-3cba-11e7-b876-129bd0521531'
-            expect(person.global_registry_checksum).to eq '64b7a7f6daebe8d8e8234651ae4c51d4'
+            expect(person.global_registry_checksum).to eq '4c671c203b5dd19cdc1920ba5434cf64'
           end
         end
 
@@ -210,7 +210,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
             worker.push_entity_to_global_registry
             requests.each { |r| expect(r).to have_been_requested.once }
             expect(person.global_registry_id).to eq '22527d88-3cba-11e7-b876-129bd0521531'
-            expect(person.global_registry_checksum).to eq '64b7a7f6daebe8d8e8234651ae4c51d4'
+            expect(person.global_registry_checksum).to eq '4c671c203b5dd19cdc1920ba5434cf64'
           end
         end
 
@@ -232,7 +232,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
             worker.push_entity_to_global_registry
             expect(request).to have_been_requested.once
             expect(person.global_registry_id).to eq '22527d88-3cba-11e7-b876-129bd0521531'
-            expect(person.global_registry_checksum).to eq '64b7a7f6daebe8d8e8234651ae4c51d4'
+            expect(person.global_registry_checksum).to eq '4c671c203b5dd19cdc1920ba5434cf64'
           end
         end
       end
@@ -287,7 +287,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
               worker.push_entity_to_global_registry
               requests.each { |r| expect(r).to have_been_requested.once }
               expect(person.global_registry_id).to eq '22527d88-3cba-11e7-b876-129bd0521531'
-              expect(person.global_registry_checksum).to eq '64b7a7f6daebe8d8e8234651ae4c51d4'
+              expect(person.global_registry_checksum).to eq '4c671c203b5dd19cdc1920ba5434cf64'
             end
           end
 
@@ -302,7 +302,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
                                                             key_guid: '98711710-acb5-4a41-ba51-e0fc56644b53'
                                                           } } } })
                         .to_return(body: file_fixture('post_entities_person.json'), status: 200)
-              person.global_registry_checksum = '64b7a7f6daebe8d8e8234651ae4c51d4'
+              person.global_registry_checksum = '4c671c203b5dd19cdc1920ba5434cf64'
               worker.push_entity_to_global_registry
               expect(request).not_to have_been_requested
             end

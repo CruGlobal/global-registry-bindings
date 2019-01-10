@@ -81,7 +81,8 @@ module GlobalRegistry #:nodoc:
         end
 
         def entity_checksum
-          @entity_checksum ||= Digest::MD5.hexdigest(Marshal.dump(model.entity_attributes_to_push))
+          @entity_checksum ||=
+            Digest::MD5.hexdigest(Marshal.dump(model.entity_attributes_to_push&.except(:client_updated_at)))
         end
 
         def update_checksum
