@@ -9,7 +9,7 @@ FactoryGirl.define do
     guid '98711710-acb5-4a41-ba51-e0fc56644b53'
     global_registry_id nil
     global_registry_mdm_id nil
-    global_registry_checksum nil
+    global_registry_fingerprint nil
     country_of_service_id nil
     country_of_service_gr_id nil
     country_of_residence_id nil

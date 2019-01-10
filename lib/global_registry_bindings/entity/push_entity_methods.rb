@@ -10,8 +10,8 @@ module GlobalRegistry #:nodoc:
         extend ActiveSupport::Concern
 
         def push_entity_to_global_registry # rubocop:disable Metrics/PerceivedComplexity
-          # Don't push entity if Checksum is defined and matches (nothing changed)
-          return if global_registry_entity.checksum_column.present? && checksums_match?
+          # Don't push entity if fingerprint is defined and matches (nothing changed)
+          return if global_registry_entity.fingerprint_column.present? && fingerprints_match?
           return if global_registry_entity.parent_required? && global_registry_entity.parent.blank?
           push_entity_type_to_global_registry
 
@@ -40,7 +40,7 @@ module GlobalRegistry #:nodoc:
                                                                                global_registry_entity.type)
           model.update_column(global_registry_entity.id_column, # rubocop:disable Rails/SkipsModelValidations
                               global_registry_entity.id_value)
-          update_checksum if global_registry_entity.checksum_column.present?
+          update_fingerprint if global_registry_entity.fingerprint_column.present?
         end
 
         # Create or Update a child entity (ex: :email_address is a child of :person)
@@ -59,7 +59,7 @@ module GlobalRegistry #:nodoc:
                                                                                global_registry_entity.parent_type)
           model.update_column(global_registry_entity.id_column, # rubocop:disable Rails/SkipsModelValidations
                               global_registry_entity.id_value)
-          update_checksum if global_registry_entity.checksum_column.present?
+          update_fingerprint if global_registry_entity.fingerprint_column.present?
         end
 
         def dig_global_registry_id_from_entity(entity, type, parent_type = nil)
@@ -80,23 +80,23 @@ module GlobalRegistry #:nodoc:
                 'global_registry_id; will retry.'
         end
 
-        def entity_checksum
-          @entity_checksum ||=
+        def entity_fingerprint
+          @entity_fingerprint ||=
             Digest::MD5.hexdigest(Marshal.dump(model.entity_attributes_to_push&.except(:client_updated_at)))
         end
 
-        def update_checksum
-          model.update_column(global_registry_entity.checksum_column, # rubocop:disable Rails/SkipsModelValidations
-                              entity_checksum)
+        def update_fingerprint
+          model.update_column(global_registry_entity.fingerprint_column, # rubocop:disable Rails/SkipsModelValidations
+                              entity_fingerprint)
         end
 
-        def checksums_match?
-          # Checksum never matches if id_value is missing (never been pushed to Global Registry)
+        def fingerprints_match?
+          # fingerprint never matches if id_value is missing (never been pushed to Global Registry)
           return false unless global_registry_entity.id_value?
-          # Checksum never matches if previous checksum is missing.
-          old_checksum = model.send(global_registry_entity.checksum_column)
-          return false if old_checksum.blank?
-          return true if old_checksum == entity_checksum
+          # fingerprint never matches if previous fingerprint is missing.
+          old_fingerprint = model.send(global_registry_entity.fingerprint_column)
+          return false if old_fingerprint.blank?
+          return true if old_fingerprint == entity_fingerprint
           false
         end
       end

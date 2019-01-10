@@ -160,8 +160,8 @@ option is nil or empty. (default: `nil`) **[`:entity`]**
 * `:mdm_timeout`: Only pull mdm information at most once every `:mdm_timeout`. (default: `1.minute`)
 **[`:entity`]**
 
-* `:checksum_column`: Column used to enable checksums and set the name of the column. Checksums are disabled
-when this option is nil or empty. Enabling checksums result in bindings only pushing data on a tracked change.
+* `:fingerprint_column`: Column used to enable fingerprints and set the name of the column. fingerprints are disabled
+when this option is nil or empty. Enabling fingerprints result in bindings only pushing data on a tracked change.
 (default: `nil`) **[`:entity`]**
 
 * `:if`, `:unless`: Proc or Symbol, called to determine if the change should be sent (enqueue a worker) to Global

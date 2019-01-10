@@ -31,7 +31,7 @@ RSpec.describe 'GlobalRegistry::Bindings' do
       expect(Namespaced::Person.global_registry_entity.exclude)
         .to contain_exactly(:country_of_residence_gr_id, :country_of_residence_id, :country_of_service_gr_id,
                             :country_of_service_id, :created_at, :global_registry_id, :global_registry_mdm_id,
-                            :guid, :id, :updated_at, :global_registry_checksum)
+                            :guid, :id, :updated_at, :global_registry_fingerprint)
       expect(Namespaced::Person.global_registry_entity.fields).to be_a(Hash).and be_empty
       expect(GlobalRegistry::Bindings::Workers::PullNamespacedPersonMdmIdWorker.get_sidekiq_options)
         .to include('unique' => :until_timeout, 'unique_expiration' => 24.hours)
