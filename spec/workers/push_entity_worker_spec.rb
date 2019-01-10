@@ -6,8 +6,8 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
   around { |example| travel_to Time.utc(2001, 2, 3), &example }
   describe '#perform(model_class, id)' do
     context Namespaced::Person do
+      let(:person) { create(:person) }
       context 'with valid id' do
-        let(:person) { create(:person) }
         it 'should call #push_entity_to_global_registry' do
           expect(Namespaced::Person).to receive(:find).with(person.id).and_return(person)
 
@@ -19,7 +19,6 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
       end
 
       context 'with valid id and checksum' do
-        let(:person) { create(:person) }
         it 'should call #push_entity_to_global_registry' do
           expect(Namespaced::Person).to receive(:find).with(person.id).and_return(person)
 
@@ -31,7 +30,6 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
       end
 
       context 'with invalid id' do
-        let(:person) { create(:person) }
         it 'should fail silently' do
           expect(Namespaced::Person).to receive(:find).with(person.id).and_raise(ActiveRecord::RecordNotFound)
           expect(GlobalRegistry::Bindings::Workers::PushEntityWorker).not_to receive(:push_entity_to_global_registry)
@@ -39,36 +37,6 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
           worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new
           worker.perform(Namespaced::Person, person.id)
           expect(worker.model).to be nil
-        end
-      end
-
-      context 'checksum matches' do
-        let(:person) do
-          create(:person, global_registry_id: 'f8d20318-2ff2-4a98-a5eb-e9d840508bf1',
-                          global_registry_checksum: '64b7a7f6daebe8d8e8234651ae4c51d4')
-        end
-        it 'should NOT call #push_entity_to_global_registry' do
-          expect(Namespaced::Person).to receive(:find).with(person.id).and_return(person)
-
-          worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new
-          expect(worker).not_to receive(:push_entity_to_global_registry)
-          worker.perform('Namespaced::Person', person.id)
-          expect(worker.model).to be person
-        end
-      end
-
-      context 'checksum do not matche' do
-        let(:person) do
-          create(:person, global_registry_id: 'f8d20318-2ff2-4a98-a5eb-e9d840508bf1',
-                          global_registry_checksum: 'abc123')
-        end
-        it 'should call #push_entity_to_global_registry' do
-          expect(Namespaced::Person).to receive(:find).with(person.id).and_return(person)
-
-          worker = GlobalRegistry::Bindings::Workers::PushEntityWorker.new
-          expect(worker).to receive(:push_entity_to_global_registry)
-          worker.perform('Namespaced::Person', person.id)
-          expect(worker.model).to be person
         end
       end
     end
@@ -160,7 +128,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
     describe Namespaced::Person do
       let(:worker) { GlobalRegistry::Bindings::Workers::PushEntityWorker.new person }
       context 'as create' do
-        let(:person) { create(:person) }
+        let(:person) { create(:person, global_registry_checksum: 'abc123') }
 
         context '\'person\' entity_type does not exist' do
           let!(:requests) do
@@ -192,6 +160,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
             worker.push_entity_to_global_registry
             requests.each { |r| expect(r).to have_been_requested.once }
             expect(person.global_registry_id).to eq '22527d88-3cba-11e7-b876-129bd0521531'
+            expect(person.global_registry_checksum).to eq '64b7a7f6daebe8d8e8234651ae4c51d4'
           end
         end
 
@@ -214,6 +183,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
             worker.push_entity_to_global_registry
             requests.each { |r| expect(r).to have_been_requested.once }
             expect(person.global_registry_id).to eq '22527d88-3cba-11e7-b876-129bd0521531'
+            expect(person.global_registry_checksum).to eq '64b7a7f6daebe8d8e8234651ae4c51d4'
           end
         end
 
@@ -240,6 +210,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
             worker.push_entity_to_global_registry
             requests.each { |r| expect(r).to have_been_requested.once }
             expect(person.global_registry_id).to eq '22527d88-3cba-11e7-b876-129bd0521531'
+            expect(person.global_registry_checksum).to eq '64b7a7f6daebe8d8e8234651ae4c51d4'
           end
         end
 
@@ -261,12 +232,16 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
             worker.push_entity_to_global_registry
             expect(request).to have_been_requested.once
             expect(person.global_registry_id).to eq '22527d88-3cba-11e7-b876-129bd0521531'
+            expect(person.global_registry_checksum).to eq '64b7a7f6daebe8d8e8234651ae4c51d4'
           end
         end
       end
 
       context 'as an update' do
-        let(:person) { create(:person, global_registry_id: 'f8d20318-2ff2-4a98-a5eb-e9d840508bf1') }
+        let(:person) do
+          create(:person, global_registry_id: 'f8d20318-2ff2-4a98-a5eb-e9d840508bf1',
+                          global_registry_checksum: 'abc123')
+        end
         context '\'person\' entity_type is cached' do
           before :each do
             person_entity_types = JSON.parse(file_fixture('get_entity_types_person.json').read)
@@ -312,6 +287,24 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
               worker.push_entity_to_global_registry
               requests.each { |r| expect(r).to have_been_requested.once }
               expect(person.global_registry_id).to eq '22527d88-3cba-11e7-b876-129bd0521531'
+              expect(person.global_registry_checksum).to eq '64b7a7f6daebe8d8e8234651ae4c51d4'
+            end
+          end
+
+          context 'checksums match' do
+            it 'should do nothing' do
+              request = stub_request(:put,
+                                     'https://backend.global-registry.org/entities/f8d20318-2ff2-4a98-a5eb-e9d840508bf1')
+                          .with(body: { entity: { person: { first_name: 'Tony', last_name: 'Stark',
+                                                            client_integration_id: person.id,
+                                                            client_updated_at: '2001-02-03 00:00:00',
+                                                            authentication: {
+                                                              key_guid: '98711710-acb5-4a41-ba51-e0fc56644b53'
+                                                            } } } })
+                          .to_return(body: file_fixture('post_entities_person.json'), status: 200)
+              person.global_registry_checksum = '64b7a7f6daebe8d8e8234651ae4c51d4'
+              worker.push_entity_to_global_registry
+              expect(request).not_to have_been_requested
             end
           end
         end

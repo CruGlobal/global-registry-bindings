@@ -14,8 +14,6 @@ module GlobalRegistry #:nodoc:
 
         def perform(model_class, id)
           super model_class, id
-          # Don't push entity if Checksum is defined and matches (nothing changed)
-          return if global_registry_entity.checksum_column.present? && checksums_match?
           push_entity_to_global_registry
         rescue ActiveRecord::RecordNotFound # rubocop:disable Lint/HandleExceptions
           # If the record was deleted after the job was created, swallow it

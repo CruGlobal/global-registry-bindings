@@ -10,6 +10,8 @@ module GlobalRegistry #:nodoc:
         extend ActiveSupport::Concern
 
         def push_entity_to_global_registry # rubocop:disable Metrics/PerceivedComplexity
+          # Don't push entity if Checksum is defined and matches (nothing changed)
+          return if global_registry_entity.checksum_column.present? && checksums_match?
           return if global_registry_entity.parent_required? && global_registry_entity.parent.blank?
           push_entity_type_to_global_registry
 
@@ -38,6 +40,7 @@ module GlobalRegistry #:nodoc:
                                                                                global_registry_entity.type)
           model.update_column(global_registry_entity.id_column, # rubocop:disable Rails/SkipsModelValidations
                               global_registry_entity.id_value)
+          update_checksum if global_registry_entity.checksum_column.present?
         end
 
         # Create or Update a child entity (ex: :email_address is a child of :person)
@@ -56,6 +59,7 @@ module GlobalRegistry #:nodoc:
                                                                                global_registry_entity.parent_type)
           model.update_column(global_registry_entity.id_column, # rubocop:disable Rails/SkipsModelValidations
                               global_registry_entity.id_value)
+          update_checksum if global_registry_entity.checksum_column.present?
         end
 
         def dig_global_registry_id_from_entity(entity, type, parent_type = nil)
@@ -76,14 +80,22 @@ module GlobalRegistry #:nodoc:
                 'global_registry_id; will retry.'
         end
 
+        def entity_checksum
+          @entity_checksum ||= Digest::MD5.hexdigest(Marshal.dump(model.entity_attributes_to_push))
+        end
+
+        def update_checksum
+          model.update_column(global_registry_entity.checksum_column, # rubocop:disable Rails/SkipsModelValidations
+                              entity_checksum)
+        end
+
         def checksums_match?
           # Checksum never matches if id_value is missing (never been pushed to Global Registry)
           return false unless global_registry_entity.id_value?
           # Checksum never matches if previous checksum is missing.
           old_checksum = model.send(global_registry_entity.checksum_column)
           return false if old_checksum.blank?
-          checksum = Digest::MD5.hexdigest(Marshal.dump(model.entity_attributes_to_push))
-          return true if old_checksum == checksum
+          return true if old_checksum == entity_checksum
           false
         end
       end
