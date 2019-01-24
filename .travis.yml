@@ -9,7 +9,6 @@ before_install:
 script:
   - bundle exec rspec
   - bundle exec rubocop -R
-  - cat spec/internal/log/test.log
 gemfile:
   - gemfiles/sidekiq_4.gemfile
   - gemfiles/sidekiq_5.gemfile
