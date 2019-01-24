@@ -40,7 +40,7 @@ module GlobalRegistry #:nodoc:
                                                                                global_registry_entity.type)
           model.update_column(global_registry_entity.id_column, # rubocop:disable Rails/SkipsModelValidations
                               global_registry_entity.id_value)
-          update_fingerprint if global_registry_entity.fingerprint_column.present?
+          update_fingerprint
         end
 
         # Create or Update a child entity (ex: :email_address is a child of :person)
@@ -59,7 +59,7 @@ module GlobalRegistry #:nodoc:
                                                                                global_registry_entity.parent_type)
           model.update_column(global_registry_entity.id_column, # rubocop:disable Rails/SkipsModelValidations
                               global_registry_entity.id_value)
-          update_fingerprint if global_registry_entity.fingerprint_column.present?
+          update_fingerprint
         end
 
         def dig_global_registry_id_from_entity(entity, type, parent_type = nil)
@@ -86,6 +86,7 @@ module GlobalRegistry #:nodoc:
         end
 
         def update_fingerprint
+          return if global_registry_entity.fingerprint_column.blank?
           model.update_column(global_registry_entity.fingerprint_column, # rubocop:disable Rails/SkipsModelValidations
                               entity_fingerprint)
         end

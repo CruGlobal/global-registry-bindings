@@ -127,6 +127,14 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
 
     describe Namespaced::Person do
       let(:worker) { GlobalRegistry::Bindings::Workers::PushEntityWorker.new person }
+      let(:entity_body) do
+        { entity: { person: { first_name: 'Tony', last_name: 'Stark',
+                              client_integration_id: person.id,
+                              client_updated_at: '2001-02-03 00:00:00',
+                              authentication: {
+                                key_guid: '98711710-acb5-4a41-ba51-e0fc56644b53'
+                              } } } }
+      end
       context 'as create' do
         let(:person) { create(:person, global_registry_fingerprint: 'abc123') }
 
@@ -147,12 +155,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
                                             field_type: 'string' } })
                .to_return(status: 200),
              stub_request(:post, 'https://backend.global-registry.org/entities')
-               .with(body: { entity: { person: { first_name: 'Tony', last_name: 'Stark',
-                                                 client_integration_id: person.id,
-                                                 client_updated_at: '2001-02-03 00:00:00',
-                                                 authentication: {
-                                                   key_guid: '98711710-acb5-4a41-ba51-e0fc56644b53'
-                                                 } } } })
+               .with(body: entity_body)
                .to_return(body: file_fixture('post_entities_person.json'), status: 200)]
           end
 
@@ -170,12 +173,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
               .with(query: { 'filters[name]' => 'person', 'filters[parent_id]' => nil })
               .to_return(body: file_fixture('get_entity_types_person.json'), status: 200),
              stub_request(:post, 'https://backend.global-registry.org/entities')
-               .with(body: { entity: { person: { first_name: 'Tony', last_name: 'Stark',
-                                                 client_integration_id: person.id,
-                                                 client_updated_at: '2001-02-03 00:00:00',
-                                                 authentication: {
-                                                   key_guid: '98711710-acb5-4a41-ba51-e0fc56644b53'
-                                                 } } } })
+               .with(body: entity_body)
                .to_return(body: file_fixture('post_entities_person.json'), status: 200)]
           end
 
@@ -197,12 +195,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
                                             field_type: 'string' } })
                .to_return(status: 200),
              stub_request(:post, 'https://backend.global-registry.org/entities')
-               .with(body: { entity: { person: { first_name: 'Tony', last_name: 'Stark',
-                                                 client_integration_id: person.id,
-                                                 client_updated_at: '2001-02-03 00:00:00',
-                                                 authentication: {
-                                                   key_guid: '98711710-acb5-4a41-ba51-e0fc56644b53'
-                                                 } } } })
+               .with(body: entity_body)
                .to_return(body: file_fixture('post_entities_person.json'), status: 200)]
           end
 
@@ -222,12 +215,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
 
           it 'should skip creating entity_type and push the entity' do
             request = stub_request(:post, 'https://backend.global-registry.org/entities')
-                      .with(body: { entity: { person: { first_name: 'Tony', last_name: 'Stark',
-                                                        client_integration_id: person.id,
-                                                        client_updated_at: '2001-02-03 00:00:00',
-                                                        authentication: {
-                                                          key_guid: '98711710-acb5-4a41-ba51-e0fc56644b53'
-                                                        } } } })
+                      .with(body: entity_body)
                       .to_return(body: file_fixture('post_entities_person.json'), status: 200)
             worker.push_entity_to_global_registry
             expect(request).to have_been_requested.once
@@ -251,12 +239,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
           it 'should skip creating entity_type and update the entity' do
             request = stub_request(:put,
                                    'https://backend.global-registry.org/entities/f8d20318-2ff2-4a98-a5eb-e9d840508bf1')
-                      .with(body: { entity: { person: { first_name: 'Tony', last_name: 'Stark',
-                                                        client_integration_id: person.id,
-                                                        client_updated_at: '2001-02-03 00:00:00',
-                                                        authentication: {
-                                                          key_guid: '98711710-acb5-4a41-ba51-e0fc56644b53'
-                                                        } } } })
+                      .with(body: entity_body)
                       .to_return(body: file_fixture('post_entities_person.json'), status: 200)
             worker.push_entity_to_global_registry
             expect(request).to have_been_requested.once
@@ -266,20 +249,10 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
             let!(:requests) do
               [stub_request(:put,
                             'https://backend.global-registry.org/entities/f8d20318-2ff2-4a98-a5eb-e9d840508bf1')
-                .with(body: { entity: { person: { first_name: 'Tony', last_name: 'Stark',
-                                                  client_integration_id: person.id,
-                                                  client_updated_at: '2001-02-03 00:00:00',
-                                                  authentication: {
-                                                    key_guid: '98711710-acb5-4a41-ba51-e0fc56644b53'
-                                                  } } } })
+                .with(body: entity_body)
                 .to_return(status: 404),
                stub_request(:post, 'https://backend.global-registry.org/entities')
-                 .with(body: { entity: { person: { first_name: 'Tony', last_name: 'Stark',
-                                                   client_integration_id: person.id,
-                                                   client_updated_at: '2001-02-03 00:00:00',
-                                                   authentication: {
-                                                     key_guid: '98711710-acb5-4a41-ba51-e0fc56644b53'
-                                                   } } } })
+                 .with(body: entity_body)
                  .to_return(body: file_fixture('post_entities_person.json'), status: 200)]
             end
 
@@ -295,12 +268,7 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
             it 'should do nothing' do
               request = stub_request(:put,
                                      'https://backend.global-registry.org/entities/f8d20318-2ff2-4a98-a5eb-e9d840508bf1')
-                        .with(body: { entity: { person: { first_name: 'Tony', last_name: 'Stark',
-                                                          client_integration_id: person.id,
-                                                          client_updated_at: '2001-02-03 00:00:00',
-                                                          authentication: {
-                                                            key_guid: '98711710-acb5-4a41-ba51-e0fc56644b53'
-                                                          } } } })
+                        .with(body: entity_body)
                         .to_return(body: file_fixture('post_entities_person.json'), status: 200)
               person.global_registry_fingerprint = '4c671c203b5dd19cdc1920ba5434cf64'
               worker.push_entity_to_global_registry

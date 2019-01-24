@@ -8,10 +8,12 @@ module GlobalRegistry #:nodoc:
           @model_class = model_class
         end
 
-        def defaults
+        def defaults # rubocop:disable Metrics/MethodLength
           {
             binding: :entity,
-            id_column: :global_registry_id, mdm_id_column: nil, fingerprint_column: nil,
+            id_column: :global_registry_id,
+            mdm_id_column: nil,
+            fingerprint_column: nil,
             type: @model_class.name.demodulize.underscore.to_sym,
             push_on: %i[create update destroy],
             parent: nil,
