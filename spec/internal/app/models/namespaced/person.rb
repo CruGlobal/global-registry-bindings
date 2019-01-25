@@ -17,6 +17,7 @@ module Namespaced
     global_registry_bindings binding: :entity,
                              mdm_id_column: :global_registry_mdm_id,
                              mdm_timeout: 24.hours,
+                             fingerprint_column: :global_registry_fingerprint,
                              include_all_columns: true,
                              exclude: %i[guid country_of_service_gr_id country_of_service_id
                                          country_of_residence_gr_id country_of_residence_id]

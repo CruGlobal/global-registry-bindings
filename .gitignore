@@ -4,3 +4,4 @@ Gemfile.lock
 coverage/
 tmp/
 gemfiles/*.lock
+spec/internal/db/*.sqlite

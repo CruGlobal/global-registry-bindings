@@ -8,6 +8,7 @@ module GlobalRegistry #:nodoc:
       class EntityClassOptions
         delegate :id_column,
                  :mdm_id_column,
+                 :fingerprint_column,
                  :type,
                  :mdm_timeout,
                  :push_on,

@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 ActiveRecord::Schema.define(version: 0) do
-  # enable_extension 'uuid-ossp'
-
   create_table :people, force: true do |t|
     t.string :global_registry_id
     t.string :global_registry_mdm_id
+    t.string :global_registry_fingerprint
     t.string :first_name
     t.string :last_name
     t.string :guid
