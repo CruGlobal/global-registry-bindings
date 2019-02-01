@@ -30,6 +30,7 @@ module GlobalRegistry #:nodoc:
         def update_entity_in_global_registry
           entity_attributes = { global_registry_entity.type => model.entity_attributes_to_push }
           GlobalRegistry::Entity.put(global_registry_entity.id_value, entity: entity_attributes)
+          update_fingerprint
         end
 
         def create_entity_in_global_registry
