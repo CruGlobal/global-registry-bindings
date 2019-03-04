@@ -36,7 +36,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'webmock', '~> 3.0.0'
   s.add_development_dependency 'factory_girl', '~> 4.8.0'
   s.add_development_dependency 'rubocop', '0.48.1'
-  s.add_development_dependency 'sqlite3'
+  s.add_development_dependency 'sqlite3', '~> 1.3.6'
   s.add_development_dependency 'mock_redis', '~> 0.17.0'
   s.add_development_dependency 'simplecov', '~> 0.14.0'
   s.add_development_dependency 'pry'

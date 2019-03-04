@@ -6,10 +6,17 @@ module GlobalRegistry #:nodoc:
   module Bindings #:nodoc:
     module Workers #:nodoc:
       def self.mdm_worker_class(model_class)
+        worker_class_name = model_class.global_registry_entity.mdm_worker_class_name
+        return const_get worker_class_name if const_defined? worker_class_name
+
         klass = Class.new(PullMdmIdWorker) do
           sidekiq_options unique: :until_timeout, unique_expiration: model_class.global_registry_entity.mdm_timeout
         end
-        const_set model_class.global_registry_entity.mdm_worker_class_name, klass
+
+        const_set worker_class_name, klass
+        ActiveSupport::Dependencies.mark_for_unload(klass)
+
+        klass
       end
 
       class PullMdmIdWorker < ::GlobalRegistry::Bindings::Worker
