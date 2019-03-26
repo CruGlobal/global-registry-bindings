@@ -246,14 +246,16 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
           end
 
           context 'invalid entity id' do
-            let!(:requests) do
-              [stub_request(:put,
-                            'https://backend.global-registry.org/entities/f8d20318-2ff2-4a98-a5eb-e9d840508bf1')
+            let!(:requests) { [update_request, create_request] }
+            let!(:update_request) do
+              stub_request(:put, 'https://backend.global-registry.org/entities/f8d20318-2ff2-4a98-a5eb-e9d840508bf1')
                 .with(body: entity_body)
-                .to_return(status: 404),
-               stub_request(:post, 'https://backend.global-registry.org/entities')
-                 .with(body: entity_body)
-                 .to_return(body: file_fixture('post_entities_person.json'), status: 200)]
+                .to_return(status: 404)
+            end
+            let!(:create_request) do
+              stub_request(:post, 'https://backend.global-registry.org/entities')
+                .with(body: entity_body)
+                .to_return(body: file_fixture('post_entities_person.json'), status: 200)
             end
 
             it 'should push entity as create' do
@@ -261,6 +263,18 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
               requests.each { |r| expect(r).to have_been_requested.once }
               expect(person.global_registry_id).to eq '22527d88-3cba-11e7-b876-129bd0521531'
               expect(person.global_registry_fingerprint).to eq '4c671c203b5dd19cdc1920ba5434cf64'
+            end
+
+            context 'response is also not found on create' do
+              let!(:create_request) do
+                stub_request(:post, 'https://backend.global-registry.org/entities')
+                  .with(body: entity_body)
+                  .to_return(status: 404)
+              end
+
+              it 'should raise an error' do
+                expect { worker.push_entity_to_global_registry }.to raise_error(RestClient::NotFound)
+              end
             end
           end
 
@@ -446,16 +460,28 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PushEntityWorker do
                                                 client_integration_id: address.id,
                                                 client_updated_at: '2001-02-03 00:00:00'
                                               } } } })
-            .to_return(body: file_fixture('put_entities_address.json'), status: 200)
+            .to_return(response)
+        end
+        let!(:response) { { body: file_fixture('put_entities_address.json'), status: 200 } }
+
+        subject do
+          address.address1 = '100 Sesame Street'
+          address.primary = false
+          worker.push_entity_to_global_registry
         end
 
         it 'should push address entity' do
-          address.address1 = '100 Sesame Street'
-          address.primary = false
-          expect do
-            worker.push_entity_to_global_registry
-          end.to_not(change { address.global_registry_id })
+          expect { subject }.to_not(change { address.global_registry_id })
           expect(request).to have_been_requested.once
+        end
+
+        context 'response not found' do
+          let!(:response) { { status: 404 } }
+
+          it 'should raise an error' do
+            expect { subject }.to raise_error(RestClient::NotFound)
+            expect(request).to have_been_requested.once
+          end
         end
       end
     end

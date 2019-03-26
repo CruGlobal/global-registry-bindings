@@ -22,15 +22,15 @@ module GlobalRegistry #:nodoc:
           else
             create_entity_in_global_registry
           end
-        rescue RestClient::ResourceNotFound
-          global_registry_entity.id_value = nil
-          push_entity_to_global_registry
         end
 
         def update_entity_in_global_registry
           entity_attributes = { global_registry_entity.type => model.entity_attributes_to_push }
           GlobalRegistry::Entity.put(global_registry_entity.id_value, entity: entity_attributes)
           update_fingerprint
+        rescue RestClient::ResourceNotFound
+          global_registry_entity.id_value = nil
+          create_entity_in_global_registry
         end
 
         def create_entity_in_global_registry
