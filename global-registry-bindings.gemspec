@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 2.3.0'
 
-  s.add_runtime_dependency 'activerecord', '>= 4.0.0', '< 6'
+  s.add_runtime_dependency 'activerecord', '>= 4.0.0', '< 7'
   s.add_runtime_dependency 'global_registry', '~> 1.4', '< 2'
   s.add_runtime_dependency 'sidekiq', '>= 4.0.0', '< 6'
   s.add_runtime_dependency 'sidekiq-unique-jobs', '>= 5.0.0', '< 6'
