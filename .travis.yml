@@ -13,5 +13,6 @@ script:
 gemfile:
   - gemfiles/sidekiq_4.gemfile
   - gemfiles/sidekiq_5.gemfile
+  - gemfiles/rails_6.gemfile
 matrix:
   fast_finish: true
