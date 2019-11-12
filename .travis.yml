@@ -18,3 +18,8 @@ gemfile:
   - gemfiles/rails_6.gemfile
 matrix:
   fast_finish: true
+exclude:
+  - rvm: 2.3.8
+    gemfile: gemfiles/rails_6.gemfile
+  - rvm: 2.4.5
+    gemfile: gemfiles/rails_6.gemfile
