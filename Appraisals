@@ -9,5 +9,6 @@ appraise 'sidekiq-5' do
 end
 
 appraise 'rails-6' do
+  gem 'sqlite3', '~> 1.4.0'
   gem 'rails', '~> 6.0.0'
 end
