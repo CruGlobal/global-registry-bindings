@@ -7,11 +7,20 @@ rvm:
   - 2.5.3
 before_install:
   - sqlite3 -version
+  - gem uninstall -v '>= 2' -i $(rvm gemdir)@global -ax bundler || true # https://docs.travis-ci.com/user/languages/ruby/#bundler-20
+  - gem install bundler -v '< 2'
 script:
   - bundle exec rspec
   - bundle exec rubocop -R
 gemfile:
   - gemfiles/sidekiq_4.gemfile
   - gemfiles/sidekiq_5.gemfile
+  - gemfiles/rails_6.gemfile
 matrix:
   fast_finish: true
+jobs:
+  exclude:
+    - rvm: 2.3.8
+      gemfile: gemfiles/rails_6.gemfile
+    - rvm: 2.4.5
+      gemfile: gemfiles/rails_6.gemfile
