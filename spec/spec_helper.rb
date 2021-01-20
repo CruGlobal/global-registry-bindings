@@ -47,9 +47,6 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    SidekiqUniqueJobs.configure do |c|
-      c.redis_test_mode = :mock
-    end
     allow(Sidekiq).to receive(:redis).and_yield(MOCK_REDIS)
 
     clear_sidekiq_jobs_and_locks

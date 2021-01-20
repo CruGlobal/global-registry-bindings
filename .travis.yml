@@ -6,6 +6,7 @@ rvm:
   - 2.7.2
 before_install:
   - sqlite3 -version
+  - gem install bundler
 script:
   - bundle exec rspec
   - bundle exec rubocop -R
