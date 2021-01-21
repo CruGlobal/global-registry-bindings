@@ -3,6 +3,6 @@
 source "https://rubygems.org"
 
 gem "sidekiq", ">= 6.0.0", "< 7"
-gem "rails", ">= 6.0.3.4", "< 7"
+gem "rails", ">= 6.0.3.4", "< 6.1"
 
 gemspec path: "../"

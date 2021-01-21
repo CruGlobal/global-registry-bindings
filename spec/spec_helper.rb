@@ -8,11 +8,7 @@ require 'active_record'
 ActiveRecord::Migration.verbose = false
 
 require 'combustion'
-Combustion.initialize! :active_record do
-  if config.active_record.sqlite3.respond_to?(:represent_boolean_as_integer)
-    config.active_record.sqlite3.represent_boolean_as_integer = true
-  end
-end
+Combustion.initialize! :active_record
 
 require 'rspec/rails'
 require 'webmock/rspec'
