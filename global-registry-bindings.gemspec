@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'activerecord', '>= 4.0.0', '< 7'
   s.add_runtime_dependency 'global_registry', '~> 1.4', '< 2'
-  s.add_runtime_dependency 'sidekiq', '>= 4.0.0', '< 7'
+  s.add_runtime_dependency 'sidekiq', '>= 5', '< 7'
   s.add_runtime_dependency 'sidekiq-unique-jobs', '>= 5.0.0', '< 8'
   s.add_runtime_dependency 'deepsort', '>= 0.4.1', '< 1.0.0'
 
