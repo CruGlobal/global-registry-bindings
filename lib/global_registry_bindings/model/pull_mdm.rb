@@ -17,7 +17,7 @@ module GlobalRegistry #:nodoc:
           return if global_registry_entity.condition?(:if)
           return unless global_registry_entity.condition?(:unless)
           "::GlobalRegistry::Bindings::Workers::#{global_registry_entity.mdm_worker_class_name}"
-            .constantize .perform_async(self.class, id)
+            .constantize .perform_async(self.class.name, id)
         end
       end
     end
