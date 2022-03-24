@@ -3,7 +3,6 @@ language: ruby
 cache: bundler
 rvm:
   - 2.7.5
-  - 3.0.3
 before_install:
   - sqlite3 -version
   - gem install bundler
