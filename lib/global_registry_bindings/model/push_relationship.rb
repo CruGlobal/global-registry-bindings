@@ -39,7 +39,7 @@ module GlobalRegistry #:nodoc:
         def global_registry_relationship_async_push(type)
           return if global_registry_relationship(type).condition?(:if)
           return unless global_registry_relationship(type).condition?(:unless)
-          ::GlobalRegistry::Bindings::Workers::PushRelationshipWorker.perform_async(self.class.to_s, id, type)
+          ::GlobalRegistry::Bindings::Workers::PushRelationshipWorker.perform_async(self.class.to_s, id, type.to_s)
         end
 
         def global_registry_relationship_async_replace(type)
@@ -52,7 +52,7 @@ module GlobalRegistry #:nodoc:
           update_column( # rubocop:disable Rails/SkipsModelValidations
             global_registry_relationship(type).id_column, nil
           )
-          ::GlobalRegistry::Bindings::Workers::PushRelationshipWorker.perform_async(self.class.to_s, id, type)
+          ::GlobalRegistry::Bindings::Workers::PushRelationshipWorker.perform_async(self.class.to_s, id, type.to_s)
         end
 
         def global_registry_relationship_async_delete(type)
