@@ -20,8 +20,7 @@ module GlobalRegistry # :nodoc:
               "GR entity #{global_registry_entity.id_value} for #{model.class.name}(#{model.id}) has no mdm id; " \
               "will retry"
           end
-          # rubocop:disable Rails/SkipsModelValidations
-          model.update_column(global_registry_entity.mdm_id_column, mdm_entity_id)
+          model.update_column(global_registry_entity.mdm_id_column, mdm_entity_id) # rubocop:disable Rails/SkipsModelValidations
         end
 
         def dig_global_registry_mdm_id_from_entity(entity, type)

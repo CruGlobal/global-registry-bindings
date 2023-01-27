@@ -117,9 +117,10 @@ RSpec.describe "GlobalRegistry::Bindings" do
 
     describe "redis_error_action" do
       around do |example|
-        class Rollbar; end
-        example.run
-        Object.send(:remove_const, :Rollbar)
+        RSpec::Mocks.with_temporary_scope do
+          stub_const("Rollbar", Class.new)
+          example.run
+        end
       end
 
       context ":ignore" do
