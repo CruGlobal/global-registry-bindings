@@ -1,31 +1,31 @@
 # frozen_string_literal: true
 
-require 'ostruct'
+require "ostruct"
 
-module GlobalRegistry #:nodoc:
-  module Bindings #:nodoc:
+module GlobalRegistry # :nodoc:
+  module Bindings # :nodoc:
     module Options
       class RelationshipClassOptions
         delegate :id_column,
-                 :type,
-                 :push_on,
-                 :client_integration_id,
-                 :primary_binding,
-                 :primary,
-                 :primary_class,
-                 :primary_foreign_key,
-                 :primary_name,
-                 :related_binding,
-                 :related,
-                 :related_class,
-                 :related_foreign_key,
-                 :related_type,
-                 :related_name,
-                 :related_global_registry_id,
-                 :exclude,
-                 :fields,
-                 :if,
-                 :unless, to: :@options
+          :type,
+          :push_on,
+          :client_integration_id,
+          :primary_binding,
+          :primary,
+          :primary_class,
+          :primary_foreign_key,
+          :primary_name,
+          :related_binding,
+          :related,
+          :related_class,
+          :related_foreign_key,
+          :related_type,
+          :related_name,
+          :related_global_registry_id,
+          :exclude,
+          :fields,
+          :if,
+          :unless, to: :@options
 
         def initialize(type, model_class)
           @model_class = model_class

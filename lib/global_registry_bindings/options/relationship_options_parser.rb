@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module GlobalRegistry #:nodoc:
-  module Bindings #:nodoc:
+module GlobalRegistry # :nodoc:
+  module Bindings # :nodoc:
     module Options
       class RelationshipOptionsParser
         def initialize(model_class)
@@ -34,7 +34,7 @@ module GlobalRegistry #:nodoc:
 
         def validate_options!(options = {})
           unknown = options.keys - defaults.keys
-          raise ArgumentError, "global-registry-bindings: Unknown options (#{unknown.join ', '})" unless unknown.empty?
+          raise ArgumentError, "global-registry-bindings: Unknown options (#{unknown.join ", "})" unless unknown.empty?
         end
 
         def merge_defaults(options_hash = {})
@@ -55,10 +55,10 @@ module GlobalRegistry #:nodoc:
         def update_association_classes
           unless @options[:primary_class]
             @options[:primary_class] = if @options[:primary]
-                                         association_class @options[:primary]
-                                       else
-                                         @model_class
-                                       end
+              association_class @options[:primary]
+            else
+              @model_class
+            end
           end
           unless @options[:related_class] # rubocop:disable Style/GuardClause
             @options[:related_class] = association_class @options[:related]

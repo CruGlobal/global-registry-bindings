@@ -2,19 +2,19 @@
 
 class Community < ApplicationRecord
   global_registry_bindings ensure_type: false,
-                           include_all_columns: true,
-                           exclude: %i[infobase_id infobase_gr_id]
+    include_all_columns: true,
+    exclude: %i[infobase_id infobase_gr_id]
 
   global_registry_bindings binding: :relationship,
-                           type: :infobase_ministry,
-                           id_column: :infobase_gr_id,
-                           related_binding: :remote,
-                           related_name: :ministry,
-                           related_type: :ministry,
-                           related_foreign_key: :infobase_id,
-                           related_global_registry_id: :pull_infobase_global_registry_id
+    type: :infobase_ministry,
+    id_column: :infobase_gr_id,
+    related_binding: :remote,
+    related_name: :ministry,
+    related_type: :ministry,
+    related_foreign_key: :infobase_id,
+    related_global_registry_id: :pull_infobase_global_registry_id
 
   def pull_infobase_global_registry_id(_type)
-    '41f767fd-86f4-42e2-8d24-cbc3f697b794'
+    "41f767fd-86f4-42e2-8d24-cbc3f697b794"
   end
 end

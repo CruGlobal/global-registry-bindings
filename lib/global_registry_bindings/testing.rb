@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module GlobalRegistry #:nodoc:
-  module Bindings #:nodoc:
+module GlobalRegistry # :nodoc:
+  module Bindings # :nodoc:
     class Testing
       class << self
         attr_accessor :__test_mode
@@ -44,7 +44,7 @@ module GlobalRegistry #:nodoc:
 
     class Worker
       class << self
-        alias perform_async_real perform_async
+        alias_method :perform_async_real, :perform_async
 
         def perform_async(*args)
           return if GlobalRegistry::Bindings::Testing.skip?

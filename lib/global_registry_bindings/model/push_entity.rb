@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'global_registry_bindings/workers/push_entity_worker'
+require "global_registry_bindings/workers/push_entity_worker"
 
-module GlobalRegistry #:nodoc:
-  module Bindings #:nodoc:
-    module Model #:nodoc:
+module GlobalRegistry # :nodoc:
+  module Bindings # :nodoc:
+    module Model # :nodoc:
       module PushEntity
         extend ActiveSupport::Concern
 

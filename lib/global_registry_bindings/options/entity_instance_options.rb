@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
-module GlobalRegistry #:nodoc:
-  module Bindings #:nodoc:
+module GlobalRegistry # :nodoc:
+  module Bindings # :nodoc:
     module Options
       class EntityInstanceOptions
         delegate :id_column,
-                 :mdm_id_column,
-                 :fingerprint_column,
-                 :mdm_timeout,
-                 :push_on,
-                 :mdm_worker_class_name,
-                 :ensure_type?,
-                 :include_all_columns?,
-                 to: :@class_options
+          :mdm_id_column,
+          :fingerprint_column,
+          :mdm_timeout,
+          :push_on,
+          :mdm_worker_class_name,
+          :ensure_type?,
+          :include_all_columns?,
+          to: :@class_options
 
         def initialize(model)
           @model = model
@@ -93,7 +93,7 @@ module GlobalRegistry #:nodoc:
           when Symbol
             @model.send(option, @model)
           else
-            :if != cond
+            cond != :if
           end
         end
       end

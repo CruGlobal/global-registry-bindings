@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'global_registry_bindings/worker'
-require 'global_registry_bindings/entity/relationship_type_methods'
-require 'global_registry_bindings/entity/push_relationship_methods'
+require "global_registry_bindings/worker"
+require "global_registry_bindings/entity/relationship_type_methods"
+require "global_registry_bindings/entity/push_relationship_methods"
 
-module GlobalRegistry #:nodoc:
-  module Bindings #:nodoc:
-    module Workers #:nodoc:
+module GlobalRegistry # :nodoc:
+  module Bindings # :nodoc:
+    module Workers # :nodoc:
       class PushRelationshipWorker < GlobalRegistry::Bindings::Worker
         include GlobalRegistry::Bindings::Entity::RelationshipTypeMethods
         include GlobalRegistry::Bindings::Entity::PushRelationshipMethods

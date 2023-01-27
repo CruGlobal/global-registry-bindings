@@ -22,8 +22,8 @@ jobs:
         with:
           bundler-cache: true
 
-      - name: Rubocop
-        run: bundle exec rubocop -R
+      - name: StandardRB
+        run: bundle exec standardrb --format simple
 
       - name: RSpec tests
         run: bundle exec rspec --color

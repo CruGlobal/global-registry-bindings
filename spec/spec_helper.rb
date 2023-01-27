@@ -1,37 +1,37 @@
 # frozen_string_literal: true
 
-require 'rubygems'
-require 'bundler/setup'
-require 'pry'
+require "rubygems"
+require "bundler/setup"
+require "pry"
 
-require 'active_record'
+require "active_record"
 ActiveRecord::Migration.verbose = false
 
-require 'combustion'
+require "combustion"
 Combustion.initialize! :active_record
 
-require 'rspec/rails'
-require 'webmock/rspec'
-require 'factory_girl'
-require 'simplecov'
+require "rspec/rails"
+require "webmock/rspec"
+require "factory_girl"
+require "simplecov"
 
-require 'global_registry_bindings'
-require 'global_registry_bindings/testing'
+require "global_registry_bindings"
+require "global_registry_bindings/testing"
 
-require 'sidekiq/testing'
-require 'sidekiq_unique_jobs/testing'
+require "sidekiq/testing"
+require "sidekiq_unique_jobs/testing"
 Sidekiq::Testing.fake!
 
-require 'mock_redis'
+require "mock_redis"
 MOCK_REDIS = MockRedis.new
 
 ActionController::Base.cache_store = :memory_store
 
-require 'helpers/sidekiq_helpers'
+require "helpers/sidekiq_helpers"
 
 RSpec.configure do |config|
   config.use_transactional_fixtures = true
-  config.file_fixture_path = 'spec/fixtures'
+  config.file_fixture_path = "spec/fixtures"
   config.filter_run focus: true
   config.run_all_when_everything_filtered = true
   config.include ActiveSupport::Testing::TimeHelpers

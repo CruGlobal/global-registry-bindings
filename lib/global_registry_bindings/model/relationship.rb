@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module GlobalRegistry #:nodoc:
-  module Bindings #:nodoc:
-    module Model #:nodoc:
+module GlobalRegistry # :nodoc:
+  module Bindings # :nodoc:
+    module Model # :nodoc:
       module Relationship
         extend ActiveSupport::Concern
 
@@ -21,13 +21,13 @@ module GlobalRegistry #:nodoc:
           value = send(name)
           return [name, value] if value.nil?
           value = case type
-                  when :datetime, :date
-                    value.to_s(:db)
-                  when :boolean
-                    value ? 'true' : 'false'
-                  else
-                    value.to_s.strip
-                  end
+          when :datetime, :date
+            value.to_s(:db)
+          when :boolean
+            value ? "true" : "false"
+          else
+            value.to_s.strip
+          end
           [name, value]
         rescue ::NoMethodError
           nil
@@ -41,9 +41,9 @@ module GlobalRegistry #:nodoc:
         protected
 
         def normalize_relationship_column_type(type, name)
-          if type.to_s == 'text'
+          if type.to_s == "text"
             :string
-          elsif name.ends_with?('_id')
+          elsif name.ends_with?("_id")
             :uuid
           else
             type
@@ -53,13 +53,13 @@ module GlobalRegistry #:nodoc:
         def relationship_entity_columns(type)
           if global_registry_relationship(type).include_all_columns?
             self.class
-                .columns
-                .collect do |c|
-              { c.name.underscore.to_sym => normalize_relationship_column_type(c.type, c.name) }
+              .columns
+              .collect do |c|
+              {c.name.underscore.to_sym => normalize_relationship_column_type(c.type, c.name)}
             end # rubocop:disable Style/MultilineBlockChain
-                .reduce(&:merge)
-                .reject { |k, _v| global_registry_relationship(type).exclude.include? k }
-                .merge(global_registry_relationship(type).fields)
+              .reduce(&:merge)
+              .except(*global_registry_relationship(type).exclude)
+              .merge(global_registry_relationship(type).fields)
           else
             global_registry_relationship(type).fields || {}
           end

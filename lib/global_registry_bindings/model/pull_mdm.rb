@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'global_registry_bindings/workers/pull_mdm_id_worker'
+require "global_registry_bindings/workers/pull_mdm_id_worker"
 
-module GlobalRegistry #:nodoc:
-  module Bindings #:nodoc:
-    module Model #:nodoc:
+module GlobalRegistry # :nodoc:
+  module Bindings # :nodoc:
+    module Model # :nodoc:
       module PullMdm
         extend ActiveSupport::Concern
 
@@ -17,7 +17,7 @@ module GlobalRegistry #:nodoc:
           return if global_registry_entity.condition?(:if)
           return unless global_registry_entity.condition?(:unless)
           "::GlobalRegistry::Bindings::Workers::#{global_registry_entity.mdm_worker_class_name}"
-            .constantize .perform_async(self.class.name, id)
+            .constantize.perform_async(self.class.name, id)
         end
       end
     end

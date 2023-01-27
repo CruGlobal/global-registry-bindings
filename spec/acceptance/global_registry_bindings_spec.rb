@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
-RSpec.describe 'GlobalRegistry::Bindings' do
-  describe 'ActiveRecord::Base extensions' do
-    it 'should respond to global_registry_bindings' do
+RSpec.describe "GlobalRegistry::Bindings" do
+  describe "ActiveRecord::Base extensions" do
+    it "should respond to global_registry_bindings" do
       expect(::ActiveRecord::Base).to respond_to :global_registry_bindings
     end
   end
 
-  describe 'Options' do
-    it 'should have default values for all options' do
+  describe "Options" do
+    it "should have default values for all options" do
       expect(Default.global_registry_entity.id_column).to be :global_registry_id
       expect(Default.global_registry_entity.mdm_id_column).to be nil
       expect(Default.global_registry_entity.parent).to be nil
@@ -23,21 +23,21 @@ RSpec.describe 'GlobalRegistry::Bindings' do
       expect(Default.global_registry_entity.fields).to be_a(Hash).and be_empty
     end
 
-    it 'should parse and set mdm options' do
+    it "should parse and set mdm options" do
       expect(Namespaced::Person.global_registry_entity.id_column).to be :global_registry_id
       expect(Namespaced::Person.global_registry_entity.mdm_id_column).to be :global_registry_mdm_id
       expect(Namespaced::Person.global_registry_entity.mdm_timeout).to eq 24.hours
       expect(Namespaced::Person.global_registry_entity.type).to be :person
       expect(Namespaced::Person.global_registry_entity.exclude)
         .to contain_exactly(:country_of_residence_gr_id, :country_of_residence_id, :country_of_service_gr_id,
-                            :country_of_service_id, :created_at, :global_registry_id, :global_registry_mdm_id,
-                            :guid, :id, :updated_at, :global_registry_fingerprint)
+          :country_of_service_id, :created_at, :global_registry_id, :global_registry_mdm_id,
+          :guid, :id, :updated_at, :global_registry_fingerprint)
       expect(Namespaced::Person.global_registry_entity.fields).to be_a(Hash).and be_empty
       expect(GlobalRegistry::Bindings::Workers::PullNamespacedPersonMdmIdWorker.get_sidekiq_options)
-        .to include('unique' => :until_timeout, 'unique_expiration' => 24.hours)
+        .to include("unique" => :until_timeout, "unique_expiration" => 24.hours)
     end
 
-    it 'should parse and set exclude and extra fields options' do
+    it "should parse and set exclude and extra fields options" do
       address = build(:address)
       expect(Address.global_registry_entity.id_column).to be :global_registry_id
       expect(Address.global_registry_entity.mdm_id_column).to be nil
@@ -51,7 +51,7 @@ RSpec.describe 'GlobalRegistry::Bindings' do
         .to include(line1: :string, postal_code: :string)
     end
 
-    it 'should parse and set push_on fields' do
+    it "should parse and set push_on fields" do
       org = build(:organization)
       expect(Organization.global_registry_entity.id_column).to be :gr_id
       expect(Organization.global_registry_entity.mdm_id_column).to be nil
@@ -66,7 +66,7 @@ RSpec.describe 'GlobalRegistry::Bindings' do
       expect(org.global_registry_entity.fields).to be_a(Hash).and be_empty
     end
 
-    it 'should parse and set relationship fields' do
+    it "should parse and set relationship fields" do
       person = build(:person)
       org = build(:organization)
       assignment = build(:assignment, person: person, organization: org)
@@ -78,25 +78,25 @@ RSpec.describe 'GlobalRegistry::Bindings' do
       expect(assignment.global_registry_relationship(:fancy_org_assignment).related_name).to be :fancy_org
       expect(assignment.global_registry_relationship(:fancy_org_assignment).exclude)
         .to contain_exactly(:global_registry_id, :id, :created_at, :updated_at, :person_id, :organization_id,
-                            :assigned_by_gr_rel_id, :assigned_by_id)
+          :assigned_by_gr_rel_id, :assigned_by_id)
       expect(assignment.global_registry_relationship(:fancy_org_assignment).fields)
         .to be_a(Hash)
     end
   end
 
-  describe 'configure' do
-    it 'should have default sidekiq_options' do
+  describe "configure" do
+    it "should have default sidekiq_options" do
       expect(GlobalRegistry::Bindings.sidekiq_options).to be_a(Hash).and be_empty
     end
 
-    it 'should have default redis_error_action' do
+    it "should have default redis_error_action" do
       expect(GlobalRegistry::Bindings.redis_error_action).to be :log
     end
 
-    context 'custom sidekiq queue' do
+    context "custom sidekiq queue" do
       before do
         GlobalRegistry::Bindings.configure do |config|
-          config.sidekiq_options = { queue: :custom }
+          config.sidekiq_options = {queue: :custom}
         end
       end
       after do
@@ -109,20 +109,20 @@ RSpec.describe 'GlobalRegistry::Bindings' do
         GlobalRegistry::Bindings::Workers::DeleteEntityWorker.jobs.last
       end
 
-      it 'should contain global custom queue' do
+      it "should contain global custom queue" do
         expect(GlobalRegistry::Bindings.sidekiq_options).to be_a(Hash).and(include(queue: :custom))
-        expect(job).to include('queue' => 'custom')
+        expect(job).to include("queue" => "custom")
       end
     end
 
-    describe 'redis_error_action' do
+    describe "redis_error_action" do
       around do |example|
         class Rollbar; end
         example.run
         Object.send(:remove_const, :Rollbar)
       end
 
-      context ':ignore' do
+      context ":ignore" do
         around do |example|
           GlobalRegistry::Bindings.configure do |config|
             config.redis_error_action = :ignore
@@ -133,7 +133,7 @@ RSpec.describe 'GlobalRegistry::Bindings' do
           end
         end
 
-        it 'should silently ignore redis errors' do
+        it "should silently ignore redis errors" do
           allow(Rollbar).to receive(:error)
           expect(GlobalRegistry::Bindings::Worker).to receive(:set).and_raise(Redis::BaseError)
           expect do
@@ -144,7 +144,7 @@ RSpec.describe 'GlobalRegistry::Bindings' do
         end
       end
 
-      context ':log' do
+      context ":log" do
         around do |example|
           GlobalRegistry::Bindings.configure do |config|
             config.redis_error_action = :log
@@ -155,7 +155,7 @@ RSpec.describe 'GlobalRegistry::Bindings' do
           end
         end
 
-        it 'should log redis errors' do
+        it "should log redis errors" do
           allow(Rollbar).to receive(:error)
           expect(GlobalRegistry::Bindings::Worker).to receive(:set).and_raise(Redis::BaseError)
           expect do
@@ -166,7 +166,7 @@ RSpec.describe 'GlobalRegistry::Bindings' do
         end
       end
 
-      context ':raise' do
+      context ":raise" do
         around do |example|
           GlobalRegistry::Bindings.configure do |config|
             config.redis_error_action = :raise
@@ -177,7 +177,7 @@ RSpec.describe 'GlobalRegistry::Bindings' do
           end
         end
 
-        it 'should re-raise redis errors' do
+        it "should re-raise redis errors" do
           allow(Rollbar).to receive(:error)
           expect(GlobalRegistry::Bindings::Worker).to receive(:set).and_raise(Redis::BaseError)
           expect do
