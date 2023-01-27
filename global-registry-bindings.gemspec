@@ -32,7 +32,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rails', '>= 4.2.2'
   s.add_development_dependency 'bundler', '~> 2.1'
   s.add_development_dependency 'rake', '~> 12'
-  s.add_development_dependency 'rspec-rails', '~> 3.5.0'
+  s.add_development_dependency 'rspec-rails'
   s.add_development_dependency 'webmock', '~> 3.0.0'
   s.add_development_dependency 'factory_girl', '~> 4.8.0'
   s.add_development_dependency 'rubocop', '0.48.1'
