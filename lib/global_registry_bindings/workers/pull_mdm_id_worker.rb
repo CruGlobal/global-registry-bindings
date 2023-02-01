@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'global_registry_bindings/entity/mdm_methods'
+require "global_registry_bindings/entity/mdm_methods"
 
-module GlobalRegistry #:nodoc:
-  module Bindings #:nodoc:
-    module Workers #:nodoc:
+module GlobalRegistry # :nodoc:
+  module Bindings # :nodoc:
+    module Workers # :nodoc:
       def self.mdm_worker_class(model_class)
         worker_class_name = model_class.global_registry_entity.mdm_worker_class_name
         return const_get worker_class_name if const_defined? worker_class_name
@@ -27,7 +27,7 @@ module GlobalRegistry #:nodoc:
           pull_mdm_id_from_global_registry
         rescue ActiveRecord::RecordNotFound
           # If the record was deleted after the job was created, swallow it
-          return
+          nil
         rescue RestClient::ResourceNotFound
           Rails.logger.info "GR entity for #{self.class.name} #{id} does not exist; will _not_ retry"
         end

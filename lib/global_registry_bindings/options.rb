@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'global_registry_bindings/options/entity_instance_options'
-require 'global_registry_bindings/options/entity_class_options'
-require 'global_registry_bindings/options/relationship_instance_options'
-require 'global_registry_bindings/options/relationship_class_options'
+require "global_registry_bindings/options/entity_instance_options"
+require "global_registry_bindings/options/entity_class_options"
+require "global_registry_bindings/options/relationship_instance_options"
+require "global_registry_bindings/options/relationship_class_options"
 
-module GlobalRegistry #:nodoc:
-  module Bindings #:nodoc:
+module GlobalRegistry # :nodoc:
+  module Bindings # :nodoc:
     module Options
       extend ActiveSupport::Concern
 

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'sidekiq'
-require 'sidekiq-unique-jobs'
+require "sidekiq"
+require "sidekiq-unique-jobs"
 
-module GlobalRegistry #:nodoc:
-  module Bindings #:nodoc:
+module GlobalRegistry # :nodoc:
+  module Bindings # :nodoc:
     class Worker
       include Sidekiq::Worker
 
@@ -36,7 +36,7 @@ module GlobalRegistry #:nodoc:
         when :log
           ::Rollbar.error(e) if Module.const_defined? :Rollbar
         when :ignore
-          return
+          nil
         end
       end
     end

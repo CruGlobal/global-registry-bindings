@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'active_support/lazy_load_hooks'
-require 'global_registry_bindings/global_registry_bindings'
-require 'global_registry_bindings/railtie' if defined? ::Rails::Railtie
+require "active_support/lazy_load_hooks"
+require "global_registry_bindings/global_registry_bindings"
+require "global_registry_bindings/railtie" if defined? ::Rails::Railtie
 
 module GlobalRegistry
   module Bindings

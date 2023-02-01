@@ -1,22 +1,22 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
 RSpec.describe GlobalRegistry::Bindings::Testing do
-  describe 'skip_workers! &block' do
+  describe "skip_workers! &block" do
     around(:example) do |example|
       GlobalRegistry::Bindings::Testing.skip_workers!(&example)
     end
 
-    it 'should not enqueue sidekiq jobs' do
+    it "should not enqueue sidekiq jobs" do
       person = build(:person)
       expect do
         person.save
       end.to change(Sidekiq::Worker.jobs, :size).by(0)
     end
 
-    context 'disable_test_helper! &block' do
-      it 'should enqueue sidekiq jobs' do
+    context "disable_test_helper! &block" do
+      it "should enqueue sidekiq jobs" do
         expect(GlobalRegistry::Bindings::Testing.enabled?).to be true
         GlobalRegistry::Bindings::Testing.disable_test_helper! do
           expect(GlobalRegistry::Bindings::Testing.enabled?).to be false
@@ -37,7 +37,7 @@ RSpec.describe GlobalRegistry::Bindings::Testing do
     end
   end
 
-  describe 'skip_workers! enable/disable' do
+  describe "skip_workers! enable/disable" do
     before do
       GlobalRegistry::Bindings::Testing.skip_workers!
     end
@@ -45,7 +45,7 @@ RSpec.describe GlobalRegistry::Bindings::Testing do
       GlobalRegistry::Bindings::Testing.disable_test_helper!
     end
 
-    it 'should not enqueue sidekiq jobs' do
+    it "should not enqueue sidekiq jobs" do
       person = build(:person)
       expect do
         person.save

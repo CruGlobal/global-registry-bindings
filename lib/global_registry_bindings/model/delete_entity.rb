@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'global_registry_bindings/workers/delete_entity_worker'
+require "global_registry_bindings/workers/delete_entity_worker"
 
-module GlobalRegistry #:nodoc:
-  module Bindings #:nodoc:
-    module Model #:nodoc:
+module GlobalRegistry # :nodoc:
+  module Bindings # :nodoc:
+    module Model # :nodoc:
       module DeleteEntity
         extend ActiveSupport::Concern
 

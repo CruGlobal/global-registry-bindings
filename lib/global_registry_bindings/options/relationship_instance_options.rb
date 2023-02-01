@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
-module GlobalRegistry #:nodoc:
-  module Bindings #:nodoc:
+module GlobalRegistry # :nodoc:
+  module Bindings # :nodoc:
     module Options
       class RelationshipInstanceOptions
         delegate :id_column,
-                 :push_on,
-                 :primary_binding,
-                 :primary_foreign_key,
-                 :related_binding,
-                 :related_foreign_key,
-                 :ensure_type?,
-                 :rename_entity_type?,
-                 :include_all_columns?,
-                 to: :@class_options
+          :push_on,
+          :primary_binding,
+          :primary_foreign_key,
+          :related_binding,
+          :related_foreign_key,
+          :ensure_type?,
+          :rename_entity_type?,
+          :include_all_columns?,
+          to: :@class_options
 
         def initialize(type, model)
           @model = model
@@ -132,7 +132,7 @@ module GlobalRegistry #:nodoc:
           when Symbol
             @model.send(option, type, @model)
           else
-            :if != cond
+            cond != :if
           end
         end
       end

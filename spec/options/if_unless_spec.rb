@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
+require "spec_helper"
 
-RSpec.describe 'Options' do
+RSpec.describe "Options" do
   before do
-    stub_const 'Foo', Class.new(::ApplicationRecord)
+    stub_const "Foo", Class.new(::ApplicationRecord)
   end
 
-  describe 'entity' do
-    describe ':if' do
-      context 'value as proc' do
+  describe "entity" do
+    describe ":if" do
+      context "value as proc" do
         before do
           Foo.class_eval { global_registry_bindings type: :foo, if: proc { |_model| true } }
         end
 
-        it 'should not enqueue sidekiq job' do
+        it "should not enqueue sidekiq job" do
           foo = Foo.new
           expect do
             foo.save
@@ -22,7 +22,7 @@ RSpec.describe 'Options' do
         end
       end
 
-      context 'value as symbol' do
+      context "value as symbol" do
         before do
           Foo.class_eval { global_registry_bindings type: :foo, if: :if_cond }
           Foo.class_eval do
@@ -32,7 +32,7 @@ RSpec.describe 'Options' do
           end
         end
 
-        it 'should not enqueue sidekiq job' do
+        it "should not enqueue sidekiq job" do
           foo = Foo.new
           expect do
             foo.save
@@ -41,13 +41,13 @@ RSpec.describe 'Options' do
       end
     end
 
-    describe ':unless' do
-      context 'value as proc' do
+    describe ":unless" do
+      context "value as proc" do
         before do
           Foo.class_eval { global_registry_bindings type: :foo, unless: proc { |_model| false } }
         end
 
-        it 'should not enqueue sidekiq job' do
+        it "should not enqueue sidekiq job" do
           foo = Foo.new
           expect do
             foo.save
@@ -55,7 +55,7 @@ RSpec.describe 'Options' do
         end
       end
 
-      context 'value as symbol' do
+      context "value as symbol" do
         before do
           Foo.class_eval { global_registry_bindings type: :foo, unless: :unless_cond }
           Foo.class_eval do
@@ -65,7 +65,7 @@ RSpec.describe 'Options' do
           end
         end
 
-        it 'should not enqueue sidekiq job' do
+        it "should not enqueue sidekiq job" do
           foo = Foo.new
           expect do
             foo.save
@@ -75,14 +75,14 @@ RSpec.describe 'Options' do
     end
   end
 
-  describe 'relationship' do
-    describe ':if' do
-      context 'value as proc' do
+  describe "relationship" do
+    describe ":if" do
+      context "value as proc" do
         before do
           Foo.class_eval { global_registry_bindings binding: :relationship, type: :foo, if: proc { |_model| true } }
         end
 
-        it 'should not enqueue sidekiq job' do
+        it "should not enqueue sidekiq job" do
           foo = Foo.new
           expect do
             foo.save
@@ -90,7 +90,7 @@ RSpec.describe 'Options' do
         end
       end
 
-      context 'value as symbol' do
+      context "value as symbol" do
         before do
           Foo.class_eval { global_registry_bindings binding: :relationship, type: :foo, if: :if_cond }
           Foo.class_eval do
@@ -100,7 +100,7 @@ RSpec.describe 'Options' do
           end
         end
 
-        it 'should not enqueue sidekiq job' do
+        it "should not enqueue sidekiq job" do
           foo = Foo.new
           expect do
             foo.save
@@ -109,15 +109,15 @@ RSpec.describe 'Options' do
       end
     end
 
-    describe ':unless' do
-      context 'value as proc' do
+    describe ":unless" do
+      context "value as proc" do
         before do
           Foo.class_eval do
             global_registry_bindings binding: :relationship, type: :foo, unless: proc { |_model| false }
           end
         end
 
-        it 'should not enqueue sidekiq job' do
+        it "should not enqueue sidekiq job" do
           foo = Foo.new
           expect do
             foo.save
@@ -125,7 +125,7 @@ RSpec.describe 'Options' do
         end
       end
 
-      context 'value as symbol' do
+      context "value as symbol" do
         before do
           Foo.class_eval { global_registry_bindings binding: :relationship, type: :foo, unless: :unless_cond }
           Foo.class_eval do
@@ -135,7 +135,7 @@ RSpec.describe 'Options' do
           end
         end
 
-        it 'should not enqueue sidekiq job' do
+        it "should not enqueue sidekiq job" do
           foo = Foo.new
           expect do
             foo.save

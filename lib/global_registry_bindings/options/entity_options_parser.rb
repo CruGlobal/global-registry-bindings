@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module GlobalRegistry #:nodoc:
-  module Bindings #:nodoc:
+module GlobalRegistry # :nodoc:
+  module Bindings # :nodoc:
     module Options
       class EntityOptionsParser
         def initialize(model_class)
@@ -39,7 +39,7 @@ module GlobalRegistry #:nodoc:
 
         def validate_options!(options = {})
           unknown = options.keys - defaults.keys
-          raise ArgumentError, "global-registry-bindings: Unknown options (#{unknown.join ', '})" unless unknown.empty?
+          raise ArgumentError, "global-registry-bindings: Unknown options (#{unknown.join ", "})" unless unknown.empty?
         end
 
         def merge_defaults(options_hash = {})

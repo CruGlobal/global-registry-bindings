@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module GlobalRegistry #:nodoc:
-  module Bindings #:nodoc:
-    module Model #:nodoc:
+module GlobalRegistry # :nodoc:
+  module Bindings # :nodoc:
+    module Model # :nodoc:
       module Entity
         extend ActiveSupport::Concern
 
@@ -11,7 +11,7 @@ module GlobalRegistry #:nodoc:
             value_for_global_registry(name, type)
           end.compact.to_h
           entity_attributes[:client_integration_id] = id unless global_registry_entity.exclude
-                                                                                      .include?(:client_integration_id)
+            .include?(:client_integration_id)
           if respond_to?(:updated_at) && updated_at.present?
             entity_attributes[:client_updated_at] = updated_at.to_s(:db)
           end
@@ -25,13 +25,13 @@ module GlobalRegistry #:nodoc:
           value = send(name)
           return [name, value] if value.nil?
           value = case type
-                  when :datetime, :date
-                    value.to_s(:db)
-                  when :boolean
-                    value ? 'true' : 'false'
-                  else
-                    value.to_s.strip
-                  end
+          when :datetime, :date
+            value.to_s(:db)
+          when :boolean
+            value ? "true" : "false"
+          else
+            value.to_s.strip
+          end
           [name, value]
         rescue ::NoMethodError
           nil
@@ -39,26 +39,26 @@ module GlobalRegistry #:nodoc:
 
         def entity_columns_to_push
           @columns_to_push ||= if global_registry_entity.include_all_columns?
-                                 self
-                                   .class
-                                   .columns
-                                   .collect do |c|
-                                   { c.name.underscore.to_sym => normalize_entity_column_type(c.type, c.name) }
-                                 end # rubocop:disable Style/MultilineBlockChain
-                                   .reduce(&:merge)
-                                   .reject { |k, _v| global_registry_entity.exclude.include? k }
-                                   .merge(global_registry_entity.fields)
-                               else
-                                 global_registry_entity.fields
-                               end
+            self
+              .class
+              .columns
+              .collect do |c|
+              {c.name.underscore.to_sym => normalize_entity_column_type(c.type, c.name)}
+            end # rubocop:disable Style/MultilineBlockChain
+              .reduce(&:merge)
+              .except(*global_registry_entity.exclude)
+              .merge(global_registry_entity.fields)
+          else
+            global_registry_entity.fields
+          end
         end
 
         protected
 
         def normalize_entity_column_type(type, name)
-          if type.to_s == 'text'
+          if type.to_s == "text"
             :string
-          elsif name.ends_with?('_id')
+          elsif name.ends_with?("_id")
             :uuid
           else
             type

@@ -1,23 +1,23 @@
 # frozen_string_literal: true
 
-require 'ostruct'
+require "ostruct"
 
-module GlobalRegistry #:nodoc:
-  module Bindings #:nodoc:
+module GlobalRegistry # :nodoc:
+  module Bindings # :nodoc:
     module Options
       class EntityClassOptions
         delegate :id_column,
-                 :mdm_id_column,
-                 :fingerprint_column,
-                 :type,
-                 :mdm_timeout,
-                 :push_on,
-                 :parent,
-                 :parent_class,
-                 :exclude,
-                 :fields,
-                 :if,
-                 :unless, to: :@options
+          :mdm_id_column,
+          :fingerprint_column,
+          :type,
+          :mdm_timeout,
+          :push_on,
+          :parent,
+          :parent_class,
+          :exclude,
+          :fields,
+          :if,
+          :unless, to: :@options
 
         def initialize(model_class)
           @model_class = model_class
@@ -33,7 +33,7 @@ module GlobalRegistry #:nodoc:
         end
 
         def mdm_worker_class_name
-          "Pull#{@model_class.name.tr(':', '')}MdmIdWorker"
+          "Pull#{@model_class.name.tr(":", "")}MdmIdWorker"
         end
       end
     end

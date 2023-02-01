@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module GlobalRegistry #:nodoc:
-  module Bindings #:nodoc:
-    module Workers #:nodoc:
+module GlobalRegistry # :nodoc:
+  module Bindings # :nodoc:
+    module Workers # :nodoc:
       class DeleteEntityWorker < ::GlobalRegistry::Bindings::Worker
         sidekiq_options unique: :until_executed
 
