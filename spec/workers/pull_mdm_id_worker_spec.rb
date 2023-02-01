@@ -102,18 +102,15 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PullMdmIdWorker do
   end
 
   describe "#mdm_worker_class" do
-    before do
-      module MdmTest
-        class Klass
+    around do |example|
+      RSpec::Mocks.with_temporary_scope do
+        stub_const("MdmTest::Klass", Class.new do
           def self.global_registry_entity
             @gr ||= Object.new
           end
-        end
+        end)
+        example.run
       end
-    end
-    after do
-      MdmTest.send :remove_const, :Klass
-      GlobalRegistry::Bindings::Workers.send :remove_const, :PullMdmTestKlassMdmIdWorker
     end
 
     it "generates worker class with mdm timeout set" do
