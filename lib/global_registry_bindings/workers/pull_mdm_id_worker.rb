@@ -14,7 +14,10 @@ module GlobalRegistry # :nodoc:
         end
 
         const_set worker_class_name, klass
-        ActiveSupport::Dependencies.mark_for_unload(klass)
+
+        if Rails.gem_version < '7' # only works with "classic" loader, not zeitwerk
+          ActiveSupport::Dependencies.mark_for_unload(klass)
+        end
 
         klass
       end
