@@ -54,7 +54,7 @@ module GlobalRegistry # :nodoc:
           entity_type&.dig("id")
         end
 
-        def related_associated_entity_type_id
+        def related_associated_entity_type_id # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
           unless global_registry_relationship(type).related
             related_type = global_registry_relationship(type).related_type
             # remote foreign_key doesn't have a model class in rails. Short-circuit and fetch entity_type by name
@@ -73,7 +73,7 @@ module GlobalRegistry # :nodoc:
           related_worker.send(:push_entity_type_to_global_registry)&.dig("id")
         end
 
-        def push_global_registry_relationship_type_fields(relationship_type)
+        def push_global_registry_relationship_type_fields(relationship_type) # rubocop:disable Metrics/AbcSize
           existing_fields = relationship_type["fields"]&.collect { |f| f["name"].to_sym } || []
           fields = model.relationship_columns_to_push(type)
             .except(*existing_fields)

@@ -15,7 +15,7 @@ module GlobalRegistry # :nodoc:
 
         const_set worker_class_name, klass
 
-        if Rails.gem_version < Gem::Version.new('7') # only works with "classic" loader, not zeitwerk
+        if Rails.gem_version < Gem::Version.new("7") # only works with "classic" loader, not zeitwerk
           ActiveSupport::Dependencies.mark_for_unload(klass)
         end
 
@@ -26,7 +26,7 @@ module GlobalRegistry # :nodoc:
         include GlobalRegistry::Bindings::Entity::MdmMethods
 
         def perform(model_class, id)
-          super model_class, id
+          super
           pull_mdm_id_from_global_registry
         rescue ActiveRecord::RecordNotFound
           # If the record was deleted after the job was created, swallow it

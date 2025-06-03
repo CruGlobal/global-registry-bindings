@@ -57,9 +57,9 @@ end
 # It is not needed for sidekiq 6.x and earlier.
 
 Rails.application.config.after_initialize do
-  class MockRedis
+  class MockRedis # rubocop:disable Lint/ConstantDefinitionInBlock
     module ZsetMethods
-      def zscan(key, cursor, opts = {})
+      def zscan(key, cursor, _opts = {})
         opts = cursor.merge(key: lambda { |x| x[0] })
         result = common_scan(zrange(key, 0, -1, withscores: true), 0, opts)
         hash_result = {}
