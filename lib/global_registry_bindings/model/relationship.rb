@@ -13,7 +13,7 @@ module GlobalRegistry # :nodoc:
           unless global_registry_relationship(type).exclude.include?(:client_integration_id)
             entity_attributes[:client_integration_id] = global_registry_relationship(type).client_integration_id
           end
-          entity_attributes[:client_updated_at] = updated_at.to_s(:db) if respond_to?(:updated_at)
+          entity_attributes[:client_updated_at] = updated_at.to_fs(:db) if respond_to?(:updated_at)
           entity_attributes
         end
 
@@ -22,7 +22,7 @@ module GlobalRegistry # :nodoc:
           return [name, value] if value.nil?
           value = case type
           when :datetime, :date
-            value.to_s(:db)
+            value.to_fs(:db)
           when :boolean
             value ? "true" : "false"
           else

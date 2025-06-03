@@ -136,7 +136,7 @@ RSpec.describe "GlobalRegistry::Bindings" do
 
         it "should silently ignore redis errors" do
           allow(Rollbar).to receive(:error)
-          expect(GlobalRegistry::Bindings::Worker).to receive(:set).and_raise(Redis::BaseError)
+          expect(GlobalRegistry::Bindings::Worker).to receive(:set).and_raise(RedisClient::Error)
           expect do
             GlobalRegistry::Bindings::Worker.perform_async
           end.to_not raise_error
@@ -158,7 +158,7 @@ RSpec.describe "GlobalRegistry::Bindings" do
 
         it "should log redis errors" do
           allow(Rollbar).to receive(:error)
-          expect(GlobalRegistry::Bindings::Worker).to receive(:set).and_raise(Redis::BaseError)
+          expect(GlobalRegistry::Bindings::Worker).to receive(:set).and_raise(RedisClient::Error)
           expect do
             GlobalRegistry::Bindings::Worker.perform_async
           end.to_not raise_error
@@ -180,10 +180,10 @@ RSpec.describe "GlobalRegistry::Bindings" do
 
         it "should re-raise redis errors" do
           allow(Rollbar).to receive(:error)
-          expect(GlobalRegistry::Bindings::Worker).to receive(:set).and_raise(Redis::BaseError)
+          expect(GlobalRegistry::Bindings::Worker).to receive(:set).and_raise(RedisClient::Error)
           expect do
             GlobalRegistry::Bindings::Worker.perform_async
-          end.to raise_error(Redis::BaseError)
+          end.to raise_error(RedisClient::Error)
           expect(GlobalRegistry::Bindings::Worker.jobs.size).to be 0
         end
       end

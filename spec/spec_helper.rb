@@ -50,3 +50,24 @@ RSpec.configure do |config|
     Rails.cache.clear
   end
 end
+
+# The mock_redis gem mocks the redis gem for all intents and purposes.
+# Newer versions of sidekiq do not use the redis gem though. They use redis-client.
+# This monkeypatch makes sure that the mock_redis gem works with sidekiq 8.0.0 and later.
+# It is not needed for sidekiq 6.x and earlier.
+
+Rails.application.config.after_initialize do
+  class MockRedis
+    module ZsetMethods
+      def zscan(key, cursor, opts = {})
+        opts = cursor.merge(key: lambda { |x| x[0] })
+        result = common_scan(zrange(key, 0, -1, withscores: true), 0, opts)
+        hash_result = {}
+        result[1].each do |item|
+          hash_result[item[0]] = item[1]
+        end
+        hash_result
+      end
+    end
+  end
+end

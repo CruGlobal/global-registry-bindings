@@ -29,7 +29,7 @@ module GlobalRegistry # :nodoc:
         else # sidekiq 5.x
           worker.perform_async(*args)
         end
-      rescue Redis::BaseError => e
+      rescue RedisClient::Error => e
         case GlobalRegistry::Bindings.redis_error_action
         when :raise
           raise
