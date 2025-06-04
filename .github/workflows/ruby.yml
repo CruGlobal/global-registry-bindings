@@ -26,4 +26,4 @@ jobs:
         run: bundle exec standardrb --format simple
 
       - name: RSpec tests
-        run: bundle exec rspec --color
+        run: bundle exec rspec --color --backtrace
