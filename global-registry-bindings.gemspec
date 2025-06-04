@@ -35,7 +35,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "factory_girl", "~> 4.8.0"
   s.add_development_dependency "standard"
   s.add_development_dependency "sqlite3", "~> 1.4"
-  s.add_development_dependency "mock_redis", "~> 0.50"
   s.add_development_dependency "simplecov", "~> 0.14.0"
   s.add_development_dependency "pry"
   s.add_development_dependency "pry-byebug"
