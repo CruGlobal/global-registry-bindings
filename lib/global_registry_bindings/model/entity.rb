@@ -13,7 +13,7 @@ module GlobalRegistry # :nodoc:
           entity_attributes[:client_integration_id] = id unless global_registry_entity.exclude
             .include?(:client_integration_id)
           if respond_to?(:updated_at) && updated_at.present?
-            entity_attributes[:client_updated_at] = updated_at.to_s(:db)
+            entity_attributes[:client_updated_at] = updated_at.to_fs(:db)
           end
           if global_registry_entity.parent_is_self?
             entity_attributes[:parent_id] = global_registry_entity.parent_id_value
@@ -26,7 +26,7 @@ module GlobalRegistry # :nodoc:
           return [name, value] if value.nil?
           value = case type
           when :datetime, :date
-            value.to_s(:db)
+            value.to_fs(:db)
           when :boolean
             value ? "true" : "false"
           else

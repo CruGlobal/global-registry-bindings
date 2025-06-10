@@ -25,11 +25,11 @@ module GlobalRegistry # :nodoc:
         # Set global sidekiq_options
         worker = set(GlobalRegistry::Bindings.sidekiq_options)
         if worker == self # sidekiq 4.x
-          super(*args)
+          super
         else # sidekiq 5.x
           worker.perform_async(*args)
         end
-      rescue Redis::BaseError => e
+      rescue RedisClient::Error => e
         case GlobalRegistry::Bindings.redis_error_action
         when :raise
           raise

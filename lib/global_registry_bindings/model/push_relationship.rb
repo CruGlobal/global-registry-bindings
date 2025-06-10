@@ -18,7 +18,7 @@ module GlobalRegistry # :nodoc:
           types = types.empty? ? self.class.global_registry_relationship_types : types
           types.each do |type|
             action = global_registry_relationship_change_action(type)
-            send("global_registry_relationship_async_#{action}".to_sym, type)
+            send(:"global_registry_relationship_async_#{action}", type)
           end
         end
 

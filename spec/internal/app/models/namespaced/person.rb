@@ -55,7 +55,7 @@ module Namespaced
     end
 
     def relationship_attributes_to_push(type)
-      entity_attributes = super(type)
+      entity_attributes = super
       case type
       when :country_of_service
         entity_attributes[:country_of_service] = true

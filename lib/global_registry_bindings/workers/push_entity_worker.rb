@@ -13,7 +13,7 @@ module GlobalRegistry # :nodoc:
         sidekiq_options unique: :until_and_while_executing
 
         def perform(model_class, id)
-          super model_class, id
+          super
           push_entity_to_global_registry
         rescue ActiveRecord::RecordNotFound # rubocop:disable Lint/HandleExceptions
           # If the record was deleted after the job was created, swallow it

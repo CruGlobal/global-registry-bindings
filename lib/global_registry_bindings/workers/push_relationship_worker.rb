@@ -15,12 +15,12 @@ module GlobalRegistry # :nodoc:
         attr_accessor :type
 
         def initialize(model = nil, type = nil)
-          super model
+          super(model)
           self.type = type.to_sym if type
         end
 
         def perform(model_class, id, type)
-          super model_class, id
+          super(model_class, id)
           self.type = type.to_sym
           push_relationship_to_global_registry
         rescue ActiveRecord::RecordNotFound # rubocop:disable Lint/HandleExceptions

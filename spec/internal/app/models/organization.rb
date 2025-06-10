@@ -30,7 +30,7 @@ class Organization < ApplicationRecord
   end
 
   def relationship_attributes_to_push(type)
-    entity_attributes = super(type)
+    entity_attributes = super
     entity_attributes[:priority] = "High" if type == :area
     entity_attributes
   end

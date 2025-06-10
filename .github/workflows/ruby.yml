@@ -22,8 +22,13 @@ jobs:
         with:
           bundler-cache: true
 
+      - name: Start Redis
+        uses: supercharge/redis-github-action@1.7.0
+        with:
+          redis-version: 7.0.7
+
       - name: StandardRB
         run: bundle exec standardrb --format simple
 
       - name: RSpec tests
-        run: bundle exec rspec --color
+        run: bundle exec rspec --color --backtrace

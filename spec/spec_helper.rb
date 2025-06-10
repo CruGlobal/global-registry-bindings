@@ -22,9 +22,6 @@ require "sidekiq/testing"
 require "sidekiq_unique_jobs/testing"
 Sidekiq::Testing.fake!
 
-require "mock_redis"
-MOCK_REDIS = MockRedis.new
-
 ActionController::Base.cache_store = :memory_store
 
 require "helpers/sidekiq_helpers"
@@ -43,8 +40,6 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    allow(Sidekiq).to receive(:redis).and_yield(MOCK_REDIS)
-
     clear_sidekiq_jobs_and_locks
 
     Rails.cache.clear

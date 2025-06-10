@@ -71,8 +71,7 @@ module GlobalRegistry # :nodoc:
         end
 
         def ensure_parent_entity_has_global_registry_id!
-          return unless (global_registry_entity.parent_is_self? && global_registry_entity.parent_id_value.blank?) ||
-            global_registry_entity.parent_id_value.blank?
+          return if global_registry_entity.parent_id_value.present?
           # Push parent entity if it exists and is missing global_registry_id
           global_registry_entity.parent.push_entity_to_global_registry_async
           raise GlobalRegistry::Bindings::ParentEntityMissingGlobalRegistryId,
