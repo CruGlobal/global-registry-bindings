@@ -10,6 +10,7 @@ module GlobalRegistry # :nodoc:
       class PushEntityWorker < GlobalRegistry::Bindings::Worker
         include GlobalRegistry::Bindings::Entity::EntityTypeMethods
         include GlobalRegistry::Bindings::Entity::PushEntityMethods
+
         sidekiq_options unique: :until_and_while_executing
 
         def perform(model_class, id)

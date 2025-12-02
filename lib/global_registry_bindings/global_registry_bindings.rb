@@ -53,6 +53,7 @@ module GlobalRegistry # :nodoc:
 
     def global_registry_bindings_entity_includes
       include Model::Entity
+
       if global_registry_entity.push_on.any? { |item| %i[create update].include? item }
         include Model::PushEntity
       end

@@ -10,6 +10,7 @@ module GlobalRegistry # :nodoc:
       class PushRelationshipWorker < GlobalRegistry::Bindings::Worker
         include GlobalRegistry::Bindings::Entity::RelationshipTypeMethods
         include GlobalRegistry::Bindings::Entity::PushRelationshipMethods
+        
         sidekiq_options unique: :until_and_while_executing
 
         attr_accessor :type
