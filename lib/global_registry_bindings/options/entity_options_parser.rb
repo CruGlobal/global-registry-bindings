@@ -69,7 +69,7 @@ module GlobalRegistry # :nodoc:
           @options[:exclude] << @options[:mdm_id_column] if @options[:mdm_id_column].present?
           @options[:exclude] << @options[:fingerprint_column] if @options[:fingerprint_column].present?
 
-          parent_id_column = association_foreign_key @options[:parent]
+          parent_id_column = association_foreign_key @options[:parent] if @options[:parent]
           @options[:exclude] << parent_id_column.to_sym if parent_id_column
         end
 
