@@ -58,7 +58,7 @@ module GlobalRegistry # :nodoc:
         end
 
         def update_association_classes
-          unless @options[:parent_class] # rubocop:disable Style/GuardClause
+          if @options[:parent_class].nil? && @options[:parent] # rubocop:disable Style/GuardClause
             @options[:parent_class] = association_class @options[:parent]
           end
         end
