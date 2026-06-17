@@ -20,7 +20,12 @@ module GlobalRegistry # :nodoc:
               "GR entity #{global_registry_entity.id_value} for #{model.class.name}(#{model.id}) has no mdm id; " \
               "will retry"
           end
-          model.update_column(global_registry_entity.mdm_id_column, mdm_entity_id) # rubocop:disable Rails/SkipsModelValidations
+          mdm_id_column = global_registry_entity.mdm_id_column
+          # Skip the write when the MDM id is unchanged. update_column always issues an
+          # UPDATE, so re-pulling an unchanged MDM id churns the row (and downstream
+          # replication/WAL consumers) for no reason.
+          return if model.send(mdm_id_column) == mdm_entity_id
+          model.update_column(mdm_id_column, mdm_entity_id) # rubocop:disable Rails/SkipsModelValidations
         end
 
         def dig_global_registry_mdm_id_from_entity(entity, type)
