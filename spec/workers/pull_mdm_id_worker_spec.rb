@@ -98,6 +98,44 @@ RSpec.describe GlobalRegistry::Bindings::Workers::PullMdmIdWorker do
           end.not_to raise_error
         end
       end
+
+      context "mdm id is unchanged" do
+        let(:person) do
+          create(:person, global_registry_id: "22527d88-3cba-11e7-b876-129bd0521531",
+            global_registry_mdm_id: "c81340b2-7e57-4978-b6b9-396f21bb0bb2")
+        end
+        let!(:request) do
+          stub_request(:get, "https://backend.global-registry.org/entities/22527d88-3cba-11e7-b876-129bd0521531")
+            .with(query: {"filters[owned_by]" => "mdm"})
+            .to_return(body: file_fixture("get_entities_person_mdm.json"), status: 200)
+        end
+
+        it "does not write to the database" do
+          expect(person).not_to receive(:update_column)
+          expect { worker.pull_mdm_id_from_global_registry }.not_to raise_error
+          expect(person.global_registry_mdm_id).to eq "c81340b2-7e57-4978-b6b9-396f21bb0bb2"
+        end
+      end
+
+      context "mdm id has changed" do
+        let(:person) do
+          create(:person, global_registry_id: "22527d88-3cba-11e7-b876-129bd0521531",
+            global_registry_mdm_id: "00000000-0000-0000-0000-000000000000")
+        end
+        let!(:request) do
+          stub_request(:get, "https://backend.global-registry.org/entities/22527d88-3cba-11e7-b876-129bd0521531")
+            .with(query: {"filters[owned_by]" => "mdm"})
+            .to_return(body: file_fixture("get_entities_person_mdm.json"), status: 200)
+        end
+
+        it "writes the new mdm id" do
+          expect(person).to receive(:update_column)
+            .with(Namespaced::Person.global_registry_entity.mdm_id_column,
+              "c81340b2-7e57-4978-b6b9-396f21bb0bb2").and_call_original
+          worker.pull_mdm_id_from_global_registry
+          expect(person.reload.global_registry_mdm_id).to eq "c81340b2-7e57-4978-b6b9-396f21bb0bb2"
+        end
+      end
     end
   end
 
